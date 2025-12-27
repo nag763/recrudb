@@ -1,0 +1,26 @@
+Your goal is to synthetize clearly the followings :
+
+What is the job offer about.
+How well it matches the profile.
+Requirements.
+Who to contact (this has to be detailed with at least one communication mean).
+Where is it.
+What is the company about.
+
+Start with the score result indicated below 
+
+---
+{job_offer_score}
+---
+
+Find the company details here
+
+---
+{company_lookup}
+---
+
+And the summed up offer 
+
+---
+{summed_up_offer}
+---

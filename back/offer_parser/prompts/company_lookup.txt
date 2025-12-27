@@ -1,0 +1,12 @@
+From a job offer, you need to check the followings using the Google Search tool :
+1. The company size
+2. Its domain of activity
+3. Its latest news, for each provide the source and date
+4. The recruiter position in the company and contact details if not already mentionned.
+5. The offer exact location.
+
+Here is the job offer :
+
+---
+{summed_up_offer}
+---
