@@ -16,13 +16,34 @@ var s *server.MCPServer
 //go:embed profile.txt
 var ProfileText string
 
+type Contact struct {
+	Email       string `json:"email,omitempty"`
+	Name        string `json:"name,omitempty"`
+	PhoneNumber string `json:"number,omitempty"`
+}
+
+type Address struct {
+	AddressLine1 string `json:"line1,omitempty"`
+	AddressLine2 string `json:"line2,omitempty"`
+	AddressLine3 string `json:"line3,omitempty"`
+	City         string `json:"city,omitempty"`
+	Country      string `json:"country,omitempty"`
+}
+
+type OfferDetails struct {
+	EnterpriseName        string   `json:"enterpriseName"`
+	Contact               Contact  `json:"contact"`
+	Address               Address  `json:"address"`
+	TechnicalRequirements []string `json:"tech_req"`
+}
+
 func init() {
 	viper.SetDefault("ADRESS", ":3000")
 	viper.AutomaticEnv()
 
 	// Create a new MCP server
 	s = server.NewMCPServer(
-		"MCP",
+		"RecruDB Agent Tools",
 		"1.0.0",
 		server.WithToolCapabilities(true),
 	)
@@ -36,6 +57,18 @@ func init() {
 			return mcp.NewToolResultText(ProfileText), nil
 		},
 	)
+
+	s.AddTool(
+		mcp.NewTool("stores_offer_details",
+			mcp.WithDescription("Stores offers details"),
+			mcp.WithInputSchema[OfferDetails](),
+		),
+		func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+			log.Printf("tool called w/ %v", request)
+			return mcp.NewToolResultText("OK"), nil
+		},
+	)
+
 }
 
 func main() {

@@ -11,4 +11,4 @@ Here is the summed up offer
 {summed_up_offer}
 ---
 
-Find the candidate profile information using the get_profile tool
+Find the candidate profile information using the `get_profile` tool
