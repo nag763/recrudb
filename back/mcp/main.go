@@ -91,6 +91,24 @@ func init() {
 		},
 	)
 
+	s.AddTool(
+		mcp.NewTool("delete_offer",
+			mcp.WithDescription("Deletes an offer"),
+			mcp.WithString("UUID", mcp.Required(), mcp.Description("The uuid of the offer to delete"))),
+		func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+			uuid := request.GetString("UUID", "")
+			if uuid == "" {
+				return mcp.NewToolResultError("uuid param is mandatory"), nil
+			}
+			if _, err := client.Collection("offers").Doc(uuid).Delete(ctx); err != nil {
+				log.Printf("error while deleting job offer in firestore: %v\n", err)
+				return mcp.NewToolResultError(fmt.Sprintf("ERROR WHILE DELETING %s IN FIRESTORE", uuid)), nil
+			}
+			log.Printf("job %s offer deleted\n", uuid)
+			return mcp.NewToolResultText(uuid), nil
+		},
+	)
+
 }
 
 func main() {

@@ -38,7 +38,7 @@ func main() {
 		Project: viper.GetString("PROJECT"),
 	})
 
-	mcpTools, err := tools.GetMcpTools([]string{"stores_offer_details"})
+	mcpTools, err := tools.GetMcpTools([]string{"stores_offer_details", "delete_offer"})
 	if err != nil {
 		log.Fatalf("couldn't load mcp tools %v", err)
 	}
@@ -74,6 +74,10 @@ func main() {
 		Stores an offer details. This should be used only once an offer has already been analyzed by the joboffer_analyzer agent. 
 		
 		You don't have to wait for user confirmation to store details, but in case some informations appear to be missing, indicate it to the user.
+		
+		## delete_offer
+
+		Deletes an offer. Perform it using the UUID the job offer was created. Only do that with the job offers created in the session.
 		`,
 		Toolsets:  []tool.Toolset{mcpTools},
 		SubAgents: []agent.Agent{jobOfferMatcher},
