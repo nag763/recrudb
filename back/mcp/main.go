@@ -5,13 +5,18 @@ import (
 	_ "embed"
 	"fmt"
 	"log"
+	"time"
 
+	"cloud.google.com/go/firestore"
+	"github.com/google/uuid"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 	"github.com/spf13/viper"
 )
 
 var s *server.MCPServer
+var client *firestore.Client
+var err error
 
 //go:embed profile.txt
 var ProfileText string
@@ -39,7 +44,15 @@ type OfferDetails struct {
 
 func init() {
 	viper.SetDefault("ADRESS", ":3000")
+	viper.SetDefault("FIRESTORE_DB", "recrudb")
 	viper.AutomaticEnv()
+
+	ctx := context.Background()
+
+	client, err = firestore.NewClient(ctx, viper.GetString("FIRESTORE_DB"))
+	if err != nil {
+		log.Fatalf("Failed to create client: %v", err)
+	}
 
 	// Create a new MCP server
 	s = server.NewMCPServer(
@@ -64,14 +77,25 @@ func init() {
 			mcp.WithInputSchema[OfferDetails](),
 		),
 		func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-			log.Printf("tool called w/ %v", request)
-			return mcp.NewToolResultText("OK"), nil
+			log.Printf("tool called w/ %v\n", request)
+			log.Printf("args %s\n", request.GetRawArguments())
+			uuid := uuid.NewString()
+			args := request.GetArguments()
+			args["timestamp"] = time.Now()
+			if _, err := client.Collection("offers").Doc(uuid).Set(ctx, request.GetArguments()); err != nil {
+				log.Printf("error while storing job offer in firestore: %v\n", err)
+				return mcp.NewToolResultError("ERROR WHILE STORING IN FIRESTORE"), nil
+			}
+			log.Printf("job offer stored under uuid %s\n", uuid)
+			return mcp.NewToolResultText(uuid), nil
 		},
 	)
 
 }
 
 func main() {
+	defer client.Close()
+
 	httpServer := server.NewStreamableHTTPServer(s)
 	// Start the stdio server
 	if err := httpServer.Start(viper.GetString("ADRESS")); err != nil {

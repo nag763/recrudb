@@ -14,7 +14,6 @@ import (
 	"google.golang.org/adk/cmd/launcher/full"
 	"google.golang.org/adk/model/gemini"
 	"google.golang.org/adk/tool"
-	"google.golang.org/adk/tool/geminitool"
 	"google.golang.org/genai"
 )
 
@@ -23,6 +22,7 @@ func loadConfig() {
 	viper.SetConfigFile(".env")
 	viper.SetDefault("MCP_ENDPOINT", "http://localhost:3000/mcp")
 	viper.SetDefault("MODEL", "gemini-2.5-flash-lite")
+	viper.SetDefault("PROJECT", "recrudb")
 
 	// If config can't be loaded, ignore
 	_ = viper.ReadInConfig()
@@ -34,7 +34,8 @@ func main() {
 	loadConfig()
 
 	model, err := gemini.NewModel(ctx, viper.GetString("MODEL"), &genai.ClientConfig{
-		APIKey: viper.GetString("GOOGLE_API_KEY"),
+		Backend: genai.BackendVertexAI,
+		Project: viper.GetString("PROJECT"),
 	})
 
 	mcpTools, err := tools.GetMcpTools([]string{"stores_offer_details"})
@@ -73,16 +74,8 @@ func main() {
 		Stores an offer details. This should be used only once an offer has already been analyzed by the joboffer_analyzer agent. 
 		
 		You don't have to wait for user confirmation to store details, but in case some informations appear to be missing, indicate it to the user.
-
-		If the user doesn't know, search it on using the google search tool
-
-		## google search tool
-
-		Use it to find any missing details.
-		
 		`,
 		Toolsets:  []tool.Toolset{mcpTools},
-		Tools:     []tool.Tool{geminitool.GoogleSearch{}},
 		SubAgents: []agent.Agent{jobOfferMatcher},
 	})
 	if err != nil {

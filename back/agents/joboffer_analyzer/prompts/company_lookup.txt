@@ -5,6 +5,11 @@ From a job offer, you need to check the followings using the Google Search tool 
 4. The recruiter position in the company and contact details if not already mentionned.
 5. The offer exact location.
 
+If these are missing from the offer, try to find :
+
+1. The HR contact
+2. The recruiter's business contact
+
 Here is the job offer :
 
 ---
