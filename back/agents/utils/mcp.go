@@ -1,8 +1,7 @@
-package tools
+package utils
 
 import (
 	"github.com/modelcontextprotocol/go-sdk/mcp"
-	"github.com/spf13/viper"
 	"google.golang.org/adk/tool"
 	"google.golang.org/adk/tool/mcptoolset"
 )
@@ -10,7 +9,7 @@ import (
 func GetMcpTools(allowedTools []string) (tool.Toolset, error) {
 	toolset, err := mcptoolset.New(mcptoolset.Config{
 		Transport: &mcp.StreamableClientTransport{
-			Endpoint: viper.GetString("MCP_ENDPOINT"),
+			Endpoint: GetEnvOrDefault("MCP_ENDPOINT", ":3000"),
 		},
 		ToolFilter: tool.StringPredicate(allowedTools),
 	})

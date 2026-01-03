@@ -4,10 +4,7 @@ import (
 	"context"
 	"log"
 	"os"
-	"recrudbagents/agents/joboffer_analyzer"
-	"recrudbagents/agents/tools"
 
-	"github.com/spf13/viper"
 	"google.golang.org/adk/agent"
 	"google.golang.org/adk/agent/llmagent"
 	"google.golang.org/adk/cmd/launcher"
@@ -15,37 +12,31 @@ import (
 	"google.golang.org/adk/model/gemini"
 	"google.golang.org/adk/tool"
 	"google.golang.org/genai"
+	"nag763.com/recrudbagents/agents"
+	"nag763.com/recrudbagents/utils"
 )
-
-func loadConfig() {
-	viper.AutomaticEnv()
-	viper.SetConfigFile(".env")
-	viper.SetDefault("MCP_ENDPOINT", "http://localhost:3000/mcp")
-	viper.SetDefault("MODEL", "gemini-2.5-flash-lite")
-	viper.SetDefault("PROJECT", "recrudb")
-
-	// If config can't be loaded, ignore
-	_ = viper.ReadInConfig()
-}
 
 func main() {
 	ctx := context.Background()
 
-	loadConfig()
-
-	model, err := gemini.NewModel(ctx, viper.GetString("MODEL"), &genai.ClientConfig{
+	model, err := gemini.NewModel(ctx, utils.GetEnvOrDefault("MODEL", "gemini-2.5-flash-lite"), &genai.ClientConfig{
 		Backend: genai.BackendVertexAI,
-		Project: viper.GetString("PROJECT"),
+		Project: utils.GetEnvOrDefault("MODEL", "recrudb"),
 	})
 
-	mcpTools, err := tools.GetMcpTools([]string{"stores_offer_details", "delete_offer"})
+	mcpTools, err := utils.GetMcpTools([]string{"stores_offer_details", "delete_offer", "mark_communication_sent"})
 	if err != nil {
 		log.Fatalf("couldn't load mcp tools %v", err)
 	}
 
-	jobOfferMatcher, err := joboffer_analyzer.NewJobOfferAgent(model)
+	jobOfferMatcher, err := agents.NewJobOfferAgent(model)
 	if err != nil {
-		log.Fatalf("error while creating job offer agent %v", jobOfferMatcher)
+		log.Fatalf("error while creating job offer agent %v", err)
+	}
+
+	reachOutAgent, err := agents.NewReachOutAgent(model)
+	if err != nil {
+		log.Fatalf("error while creating reach out agent %v", err)
 	}
 
 	orchestrator, err := llmagent.New(llmagent.Config{
@@ -67,6 +58,10 @@ func main() {
 		If an offer is passed without further context, you should use this agent by default without asking for confirmation.
 
 		If the first message of the session is an offer, use this agent by default.
+
+		## reachout_agent
+
+		Use it when requested to write a motivation letter, or to reach out the people mentionned in the offer.
 		
 		# Tools:
 		## stores_offer_details
@@ -78,9 +73,13 @@ func main() {
 		## delete_offer
 
 		Deletes an offer. Perform it using the UUID the job offer was created. Only do that with the job offers created in the session.
+
+		## mark_communication_sent
+
+		Marks a communication as sent, use it once a reach out mail has been written.
 		`,
 		Toolsets:  []tool.Toolset{mcpTools},
-		SubAgents: []agent.Agent{jobOfferMatcher},
+		SubAgents: []agent.Agent{jobOfferMatcher, reachOutAgent},
 	})
 	if err != nil {
 		log.Fatalf("error while creating orchestrator agent: %v", err)

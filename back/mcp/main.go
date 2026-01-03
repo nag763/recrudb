@@ -40,6 +40,25 @@ type OfferDetails struct {
 	Contact               Contact  `json:"contact"`
 	Address               Address  `json:"address"`
 	TechnicalRequirements []string `json:"tech_req"`
+	CandidateScore        float32  `json:"candidate_score"`
+	HowToApply            string   `json:"how_to_apply"`
+}
+
+type Communication struct {
+	Initial  time.Time `firestore:"initial`
+	Reminder time.Time `firstore:"reminder"`
+	Last     time.Time `firestore:"last"`
+}
+
+func NewCommunication() Communication {
+	initial := time.Now()
+	reminder := initial.AddDate(0, 0, 7)
+	last := initial.AddDate(0, 0, 21)
+	return Communication{
+		initial,
+		reminder,
+		last,
+	}
 }
 
 func init() {
@@ -101,6 +120,26 @@ func init() {
 				return mcp.NewToolResultError("uuid param is mandatory"), nil
 			}
 			if _, err := client.Collection("offers").Doc(uuid).Delete(ctx); err != nil {
+				log.Printf("error while deleting job offer in firestore: %v\n", err)
+				return mcp.NewToolResultError(fmt.Sprintf("ERROR WHILE DELETING %s IN FIRESTORE", uuid)), nil
+			}
+			log.Printf("job %s offer deleted\n", uuid)
+			return mcp.NewToolResultText(uuid), nil
+		},
+	)
+
+	s.AddTool(
+		mcp.NewTool("mark_communication_sent",
+			mcp.WithDescription("Mark an offer with first communication sent"),
+			mcp.WithString("UUID", mcp.Required(), mcp.Description("The uuid of the offer to mark"))),
+		func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+			uuid := request.GetString("UUID", "")
+			if uuid == "" {
+				return mcp.NewToolResultError("uuid param is mandatory"), nil
+			}
+
+			communication := NewCommunication()
+			if _, err := client.Collection("offers").Doc(uuid).Set(ctx, communication, firestore.MergeAll); err != nil {
 				log.Printf("error while deleting job offer in firestore: %v\n", err)
 				return mcp.NewToolResultError(fmt.Sprintf("ERROR WHILE DELETING %s IN FIRESTORE", uuid)), nil
 			}
