@@ -24,12 +24,12 @@ func main() {
 		Project: utils.GetEnvOrDefault("MODEL", "recrudb"),
 	})
 
-	mcpTools, err := utils.GetMcpTools([]string{"stores_offer_details", "delete_offer", "mark_communication_sent"})
+	mcpTools, err := utils.GetMcpTools(ctx, []string{"stores_offer_details", "delete_offer", "mark_communication_sent"})
 	if err != nil {
 		log.Fatalf("couldn't load mcp tools %v", err)
 	}
 
-	jobOfferMatcher, err := agents.NewJobOfferAgent(model)
+	jobOfferMatcher, err := agents.NewJobOfferAgent(ctx, model)
 	if err != nil {
 		log.Fatalf("error while creating job offer agent %v", err)
 	}
@@ -44,17 +44,17 @@ func main() {
 		Description: "Redirects to subagents or use tools to coordinate with user prompts.",
 		Model:       model,
 		Instruction: `Your goal is to coordinate with other agents or use the tools available to you in order to satisfy the request.
-	
+
 		Do not perform any action on your own, your goal is to orchestrate.
 
 		Here are what you have at your disposal:
-		
+
 		# Agents:
-		
-		## job_offer_agent 
+
+		## job_offer_agent
 
 		Analyzes job offers and returns key details given the user profile.
-		
+
 		If an offer is passed without further context, you should use this agent by default without asking for confirmation.
 
 		If the first message of the session is an offer, use this agent by default.
@@ -62,14 +62,14 @@ func main() {
 		## reachout_agent
 
 		Use it when requested to write a motivation letter, or to reach out the people mentionned in the offer.
-		
+
 		# Tools:
 		## stores_offer_details
-		
-		Stores an offer details. This should be used only once an offer has already been analyzed by the joboffer_analyzer agent. 
-		
+
+		Stores an offer details. This should be used only once an offer has already been analyzed by the joboffer_analyzer agent.
+
 		You don't have to wait for user confirmation to store details, but in case some informations appear to be missing, indicate it to the user.
-		
+
 		## delete_offer
 
 		Deletes an offer. Perform it using the UUID the job offer was created. Only do that with the job offers created in the session.

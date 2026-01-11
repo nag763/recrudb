@@ -1,6 +1,7 @@
 package agents
 
 import (
+	"context"
 	_ "embed"
 
 	"google.golang.org/adk/agent"
@@ -24,9 +25,9 @@ var companyLookupPrompt string
 //go:embed prompts/recap_agent.txt
 var recapAgentPrompt string
 
-func NewJobOfferAgent(model model.LLM) (agent.Agent, error) {
+func NewJobOfferAgent(ctx context.Context, model model.LLM) (agent.Agent, error) {
 
-	mcpTools, err := utils.GetMcpTools([]string{"get_profile"})
+	mcpTools, err := utils.GetMcpTools(context.Background(), []string{"get_profile"})
 
 	parseOfferAgent, err := llmagent.New(llmagent.Config{
 		Name:        "parse_offer_agent",

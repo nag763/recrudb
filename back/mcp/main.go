@@ -78,6 +78,19 @@ func init() {
 		"RecruDB Agent Tools",
 		"1.0.0",
 		server.WithToolCapabilities(true),
+		server.WithHooks(&server.Hooks{
+			OnBeforeCallTool: []server.OnBeforeCallToolFunc{
+				func(ctx context.Context, id any, message *mcp.CallToolRequest) {
+					log.Println("tool called")
+				},
+			},
+			OnBeforeListTools: []server.OnBeforeListToolsFunc{
+				func(ctx context.Context, id any, message *mcp.ListToolsRequest) {
+					log.Println("tool list called")
+				},
+			},
+		},
+		),
 	)
 
 	// Add tool handler
@@ -153,8 +166,8 @@ func init() {
 func main() {
 	defer client.Close()
 
-	httpServer := server.NewStreamableHTTPServer(s)
-	// Start the stdio server
+	httpServer := server.NewSSEServer(s)
+
 	if err := httpServer.Start(viper.GetString("ADRESS")); err != nil {
 		fmt.Printf("Server error: %v\n", err)
 	}
