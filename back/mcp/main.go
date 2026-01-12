@@ -5,13 +5,14 @@ import (
 	_ "embed"
 	"fmt"
 	"log"
+	"main/middleware"
+	"main/utils"
 	"time"
 
 	"cloud.google.com/go/firestore"
 	"github.com/google/uuid"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
-	"github.com/spf13/viper"
 )
 
 var s *server.MCPServer
@@ -62,13 +63,9 @@ func NewCommunication() Communication {
 }
 
 func init() {
-	viper.SetDefault("ADRESS", ":3000")
-	viper.SetDefault("FIRESTORE_DB", "recrudb")
-	viper.AutomaticEnv()
-
 	ctx := context.Background()
 
-	client, err = firestore.NewClient(ctx, viper.GetString("FIRESTORE_DB"))
+	client, err = firestore.NewClient(ctx, utils.GetEnvOrDefault("FIRESTORE_DB", "recrudb"))
 	if err != nil {
 		log.Fatalf("Failed to create client: %v", err)
 	}
@@ -78,19 +75,7 @@ func init() {
 		"RecruDB Agent Tools",
 		"1.0.0",
 		server.WithToolCapabilities(true),
-		server.WithHooks(&server.Hooks{
-			OnBeforeCallTool: []server.OnBeforeCallToolFunc{
-				func(ctx context.Context, id any, message *mcp.CallToolRequest) {
-					log.Println("tool called")
-				},
-			},
-			OnBeforeListTools: []server.OnBeforeListToolsFunc{
-				func(ctx context.Context, id any, message *mcp.ListToolsRequest) {
-					log.Println("tool list called")
-				},
-			},
-		},
-		),
+		server.WithToolHandlerMiddleware(middleware.AuthorizationHook),
 	)
 
 	// Add tool handler
@@ -98,7 +83,6 @@ func init() {
 		mcp.NewTool("get_profile",
 			mcp.WithDescription("Get user profile"),
 		), func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-			log.Printf("Tool called")
 			return mcp.NewToolResultText(ProfileText), nil
 		},
 	)
@@ -168,7 +152,7 @@ func main() {
 
 	httpServer := server.NewSSEServer(s)
 
-	if err := httpServer.Start(viper.GetString("ADRESS")); err != nil {
+	if err := httpServer.Start(utils.GetEnvOrDefault("ADRESS", ":3000")); err != nil {
 		fmt.Printf("Server error: %v\n", err)
 	}
 }

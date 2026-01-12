@@ -34,7 +34,7 @@ func main() {
 		log.Fatalf("error while creating job offer agent %v", err)
 	}
 
-	reachOutAgent, err := agents.NewReachOutAgent(model)
+	reachOutAgent, err := agents.NewReachOutAgent(ctx, model)
 	if err != nil {
 		log.Fatalf("error while creating reach out agent %v", err)
 	}

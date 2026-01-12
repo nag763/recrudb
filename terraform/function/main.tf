@@ -3,7 +3,6 @@ resource "google_cloudfunctions2_function" "agents" {
   name     = var.name
   location = var.region
 
-
   build_config {
     runtime     = "go125"
     entry_point = var.entrypoint

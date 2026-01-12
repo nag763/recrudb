@@ -1,6 +1,7 @@
 package agents
 
 import (
+	"context"
 	_ "embed"
 
 	"google.golang.org/adk/agent"
@@ -11,7 +12,7 @@ import (
 //go:embed prompts/reachout_agent.txt
 var reachOutPrompt string
 
-func NewReachOutAgent(model model.LLM) (agent.Agent, error) {
+func NewReachOutAgent(ctx context.Context, model model.LLM) (agent.Agent, error) {
 
 	agent, err := llmagent.New(llmagent.Config{
 		Name:        "reachout_agent",

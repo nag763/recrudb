@@ -1,13 +1,23 @@
 package function
 
 import (
-	"fmt"
+	"encoding/json"
 	"net/http"
 	"sync"
 
 	"github.com/GoogleCloudPlatform/functions-framework-go/functions"
 	"nag763.com/recrudbagents/agents"
 )
+
+type AgentGCFResponse struct {
+	Success bool   `json:"success"`
+	Error   *error `json:"error,omitempty"`
+}
+
+type AgentGCFResponseContent[T any] struct {
+	AgentGCFResponse
+	Content T `json:"content,omitempty"`
+}
 
 func sessionlessHttpRunner(initalizer agents.AgentInitializer) func(w http.ResponseWriter, r *http.Request) {
 
@@ -16,23 +26,33 @@ func sessionlessHttpRunner(initalizer agents.AgentInitializer) func(w http.Respo
 	})
 
 	return func(w http.ResponseWriter, r *http.Request) {
+
+		w.Header().Set("Content-Type", "application/json")
 		runner, err := runnerInitalizer()
 		if err != nil {
-			http.Error(w, fmt.Sprintf("runner error: %v", err), http.StatusInternalServerError)
-			return
+			json.NewEncoder(w).Encode(AgentGCFResponse{
+				Success: false,
+			})
+			w.WriteHeader(http.StatusInternalServerError)
 		}
 
 		resp, err := runner.RunSessionless("")
 		if err != nil {
-			http.Error(w, fmt.Sprintf("agent failed to respond %v", err), http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(AgentGCFResponse{
+				Success: false,
+			})
+			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
-		w.Header().Set("Content-Type", "application/json")
-		fmt.Fprintf(w, `{"message": "Success", "agent_response1": "%v"}`, resp)
+		json.NewEncoder(w).Encode(AgentGCFResponseContent[string]{
+			AgentGCFResponse: AgentGCFResponse{Success: true},
+			Content:          resp,
+		})
 	}
 }
 
 func init() {
 	functions.HTTP("JobOfferAnalyzer", sessionlessHttpRunner(agents.NewJobOfferAgent))
+	functions.HTTP("ReachOutAgent", sessionlessHttpRunner(agents.NewReachOutAgent))
 }
