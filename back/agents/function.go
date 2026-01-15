@@ -9,18 +9,9 @@ import (
 	"nag763.com/recrudbagents/agents"
 )
 
-type AgentGCFResponse struct {
-	Success bool   `json:"success"`
-	Error   string `json:"error,omitempty"`
-}
-
-type AgentGCFResponseContent[T any] struct {
-	AgentGCFResponse
-	Content T `json:"content,omitempty"`
-}
-
-type AgentGCFRequest struct {
-	Content string `json:"content"`
+func writeError(w http.ResponseWriter, err error) {
+	w.WriteHeader(http.StatusInternalServerError)
+	json.NewEncoder(w).Encode(NewResponseError(err))
 }
 
 func sessionlessHttpRunner(initalizer agents.AgentInitializer) func(w http.ResponseWriter, r *http.Request) {
@@ -33,38 +24,24 @@ func sessionlessHttpRunner(initalizer agents.AgentInitializer) func(w http.Respo
 
 		w.Header().Set("Content-Type", "application/json")
 		var agentGCFRequest AgentGCFRequest
-
 		if err := json.NewDecoder(r.Body).Decode(&agentGCFRequest); err != nil {
-			json.NewEncoder(w).Encode(AgentGCFResponse{
-				Success: false,
-				Error:   err.Error(),
-			})
+			writeError(w, err)
 			return
 		}
 
 		runner, err := runnerInitalizer()
 		if err != nil {
-			json.NewEncoder(w).Encode(AgentGCFResponse{
-				Success: false,
-				Error:   err.Error(),
-			})
-			w.WriteHeader(http.StatusInternalServerError)
+			writeError(w, err)
+			return
 		}
 
 		resp, err := runner.RunSessionless(agentGCFRequest.Content)
 		if err != nil {
-			json.NewEncoder(w).Encode(AgentGCFResponse{
-				Success: false,
-				Error:   err.Error(),
-			})
-			w.WriteHeader(http.StatusInternalServerError)
+			writeError(w, err)
 			return
 		}
 
-		json.NewEncoder(w).Encode(AgentGCFResponseContent[string]{
-			AgentGCFResponse: AgentGCFResponse{Success: true},
-			Content:          resp,
-		})
+		json.NewEncoder(w).Encode(NewResponseSuccess(resp))
 	}
 }
 
