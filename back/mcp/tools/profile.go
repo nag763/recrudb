@@ -11,9 +11,6 @@ import (
 	"github.com/mark3labs/mcp-go/server"
 )
 
-//go:embed profile.txt
-var ProfileText string
-
 func NewGetProfileTool(ctx context.Context, client *firestore.Client) (tool mcp.Tool, handler server.ToolHandlerFunc) {
 	return mcp.NewTool("get_profile",
 			mcp.WithDescription("Get user profile"),
