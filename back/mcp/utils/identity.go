@@ -10,7 +10,7 @@ import (
 	"github.com/mark3labs/mcp-go/mcp"
 )
 
-func ExtractBearer(req mcp.CallToolRequest) (string, error) {
+func extractBearer(req mcp.CallToolRequest) (string, error) {
 	authorizationHeader := req.Header.Get("Authorization")
 	if authorizationHeader == "" {
 		return "", errors.New("Authorization not found")
@@ -22,7 +22,7 @@ func ExtractBearer(req mcp.CallToolRequest) (string, error) {
 	return token, nil
 }
 
-func VerifyGoogleIDToken(ctx context.Context, idToken string) (*idtoken.Payload, error) {
+func verifyGoogleIDToken(ctx context.Context, idToken string) (*idtoken.Payload, error) {
 	payload, err := idtoken.Validate(ctx, idToken, GetEnvOrDefault("JWT_AUDIENCE", ""))
 	if err != nil {
 		return nil, fmt.Errorf("invalid token: %v", err)
@@ -31,8 +31,17 @@ func VerifyGoogleIDToken(ctx context.Context, idToken string) (*idtoken.Payload,
 	return payload, nil
 }
 
+func VerifyGoogleIDTokenFromRequest(ctx context.Context, request mcp.CallToolRequest) (*idtoken.Payload, error) {
+	bearer, err := extractBearer(request)
+	if err != nil {
+		return nil, fmt.Errorf("invalid token: %v", err)
+	}
+
+	return verifyGoogleIDToken(ctx, bearer)
+}
+
 func GetClaims(ctx context.Context, idToken string) (map[string]interface{}, error) {
-	payload, err := VerifyGoogleIDToken(ctx, idToken)
+	payload, err := verifyGoogleIDToken(ctx, idToken)
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +61,7 @@ func getSub(ctx context.Context, idToken string) (string, error) {
 }
 
 func GetSubFromRequest(ctx context.Context, req mcp.CallToolRequest) (string, error) {
-	token, err := ExtractBearer(req)
+	token, err := extractBearer(req)
 	if err != nil {
 		return "", err
 	}
