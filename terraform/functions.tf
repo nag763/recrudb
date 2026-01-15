@@ -12,7 +12,7 @@ module "function_job_offer" {
   network    = google_compute_network.vpc_network.name
   subnetwork = google_compute_subnetwork.public_subnet.name
 
-  name       = "jobOfferAnalyzer"
+  name       = "agent-job-offer-analyzer"
   entrypoint = "JobOfferAnalyzer"
 
   public_access = false
@@ -30,7 +30,7 @@ module "function_reachout" {
   network    = google_compute_network.vpc_network.name
   subnetwork = google_compute_subnetwork.public_subnet.name
 
-  name       = "reachOutAgent"
+  name       = "agent-reachout"
   entrypoint = "ReachOutAgent"
 
   public_access = false
@@ -53,7 +53,7 @@ module "function_cv_analyzer" {
   network    = google_compute_network.vpc_network.name
   subnetwork = google_compute_subnetwork.public_subnet.name
 
-  name       = "cvAnalyzerAgent"
+  name       = "agent-cv-analyzer"
   entrypoint = "CvAnalyzerAgent"
 
   public_access = true
