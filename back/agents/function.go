@@ -29,6 +29,11 @@ func sessionlessHttpRunner(initalizer agents.AgentInitializer) func(w http.Respo
 			return
 		}
 
+		if err := agentGCFRequest.validate(); err != nil {
+			writeError(w, err)
+			return
+		}
+
 		runner, err := runnerInitalizer()
 		if err != nil {
 			writeError(w, err)
