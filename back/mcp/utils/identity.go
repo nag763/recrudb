@@ -39,7 +39,7 @@ func GetClaims(ctx context.Context, idToken string) (map[string]interface{}, err
 	return payload.Claims, nil
 }
 
-func GetSub(ctx context.Context, idToken string) (string, error) {
+func getSub(ctx context.Context, idToken string) (string, error) {
 	claims, err := GetClaims(ctx, idToken)
 	if err != nil {
 		return "", err
@@ -49,4 +49,12 @@ func GetSub(ctx context.Context, idToken string) (string, error) {
 		return "", errors.New("sub couldn't be extracted")
 	}
 	return sub, nil
+}
+
+func GetSubFromRequest(ctx context.Context, req mcp.CallToolRequest) (string, error) {
+	token, err := ExtractBearer(req)
+	if err != nil {
+		return "", err
+	}
+	return getSub(ctx, token)
 }

@@ -15,13 +15,7 @@ func NewGetProfileTool(ctx context.Context, client *firestore.Client) (tool mcp.
 	return mcp.NewTool("get_profile",
 			mcp.WithDescription("Get user profile"),
 		), func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-
-			bearer, err := utils.ExtractBearer(request)
-			if err != nil {
-				return mcp.NewToolResultError("couldn't extract authorization"), nil
-			}
-
-			sub, err := utils.GetSub(ctx, bearer)
+			sub, err := utils.GetSubFromRequest(ctx, request)
 			if err != nil {
 				return mcp.NewToolResultError("couldn't extract sub"), nil
 			}
@@ -39,13 +33,7 @@ func NewStoreProfileTool(client *firestore.Client) (tool mcp.Tool, handler serve
 			mcp.WithDescription("Stores a CV analyzed details"),
 			mcp.WithInputSchema[domain.Profile](),
 		), func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-
-			bearer, err := utils.ExtractBearer(request)
-			if err != nil {
-				return mcp.NewToolResultError("couldn't extract authorization"), nil
-			}
-
-			sub, err := utils.GetSub(ctx, bearer)
+			sub, err := utils.GetSubFromRequest(ctx, request)
 			if err != nil {
 				return mcp.NewToolResultError("couldn't extract sub"), nil
 			}
