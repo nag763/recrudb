@@ -3,7 +3,7 @@ package domain
 import "time"
 
 type Communication struct {
-	First    time.Time `json:"first`
+	First    time.Time `json:"first"`
 	Reminder time.Time `json:"reminder"`
 	Last     time.Time `json:"last"`
 }
