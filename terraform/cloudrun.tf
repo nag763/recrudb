@@ -53,8 +53,9 @@ resource "google_cloud_run_v2_service" "mcp" {
 }
 
 resource "google_cloud_run_v2_service_iam_member" "cr_access" {
+  for_each = toset([ module.function_job_offer.service_account.member, module.function_cv_analyzer.service_account.member ])
   name     = google_cloud_run_v2_service.mcp.name
   location = google_cloud_run_v2_service.mcp.location
   role     = "roles/run.invoker"
-  member   = module.function_job_offer.service_account.member
+  member   = each.key
 }

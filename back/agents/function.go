@@ -11,12 +11,16 @@ import (
 
 type AgentGCFResponse struct {
 	Success bool   `json:"success"`
-	Error   *error `json:"error,omitempty"`
+	Error   string `json:"error,omitempty"`
 }
 
 type AgentGCFResponseContent[T any] struct {
 	AgentGCFResponse
 	Content T `json:"content,omitempty"`
+}
+
+type AgentGCFRequest struct {
+	Content string `json:"content"`
 }
 
 func sessionlessHttpRunner(initalizer agents.AgentInitializer) func(w http.ResponseWriter, r *http.Request) {
@@ -28,18 +32,30 @@ func sessionlessHttpRunner(initalizer agents.AgentInitializer) func(w http.Respo
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		w.Header().Set("Content-Type", "application/json")
+		var agentGCFRequest AgentGCFRequest
+
+		if err := json.NewDecoder(r.Body).Decode(&agentGCFRequest); err != nil {
+			json.NewEncoder(w).Encode(AgentGCFResponse{
+				Success: false,
+				Error:   err.Error(),
+			})
+			return
+		}
+
 		runner, err := runnerInitalizer()
 		if err != nil {
 			json.NewEncoder(w).Encode(AgentGCFResponse{
 				Success: false,
+				Error:   err.Error(),
 			})
 			w.WriteHeader(http.StatusInternalServerError)
 		}
 
-		resp, err := runner.RunSessionless("")
+		resp, err := runner.RunSessionless(agentGCFRequest.Content)
 		if err != nil {
 			json.NewEncoder(w).Encode(AgentGCFResponse{
 				Success: false,
+				Error:   err.Error(),
 			})
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -55,4 +71,5 @@ func sessionlessHttpRunner(initalizer agents.AgentInitializer) func(w http.Respo
 func init() {
 	functions.HTTP("JobOfferAnalyzer", sessionlessHttpRunner(agents.NewJobOfferAgent))
 	functions.HTTP("ReachOutAgent", sessionlessHttpRunner(agents.NewReachOutAgent))
+	functions.HTTP("CvAnalyzerAgent", sessionlessHttpRunner(agents.NewCvAnalyzer))
 }

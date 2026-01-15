@@ -85,7 +85,12 @@ func main() {
 		log.Fatalf("error while creating orchestrator agent: %v", err)
 	}
 
-	loader, err := agent.NewMultiLoader(orchestrator, jobOfferMatcher)
+	cv_analyzer, err := agents.NewCvAnalyzer(ctx, model)
+	if err != nil {
+		log.Fatalf("error met while creating cv_analyzer %v", err)
+	}
+
+	loader, err := agent.NewMultiLoader(orchestrator, jobOfferMatcher, cv_analyzer)
 	if err != nil {
 		log.Fatalf("error met while loading agents %v", err)
 	}

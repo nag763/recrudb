@@ -93,8 +93,6 @@ func init() {
 			mcp.WithInputSchema[OfferDetails](),
 		),
 		func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-			log.Printf("tool called w/ %v\n", request)
-			log.Printf("args %s\n", request.GetRawArguments())
 			uuid := uuid.NewString()
 			args := request.GetArguments()
 			args["timestamp"] = time.Now()
@@ -142,6 +140,50 @@ func init() {
 			}
 			log.Printf("job %s offer deleted\n", uuid)
 			return mcp.NewToolResultText(uuid), nil
+		},
+	)
+
+	s.AddTool(
+		mcp.NewTool("store_cv",
+			mcp.WithDescription("Stores a CV analyzed details"),
+			mcp.WithInputSchema[struct {
+				Firstname   string
+				Lastname    string
+				Contact     Contact `json:",omitempty"`
+				Skills      []string
+				LookingFor  string
+				Experiences []struct {
+					StartDate time.Time
+					EndDate   time.Time
+					Company   string
+					Misison   string
+					Role      string
+					Skills    []string
+				}
+				Languages []string
+				Socials   []struct {
+					Name string
+					Link string
+				}
+				Location Address `json:",omitempty"`
+			}](),
+		), func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+
+			bearer, err := utils.ExtractBearer(request)
+			if err != nil {
+				return mcp.NewToolResultError("couldn't extract authorization"), nil
+			}
+
+			sub, err := utils.GetSub(ctx, bearer)
+			if err != nil {
+				return mcp.NewToolResultError("couldn't extract sub"), nil
+			}
+
+			if _, err := client.Collection("profile").Doc(sub).Set(ctx, request.GetArguments()); err != nil {
+				log.Printf("error while storing profile in firestore: %v\n", err)
+				return mcp.NewToolResultError("ERROR WHILE STORING IN FIRESTORE"), nil
+			}
+			return mcp.NewToolResultText(sub), nil
 		},
 	)
 

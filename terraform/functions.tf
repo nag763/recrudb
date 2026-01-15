@@ -38,3 +38,26 @@ module "function_reachout" {
 
   roles = ["roles/aiplatform.user"]
 }
+
+module "function_cv_analyzer" {
+  source = "./function"
+
+
+  environment_variables = {
+    MCP_ENDPOINT = "${google_cloud_run_v2_service.mcp.uri}/sse"
+  }
+
+  bucket = google_storage_bucket.bucket.name
+  object = google_storage_bucket_object.api.name
+
+  network    = google_compute_network.vpc_network.name
+  subnetwork = google_compute_subnetwork.public_subnet.name
+
+  name       = "cvAnalyzerAgent"
+  entrypoint = "CvAnalyzerAgent"
+
+  public_access = true
+
+  roles = ["roles/aiplatform.user"]
+}
+
