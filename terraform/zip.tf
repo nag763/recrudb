@@ -1,8 +1,15 @@
-data "archive_file" "api_function_zip" {
+data "archive_file" "agent_function_zip" {
   type        = "zip"
   source_dir  = "../services/agents"
   output_path = "/tmp/recrudb-agents.zip"
 }
+
+data "archive_file" "rest_function_zip" {
+  type        = "zip"
+  source_dir  = "../services/rest"
+  output_path = "/tmp/recrudb-rest.zip"
+}
+
 
 resource "terraform_data" "go_binary" {
   provisioner "local-exec" {

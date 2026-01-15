@@ -7,7 +7,7 @@ module "function_job_offer" {
   }
 
   bucket = google_storage_bucket.bucket.name
-  object = google_storage_bucket_object.api.name
+  object = google_storage_bucket_object.agent.name
 
   network    = google_compute_network.vpc_network.name
   subnetwork = google_compute_subnetwork.public_subnet.name
@@ -25,7 +25,7 @@ module "function_reachout" {
   source = "./function"
 
   bucket = google_storage_bucket.bucket.name
-  object = google_storage_bucket_object.api.name
+  object = google_storage_bucket_object.agent.name
 
   network    = google_compute_network.vpc_network.name
   subnetwork = google_compute_subnetwork.public_subnet.name
@@ -48,7 +48,7 @@ module "function_cv_analyzer" {
   }
 
   bucket = google_storage_bucket.bucket.name
-  object = google_storage_bucket_object.api.name
+  object = google_storage_bucket_object.agent.name
 
   network    = google_compute_network.vpc_network.name
   subnetwork = google_compute_subnetwork.public_subnet.name
@@ -60,4 +60,24 @@ module "function_cv_analyzer" {
 
   roles = ["roles/aiplatform.user"]
 }
+
+
+module "function_get_profile" {
+  source = "./function"
+
+
+  bucket = google_storage_bucket.bucket.name
+  object = google_storage_bucket_object.rest.name
+
+  network    = google_compute_network.vpc_network.name
+  subnetwork = google_compute_subnetwork.public_subnet.name
+
+  name       = "api-get-profile"
+  entrypoint = "GetProfile"
+
+  public_access = true
+
+  roles = ["roles/aiplatform.user"]
+}
+
 
