@@ -3,6 +3,7 @@ package agents
 import (
 	"context"
 	_ "embed"
+	"nag763/recrudb/api/internal/agents/callback"
 	"nag763/recrudb/api/internal/clients"
 
 	"google.golang.org/adk/agent"
@@ -53,12 +54,13 @@ func NewJobOfferAgent(ctx context.Context, model model.LLM) (agent.Agent, error)
 	}
 
 	offerScorerAgent, err := llmagent.New(llmagent.Config{
-		Name:        "offer_scorer",
-		Model:       model,
-		Description: "Goal is to match my profile with the offer, on a score out of 100",
-		Instruction: profileScorerPrompt,
-		OutputKey:   "job_offer_score",
-		Toolsets:    []tool.Toolset{mcpTools},
+		Name:                "offer_scorer",
+		Model:               model,
+		Description:         "Goal is to match my profile with the offer, on a score out of 100",
+		Instruction:         profileScorerPrompt,
+		OutputKey:           "job_offer_score",
+		Toolsets:            []tool.Toolset{mcpTools},
+		BeforeToolCallbacks: []llmagent.BeforeToolCallback{callback.InferUserId},
 	})
 	if err != nil {
 		return nil, err

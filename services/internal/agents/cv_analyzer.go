@@ -3,6 +3,7 @@ package agents
 import (
 	"context"
 	_ "embed"
+	"nag763/recrudb/api/internal/agents/callback"
 	"nag763/recrudb/api/internal/clients"
 
 	"google.golang.org/adk/agent"
@@ -22,11 +23,12 @@ func NewCvAnalyzer(ctx context.Context, model model.LLM) (agent.Agent, error) {
 	}
 
 	agent, err := llmagent.New(llmagent.Config{
-		Name:        "cv_analyzer",
-		Model:       model,
-		Description: "Analyze CV and store details.",
-		Instruction: cvAnalyzer,
-		Toolsets:    []tool.Toolset{tools},
+		Name:                "cv_analyzer",
+		Model:               model,
+		Description:         "Analyze CV and store details.",
+		Instruction:         cvAnalyzer,
+		Toolsets:            []tool.Toolset{tools},
+		BeforeToolCallbacks: []llmagent.BeforeToolCallback{callback.InferUserId},
 	})
 	if err != nil {
 		return nil, err

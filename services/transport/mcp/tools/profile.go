@@ -31,17 +31,17 @@ func NewGetProfileTool(ctx context.Context, client *firestore.Client) (tool mcp.
 func NewStoreProfileTool(client *firestore.Client) (tool mcp.Tool, handler server.ToolHandlerFunc) {
 	return mcp.NewTool("store_cv",
 			mcp.WithDescription("Stores a CV analyzed details"),
-			mcp.WithInputSchema[domain.Profile](),
+			mcp.WithInputSchema[domain.ProfileDocumentMCPRequest](),
 		), func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-			sub, err := identity.GetSubFromRequest(ctx, request.Header)
-			if err != nil {
-				return mcp.NewToolResultError("couldn't extract sub"), nil
+			var docRequest domain.ProfileDocumentMCPRequest
+			if err := request.BindArguments(&docRequest); err != nil {
+				return mcp.NewToolResultError("ERROR WHILE ACCESSING DOC ID"), nil
 			}
 
-			if _, err := client.Collection("profile").Doc(sub).Set(ctx, request.GetArguments()); err != nil {
+			if _, err := client.Collection("profile").Doc(docRequest.UserId).Set(ctx, docRequest.Document); err != nil {
 				log.Printf("error while storing profile in firestore: %v\n", err)
 				return mcp.NewToolResultError("ERROR WHILE STORING IN FIRESTORE"), nil
 			}
-			return mcp.NewToolResultText(sub), nil
+			return mcp.NewToolResultStructured(docRequest, docRequest.UserId), nil
 		}
 }
