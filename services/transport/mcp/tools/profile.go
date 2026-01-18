@@ -20,11 +20,11 @@ func NewGetProfileTool(ctx context.Context, client *firestore.Client) (tool mcp.
 				return mcp.NewToolResultError("couldn't extract sub"), nil
 			}
 
-			doc, err := client.Collection("profile").Doc(sub).Get(ctx)
+			doc, err := domain.GetProfile(ctx, client, sub)
 			if err != nil {
 				return mcp.NewToolResultError("couldn't access profile"), nil
 			}
-			return mcp.NewToolResultStructuredOnly(doc.Data()), nil
+			return mcp.NewToolResultStructuredOnly(doc), nil
 		}
 }
 

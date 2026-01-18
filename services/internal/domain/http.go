@@ -12,12 +12,14 @@ type HttpRequest struct {
 	Content string `json:"content"`
 }
 
-type HttpResponse struct {
+type HttpResponse[T any] struct {
 	Success    bool   `json:"success"`
 	Error      string `json:"error,omitempty"`
-	Content    string `json:"content,omitempty"`
+	Content    T      `json:"content,omitempty"`
 	StatusCode int    `json:"-"`
 }
+
+type HttpStringResponse = HttpResponse[string]
 
 func (r *HttpRequest) validate() error {
 	if r.Content == "" {
@@ -26,16 +28,23 @@ func (r *HttpRequest) validate() error {
 	return nil
 }
 
-func SuccessResponse(content string) render.Renderer {
-	return &HttpResponse{
+func SuccessResponse[T any](content T) render.Renderer {
+	return &HttpResponse[T]{
 		Success:    true,
 		Content:    content,
 		StatusCode: 200,
 	}
 }
 
+func NoContentResponse() render.Renderer {
+	return &HttpStringResponse{
+		Success:    true,
+		StatusCode: 204,
+	}
+}
+
 func ErrInternalResponse(err error) render.Renderer {
-	return &HttpResponse{
+	return &HttpStringResponse{
 		Success:    false,
 		Error:      err.Error(),
 		StatusCode: 500,
@@ -43,7 +52,7 @@ func ErrInternalResponse(err error) render.Renderer {
 }
 
 func ErrInvalidResponse(err error) render.Renderer {
-	return &HttpResponse{
+	return &HttpStringResponse{
 		Success:    false,
 		Error:      err.Error(),
 		StatusCode: 400,
@@ -51,7 +60,7 @@ func ErrInvalidResponse(err error) render.Renderer {
 }
 
 func ErrUnauthorizedResponse(err error) render.Renderer {
-	return &HttpResponse{
+	return &HttpStringResponse{
 		Success:    false,
 		Error:      err.Error(),
 		StatusCode: 403,
@@ -59,7 +68,7 @@ func ErrUnauthorizedResponse(err error) render.Renderer {
 }
 
 func ErrNotFoundResponse() render.Renderer {
-	return &HttpResponse{
+	return &HttpStringResponse{
 		Success:    false,
 		Error:      "this route doesn't exist",
 		StatusCode: 404,
@@ -74,9 +83,7 @@ func (h *HttpRequest) Bind(r *http.Request) error {
 	return nil
 }
 
-func (h *HttpResponse) Render(w http.ResponseWriter, r *http.Request) error {
-	if h.Error != "" {
-		render.Status(r, h.StatusCode)
-	}
+func (h *HttpResponse[T]) Render(w http.ResponseWriter, r *http.Request) error {
+	render.Status(r, h.StatusCode)
 	return nil
 }

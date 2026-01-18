@@ -1,7 +1,8 @@
-package utils
+package clients
 
 import (
 	"context"
+	"nag763/recrudb/api/internal/utils"
 	"net/http"
 	"net/url"
 	"strings"
@@ -38,7 +39,7 @@ func getHttpClient(ctx context.Context, endpoint string) (*http.Client, error) {
 
 func GetMcpTools(ctx context.Context, allowedTools []string) (tool.Toolset, error) {
 
-	endpoint := GetEnvOrDefault(
+	endpoint := utils.GetEnvOrDefault(
 		"MCP_ENDPOINT",
 		"http://localhost:3000/sse",
 	)

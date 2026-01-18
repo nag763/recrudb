@@ -1,6 +1,11 @@
 package domain
 
-import "time"
+import (
+	"context"
+	"time"
+
+	"cloud.google.com/go/firestore"
+)
 
 type Profile struct {
 	Firstname   string
@@ -22,4 +27,17 @@ type Profile struct {
 		Link string
 	}
 	Location Address `json:",omitempty"`
+}
+
+func GetProfile(ctx context.Context, client *firestore.Client, id string) (*Profile, error) {
+	doc, err := client.Collection("profile").Doc(id).Get(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var p Profile
+	if err := doc.DataTo(&p); err != nil {
+		return nil, err
+	}
+	return &p, nil
 }

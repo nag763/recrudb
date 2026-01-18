@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"nag763/recrudb/api/internal/agents"
+	"nag763/recrudb/api/internal/clients"
 	"nag763/recrudb/api/internal/utils"
 	"os"
 
@@ -24,7 +25,7 @@ func main() {
 		Project: utils.GetEnvOrDefault("MODEL", "recrudb"),
 	})
 
-	mcpTools, err := utils.GetMcpTools(ctx, []string{"stores_offer_details", "delete_offer", "mark_communication_sent"})
+	mcpTools, err := clients.GetMcpTools(ctx, []string{"stores_offer_details", "delete_offer", "mark_communication_sent"})
 	if err != nil {
 		log.Fatalf("couldn't load mcp tools %v", err)
 	}

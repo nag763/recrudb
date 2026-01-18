@@ -3,7 +3,7 @@ package agents
 import (
 	"context"
 	_ "embed"
-	"nag763/recrudb/api/internal/utils"
+	"nag763/recrudb/api/internal/clients"
 
 	"google.golang.org/adk/agent"
 	"google.golang.org/adk/agent/llmagent"
@@ -16,7 +16,7 @@ var cvAnalyzer string
 
 func NewCvAnalyzer(ctx context.Context, model model.LLM) (agent.Agent, error) {
 
-	tools, err := utils.GetMcpTools(ctx, []string{"store_cv"})
+	tools, err := clients.GetMcpTools(ctx, []string{"store_cv"})
 	if err != nil {
 		return nil, err
 	}

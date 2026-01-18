@@ -3,7 +3,7 @@ package agents
 import (
 	"context"
 	_ "embed"
-	"nag763/recrudb/api/internal/utils"
+	"nag763/recrudb/api/internal/clients"
 
 	"google.golang.org/adk/agent"
 	"google.golang.org/adk/agent/llmagent"
@@ -27,7 +27,7 @@ var recapAgentPrompt string
 
 func NewJobOfferAgent(ctx context.Context, model model.LLM) (agent.Agent, error) {
 
-	mcpTools, err := utils.GetMcpTools(context.Background(), []string{"get_profile"})
+	mcpTools, err := clients.GetMcpTools(context.Background(), []string{"get_profile"})
 
 	parseOfferAgent, err := llmagent.New(llmagent.Config{
 		Name:        "parse_offer_agent",
