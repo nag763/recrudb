@@ -23,7 +23,7 @@ func main() {
 		r.Route("/agents", func(r chi.Router) {
 			r.Post("/jobOffer", runner.SessionlessHttpRunner(agents.NewJobOfferAgent))
 			r.Post("/reachOut", runner.SessionlessHttpRunner(agents.NewReachOutAgent))
-			r.Post("/cvAnalyer", runner.SessionlessHttpRunner(agents.NewCvAnalyzer))
+			r.Post("/cvAnalyzer", runner.SessionlessHttpRunner(agents.NewCvAnalyzer))
 		})
 	})
 

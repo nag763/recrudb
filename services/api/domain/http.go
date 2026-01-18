@@ -67,7 +67,6 @@ func ErrNotFoundResponse() render.Renderer {
 
 }
 
-// Bind satisfies the render.Binder interface
 func (h *HttpRequest) Bind(r *http.Request) error {
 	if err := h.validate(); err != nil {
 		return fmt.Errorf("malformed request : %v", err)
