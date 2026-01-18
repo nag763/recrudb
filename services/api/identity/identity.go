@@ -1,9 +1,10 @@
-package function
+package identity
 
 import (
 	"context"
 	"errors"
 	"fmt"
+	"nag763/recrudb/api/utils"
 	"net/http"
 	"strings"
 
@@ -23,7 +24,7 @@ func extractBearer(req *http.Request) (string, error) {
 }
 
 func verifyGoogleIDToken(ctx context.Context, idToken string) (*idtoken.Payload, error) {
-	payload, err := idtoken.Validate(ctx, idToken, GetEnvOrDefault("JWT_AUDIENCE", ""))
+	payload, err := idtoken.Validate(ctx, idToken, utils.GetEnvOrDefault("JWT_AUDIENCE", ""))
 	if err != nil {
 		return nil, fmt.Errorf("invalid token: %v", err)
 	}

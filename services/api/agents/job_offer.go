@@ -4,13 +4,14 @@ import (
 	"context"
 	_ "embed"
 
+	"nag763/recrudb/api/utils"
+
 	"google.golang.org/adk/agent"
 	"google.golang.org/adk/agent/llmagent"
 	"google.golang.org/adk/agent/workflowagents/sequentialagent"
 	"google.golang.org/adk/model"
 	"google.golang.org/adk/tool"
 	"google.golang.org/adk/tool/geminitool"
-	"nag763.com/recrudbagents/utils"
 )
 
 //go:embed prompts/profile_scorer.txt

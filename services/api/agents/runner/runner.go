@@ -1,9 +1,11 @@
-package agents
+package runner
 
 import (
 	"context"
 	"log"
 	"strings"
+
+	"nag763/recrudb/api/utils"
 
 	"github.com/google/uuid"
 	"google.golang.org/adk/agent"
@@ -12,7 +14,6 @@ import (
 	"google.golang.org/adk/runner"
 	"google.golang.org/adk/session"
 	"google.golang.org/genai"
-	"nag763.com/recrudbagents/utils"
 )
 
 func createModel(ctx context.Context) (model.LLM, error) {
@@ -100,7 +101,6 @@ func (r AgentRunner) RunSessionless(input string) (string, error) {
 	for event, err := range r.runner.Run(r.ctx, randomUserId, sessionId, userMsg, agent.RunConfig{
 		StreamingMode: agent.StreamingModeSSE,
 	}) {
-		log.Printf("received err=%v response=%v\n", err, event)
 		if err != nil {
 			return "", err
 		} else if event.Partial {

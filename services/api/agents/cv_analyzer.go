@@ -3,12 +3,12 @@ package agents
 import (
 	"context"
 	_ "embed"
+	"nag763/recrudb/api/utils"
 
 	"google.golang.org/adk/agent"
 	"google.golang.org/adk/agent/llmagent"
 	"google.golang.org/adk/model"
 	"google.golang.org/adk/tool"
-	"nag763.com/recrudbagents/utils"
 )
 
 //go:embed prompts/cv_analyzer.txt

@@ -2,7 +2,9 @@ package utils
 
 import (
 	"context"
+	"net/http"
 	"net/url"
+	"strings"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"golang.org/x/oauth2"
@@ -22,18 +24,29 @@ func stripPath(raw string) string {
 	return u.String()
 }
 
+func getHttpClient(ctx context.Context, endpoint string) (*http.Client, error) {
+	if strings.Contains(endpoint, "localhost") {
+		return nil, nil
+	}
+
+	tokenSource, err := idtoken.NewTokenSource(ctx, stripPath(endpoint))
+	if err != nil {
+		return nil, err
+	}
+	return oauth2.NewClient(ctx, tokenSource), nil
+}
+
 func GetMcpTools(ctx context.Context, allowedTools []string) (tool.Toolset, error) {
 
 	endpoint := GetEnvOrDefault(
 		"MCP_ENDPOINT",
 		"http://localhost:3000/sse",
 	)
-	tokenSource, err := idtoken.NewTokenSource(ctx, stripPath(endpoint))
+
+	httpClient, err := getHttpClient(ctx, endpoint)
 	if err != nil {
 		return nil, err
 	}
-
-	httpClient := oauth2.NewClient(ctx, tokenSource)
 
 	toolset, err := mcptoolset.New(mcptoolset.Config{
 		Transport: &mcp.SSEClientTransport{

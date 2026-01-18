@@ -5,6 +5,9 @@ import (
 	"log"
 	"os"
 
+	"nag763/recrudb/api/agents"
+	"nag763/recrudb/api/utils"
+
 	"google.golang.org/adk/agent"
 	"google.golang.org/adk/agent/llmagent"
 	"google.golang.org/adk/cmd/launcher"
@@ -12,8 +15,6 @@ import (
 	"google.golang.org/adk/model/gemini"
 	"google.golang.org/adk/tool"
 	"google.golang.org/genai"
-	"nag763.com/recrudbagents/agents"
-	"nag763.com/recrudbagents/utils"
 )
 
 func main() {
