@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"main/domain"
+	"nag763/recrudb/api/internal/domain"
 	"time"
 
 	"cloud.google.com/go/firestore"

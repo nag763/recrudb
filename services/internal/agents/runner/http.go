@@ -2,7 +2,7 @@ package runner
 
 import (
 	"fmt"
-	"nag763/recrudb/api/domain"
+	"nag763/recrudb/api/internal/domain"
 	"net/http"
 	"sync"
 

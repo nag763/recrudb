@@ -1,9 +1,9 @@
 package main
 
 import (
-	"nag763/recrudb/api/agents"
-	"nag763/recrudb/api/agents/runner"
-	"nag763/recrudb/api/domain"
+	"nag763/recrudb/api/internal/agents"
+	"nag763/recrudb/api/internal/agents/runner"
+	"nag763/recrudb/api/internal/domain"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"

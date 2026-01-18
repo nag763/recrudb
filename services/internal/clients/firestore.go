@@ -2,7 +2,7 @@ package clients
 
 import (
 	"context"
-	"nag763/recrudb/api/utils"
+	"nag763/recrudb/api/internal/utils"
 	"sync"
 
 	"cloud.google.com/go/firestore"

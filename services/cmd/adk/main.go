@@ -3,10 +3,9 @@ package main
 import (
 	"context"
 	"log"
+	"nag763/recrudb/api/internal/agents"
+	"nag763/recrudb/api/internal/utils"
 	"os"
-
-	"nag763/recrudb/api/agents"
-	"nag763/recrudb/api/utils"
 
 	"google.golang.org/adk/agent"
 	"google.golang.org/adk/agent/llmagent"

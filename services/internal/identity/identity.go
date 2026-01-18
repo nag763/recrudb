@@ -1,17 +1,21 @@
-package utils
+package identity
 
 import (
 	"context"
 	"errors"
 	"fmt"
+	"nag763/recrudb/api/internal/utils"
 	"strings"
 
 	"cloud.google.com/go/auth/credentials/idtoken"
-	"github.com/mark3labs/mcp-go/mcp"
 )
 
-func extractBearer(req mcp.CallToolRequest) (string, error) {
-	authorizationHeader := req.Header.Get("Authorization")
+type HeaderAccesser interface {
+	Get(string) string
+}
+
+func extractBearer(req HeaderAccesser) (string, error) {
+	authorizationHeader := req.Get("Authorization")
 	if authorizationHeader == "" {
 		return "", errors.New("Authorization not found")
 	}
@@ -23,7 +27,7 @@ func extractBearer(req mcp.CallToolRequest) (string, error) {
 }
 
 func verifyGoogleIDToken(ctx context.Context, idToken string) (*idtoken.Payload, error) {
-	payload, err := idtoken.Validate(ctx, idToken, GetEnvOrDefault("JWT_AUDIENCE", ""))
+	payload, err := idtoken.Validate(ctx, idToken, utils.GetEnvOrDefault("JWT_AUDIENCE", ""))
 	if err != nil {
 		return nil, fmt.Errorf("invalid token: %v", err)
 	}
@@ -31,8 +35,8 @@ func verifyGoogleIDToken(ctx context.Context, idToken string) (*idtoken.Payload,
 	return payload, nil
 }
 
-func VerifyGoogleIDTokenFromRequest(ctx context.Context, request mcp.CallToolRequest) (*idtoken.Payload, error) {
-	bearer, err := extractBearer(request)
+func VerifyGoogleIDTokenFromRequest(ctx context.Context, req HeaderAccesser) (*idtoken.Payload, error) {
+	bearer, err := extractBearer(req)
 	if err != nil {
 		return nil, fmt.Errorf("invalid token: %v", err)
 	}
@@ -40,7 +44,7 @@ func VerifyGoogleIDTokenFromRequest(ctx context.Context, request mcp.CallToolReq
 	return verifyGoogleIDToken(ctx, bearer)
 }
 
-func GetClaims(ctx context.Context, idToken string) (map[string]interface{}, error) {
+func getClaims(ctx context.Context, idToken string) (map[string]interface{}, error) {
 	payload, err := verifyGoogleIDToken(ctx, idToken)
 	if err != nil {
 		return nil, err
@@ -49,7 +53,7 @@ func GetClaims(ctx context.Context, idToken string) (map[string]interface{}, err
 }
 
 func getSub(ctx context.Context, idToken string) (string, error) {
-	claims, err := GetClaims(ctx, idToken)
+	claims, err := getClaims(ctx, idToken)
 	if err != nil {
 		return "", err
 	}
@@ -60,7 +64,7 @@ func getSub(ctx context.Context, idToken string) (string, error) {
 	return sub, nil
 }
 
-func GetSubFromRequest(ctx context.Context, req mcp.CallToolRequest) (string, error) {
+func GetSubFromRequest(ctx context.Context, req HeaderAccesser) (string, error) {
 	token, err := extractBearer(req)
 	if err != nil {
 		return "", err

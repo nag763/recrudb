@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"main/middleware"
-	"main/tools"
-	"main/utils"
+	"nag763/recrudb/api/internal/utils"
+	"nag763/recrudb/api/transport/mcp/middleware"
+	"nag763/recrudb/api/transport/mcp/tools"
 
 	"cloud.google.com/go/firestore"
 	"github.com/mark3labs/mcp-go/server"

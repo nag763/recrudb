@@ -3,9 +3,8 @@ package runner
 import (
 	"context"
 	"log"
+	"nag763/recrudb/api/internal/utils"
 	"strings"
-
-	"nag763/recrudb/api/utils"
 
 	"github.com/google/uuid"
 	"google.golang.org/adk/agent"

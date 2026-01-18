@@ -3,8 +3,7 @@ package agents
 import (
 	"context"
 	_ "embed"
-
-	"nag763/recrudb/api/utils"
+	"nag763/recrudb/api/internal/utils"
 
 	"google.golang.org/adk/agent"
 	"google.golang.org/adk/agent/llmagent"

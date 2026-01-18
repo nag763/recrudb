@@ -3,8 +3,8 @@ package tools
 import (
 	"context"
 	"log"
-	"main/domain"
-	"main/utils"
+	"nag763/recrudb/api/internal/domain"
+	"nag763/recrudb/api/internal/identity"
 
 	"cloud.google.com/go/firestore"
 	"github.com/mark3labs/mcp-go/mcp"
@@ -15,7 +15,7 @@ func NewGetProfileTool(ctx context.Context, client *firestore.Client) (tool mcp.
 	return mcp.NewTool("get_profile",
 			mcp.WithDescription("Get user profile"),
 		), func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-			sub, err := utils.GetSubFromRequest(ctx, request)
+			sub, err := identity.GetSubFromRequest(ctx, request.Header)
 			if err != nil {
 				return mcp.NewToolResultError("couldn't extract sub"), nil
 			}
@@ -33,7 +33,7 @@ func NewStoreProfileTool(client *firestore.Client) (tool mcp.Tool, handler serve
 			mcp.WithDescription("Stores a CV analyzed details"),
 			mcp.WithInputSchema[domain.Profile](),
 		), func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-			sub, err := utils.GetSubFromRequest(ctx, request)
+			sub, err := identity.GetSubFromRequest(ctx, request.Header)
 			if err != nil {
 				return mcp.NewToolResultError("couldn't extract sub"), nil
 			}
