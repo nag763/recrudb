@@ -5,16 +5,13 @@ import (
 	"errors"
 	"fmt"
 	"nag763/recrudb/api/internal/utils"
+	"net/http"
 	"strings"
 
 	"cloud.google.com/go/auth/credentials/idtoken"
 )
 
-type HeaderAccesser interface {
-	Get(string) string
-}
-
-func extractBearer(req HeaderAccesser) (string, error) {
+func extractBearer(req http.Header) (string, error) {
 	authorizationHeader := req.Get("Authorization")
 	if authorizationHeader == "" {
 		return "", errors.New("Authorization not found")
@@ -35,7 +32,7 @@ func verifyGoogleIDToken(ctx context.Context, idToken string) (*idtoken.Payload,
 	return payload, nil
 }
 
-func VerifyGoogleIDTokenFromRequest(ctx context.Context, req HeaderAccesser) (*idtoken.Payload, error) {
+func VerifyGoogleIDTokenFromRequest(ctx context.Context, req http.Header) (*idtoken.Payload, error) {
 	bearer, err := extractBearer(req)
 	if err != nil {
 		return nil, fmt.Errorf("invalid token: %v", err)
@@ -64,7 +61,7 @@ func getSub(ctx context.Context, idToken string) (string, error) {
 	return sub, nil
 }
 
-func GetSubFromRequest(ctx context.Context, req HeaderAccesser) (string, error) {
+func GetSubFromRequest(ctx context.Context, req http.Header) (string, error) {
 	token, err := extractBearer(req)
 	if err != nil {
 		return "", err
