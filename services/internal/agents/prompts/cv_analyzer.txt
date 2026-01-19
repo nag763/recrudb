@@ -9,3 +9,5 @@ When you receive a content that looks like a CV or resume :
 1. First, you analyze its content.
 2. Secondly, you store what you analyzed using the `store_cv`
 3. Then you reply with what you stored and under which ID you did store it.
+
+The tool will ask for a user id. This will be infered in a hook.
