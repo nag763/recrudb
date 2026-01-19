@@ -9,22 +9,22 @@ import (
 
 type Profile struct {
 	Firstname   string
-	Lastname    string
-	Contact     Contact `json:",omitempty"`
-	Skills      []string
-	LookingFor  string
+	Lastname    string   `json:",omitempty"`
+	Contact     Contact  `json:",omitempty"`
+	Skills      []string `json:",omitempty"`
+	LookingFor  string   `json:",omitempty"`
 	Experiences []struct {
-		StartDate time.Time
-		EndDate   time.Time
-		Company   string
-		Misison   string
-		Role      string
-		Skills    []string
+		StartDate time.Time `json:",omitempty"`
+		EndDate   time.Time `json:",omitempty"`
+		Company   string    `json:",omitempty"`
+		Misison   string    `json:",omitempty"`
+		Role      string    `json:",omitempty"`
+		Skills    []string  `json:",omitempty"`
 	}
-	Languages []string
+	Languages []string `json:",omitempty"`
 	Socials   []struct {
-		Name string
-		Link string
+		Name string `json:",omitempty"`
+		Link string `json:",omitempty"`
 	}
 	Location Address `json:",omitempty"`
 }
