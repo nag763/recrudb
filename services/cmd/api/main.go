@@ -27,7 +27,7 @@ func main() {
 
 	firestoreClient, err := clients.GetFirestoreClient()
 	if err != nil {
-		log.Fatalf("couldn't acces firestore client %v", err)
+		log.Fatalf("couldn't access firestore client %v", err)
 	}
 	r := chi.NewRouter()
 

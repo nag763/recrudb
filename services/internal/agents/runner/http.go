@@ -25,13 +25,13 @@ func SessionlessHttpRunner(initalizer AgentInitializer) func(w http.ResponseWrit
 
 		runner, err := runnerInitalizer()
 		if err != nil {
-			render.Render(w, r, domain.ErrInternalResponse(fmt.Errorf("couldn't start runner")))
+			render.Render(w, r, domain.ErrInternalResponse(fmt.Errorf("couldn't start runner %v", err)))
 			return
 		}
 
 		resp, err := runner.RunSessionless(httpRequest.Content)
 		if err != nil {
-			render.Render(w, r, domain.ErrInternalResponse(fmt.Errorf("issue with runner %v", runner)))
+			render.Render(w, r, domain.ErrInternalResponse(fmt.Errorf("issue with runner %v", err)))
 			return
 		}
 
