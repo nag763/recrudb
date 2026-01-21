@@ -3,6 +3,7 @@ package runner
 import (
 	"fmt"
 	"nag763/recrudb/api/internal/domain"
+	"nag763/recrudb/api/internal/identity"
 	"net/http"
 	"sync"
 
@@ -17,6 +18,12 @@ func SessionlessHttpRunner(initalizer AgentInitializer) func(w http.ResponseWrit
 
 	return func(w http.ResponseWriter, r *http.Request) {
 
+		sub, err := identity.GetSubFromRequest(r.Context(), r.Header)
+		if err != nil {
+			render.Render(w, r, domain.ErrUnauthorizedResponse(fmt.Errorf("no sub found")))
+			return
+		}
+
 		httpRequest := &domain.HttpRequest{}
 		if err := render.Bind(r, httpRequest); err != nil {
 			render.Render(w, r, domain.ErrInvalidResponse(err))
@@ -29,7 +36,7 @@ func SessionlessHttpRunner(initalizer AgentInitializer) func(w http.ResponseWrit
 			return
 		}
 
-		resp, err := runner.RunSessionless(httpRequest.Content)
+		resp, err := runner.RunSessionless(httpRequest.Content, sub)
 		if err != nil {
 			render.Render(w, r, domain.ErrInternalResponse(fmt.Errorf("issue with runner %v", err)))
 			return

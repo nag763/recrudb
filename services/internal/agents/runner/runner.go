@@ -6,7 +6,6 @@ import (
 	"nag763/recrudb/api/internal/utils"
 	"strings"
 
-	"github.com/google/uuid"
 	"google.golang.org/adk/agent"
 	"google.golang.org/adk/model"
 	"google.golang.org/adk/model/gemini"
@@ -65,9 +64,7 @@ func CreateAgentRunnerWithSessionService(agentInitializer AgentInitializer, sess
 	}, nil
 }
 
-func (r AgentRunner) RunSessionless(input string) (string, error) {
-
-	randomUserId := uuid.NewString()
+func (r AgentRunner) RunSessionless(input string, userId string) (string, error) {
 
 	userMsg := &genai.Content{
 		Parts: []*genai.Part{{Text: input}},
@@ -78,7 +75,7 @@ func (r AgentRunner) RunSessionless(input string) (string, error) {
 
 	request, err := r.sessionService.Create(r.ctx, &session.CreateRequest{
 		AppName: r.appName,
-		UserID:  randomUserId,
+		UserID:  userId,
 	})
 	if err != nil {
 		log.Printf("error creating session %v", err)
@@ -90,14 +87,14 @@ func (r AgentRunner) RunSessionless(input string) (string, error) {
 	defer func() {
 		if err := r.sessionService.Delete(r.ctx, &session.DeleteRequest{
 			AppName:   r.appName,
-			UserID:    randomUserId,
+			UserID:    userId,
 			SessionID: sessionId,
 		}); err != nil {
 			log.Printf("error while removing stateless call err=%v", err)
 		}
 	}()
 
-	for event, err := range r.runner.Run(r.ctx, randomUserId, sessionId, userMsg, agent.RunConfig{
+	for event, err := range r.runner.Run(r.ctx, userId, sessionId, userMsg, agent.RunConfig{
 		StreamingMode: agent.StreamingModeSSE,
 	}) {
 		if err != nil {
