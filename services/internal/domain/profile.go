@@ -29,6 +29,9 @@ type Profile struct {
 	Location Address `json:",omitempty"`
 }
 
+type ProfileMcp = mcpDocument[Profile]
+type ProfileMcpWithMeta = withMetadata[Profile]
+
 func GetProfile(ctx context.Context, client *firestore.Client, id string) (*Profile, error) {
 	doc, err := client.Collection("profile").Doc(id).Get(ctx)
 	if err != nil {

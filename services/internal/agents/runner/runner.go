@@ -16,7 +16,7 @@ import (
 )
 
 func createModel(ctx context.Context) (model.LLM, error) {
-	return gemini.NewModel(ctx, utils.GetEnvOrDefault("MODEL", "gemini-2.5-flash-lite"), &genai.ClientConfig{
+	return gemini.NewModel(ctx, utils.GetEnvOrDefault("MODEL", "gemini-2.5-flash"), &genai.ClientConfig{
 		Backend: genai.BackendVertexAI,
 		Project: utils.GetEnvOrDefault("PROJECT_NAME", "recrudb"),
 	})

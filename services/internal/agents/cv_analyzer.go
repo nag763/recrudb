@@ -3,6 +3,7 @@ package agents
 import (
 	"context"
 	_ "embed"
+	"nag763/recrudb/api/internal/agents/config"
 	"nag763/recrudb/api/internal/agents/hooks"
 	"nag763/recrudb/api/internal/clients"
 
@@ -10,14 +11,17 @@ import (
 	"google.golang.org/adk/agent/llmagent"
 	"google.golang.org/adk/model"
 	"google.golang.org/adk/tool"
+	"google.golang.org/genai"
 )
 
 //go:embed prompts/cv_analyzer.txt
 var cvAnalyzer string
 
+var allowedTools = []string{"store_cv"}
+
 func NewCvAnalyzer(ctx context.Context, model model.LLM) (agent.Agent, error) {
 
-	tools, err := clients.GetMcpTools(ctx, []string{"store_cv"})
+	tools, err := clients.GetMcpTools(ctx, allowedTools)
 	if err != nil {
 		return nil, err
 	}
@@ -29,6 +33,11 @@ func NewCvAnalyzer(ctx context.Context, model model.LLM) (agent.Agent, error) {
 		Instruction:         cvAnalyzer,
 		Toolsets:            []tool.Toolset{tools},
 		BeforeToolCallbacks: []llmagent.BeforeToolCallback{hooks.InjectMetadata},
+		GenerateContentConfig: &genai.GenerateContentConfig{
+			ToolConfig: &genai.ToolConfig{
+				FunctionCallingConfig: config.RestrictConfigTo(allowedTools),
+			},
+		},
 	})
 	if err != nil {
 		return nil, err

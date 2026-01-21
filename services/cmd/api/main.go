@@ -8,6 +8,7 @@ import (
 	"nag763/recrudb/api/internal/domain"
 	"nag763/recrudb/api/transport/api"
 	"net/http"
+	"time"
 
 	"cloud.google.com/go/firestore"
 	"github.com/go-chi/chi/v5"
@@ -34,6 +35,8 @@ func main() {
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		render.Render(w, r, domain.ErrNotFoundResponse())
 	})
+
+	r.Use(middleware.Timeout(time.Second * 30))
 	r.Use(middleware.Logger, middleware.Recoverer)
 
 	r.Route("/api/v1", func(r chi.Router) {

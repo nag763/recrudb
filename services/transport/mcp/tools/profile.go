@@ -31,9 +31,9 @@ func NewGetProfileTool(ctx context.Context, client *firestore.Client) (tool mcp.
 func NewStoreProfileTool(client *firestore.Client) (tool mcp.Tool, handler server.ToolHandlerFunc) {
 	return mcp.NewTool("store_cv",
 			mcp.WithDescription("Stores a CV analyzed details"),
-			mcp.WithInputSchema[domain.ProfileWithMetadata](),
+			mcp.WithInputSchema[domain.ProfileMcp](),
 		), func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-			var doc domain.ProfileWithMetadata
+			var doc domain.ProfileMcpWithMeta
 			if err := request.BindArguments(&doc); err != nil {
 				return mcp.NewToolResultError("ERROR WHILE ACCESSING DOC ID"), nil
 			}
