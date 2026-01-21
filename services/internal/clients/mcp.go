@@ -3,7 +3,6 @@ package clients
 import (
 	"context"
 	"fmt"
-	"nag763/recrudb/api/internal/utils"
 	"net/http"
 	"net/url"
 
@@ -13,6 +12,8 @@ import (
 	"google.golang.org/adk/tool"
 	"google.golang.org/adk/tool/mcptoolset"
 	"google.golang.org/api/idtoken"
+
+	"nag763/recrudb/api/internal/utils"
 )
 
 func stripPath(raw string) string {

@@ -31,22 +31,19 @@ func NewGetProfileTool(ctx context.Context, client *firestore.Client) (tool mcp.
 func NewStoreProfileTool(client *firestore.Client) (tool mcp.Tool, handler server.ToolHandlerFunc) {
 	return mcp.NewTool("store_cv",
 			mcp.WithDescription("Stores a CV analyzed details"),
-			mcp.WithInputSchema[domain.Profile](),
+			mcp.WithInputSchema[domain.ProfileWithMetadata](),
 		), func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-			var doc domain.Profile
+			var doc domain.ProfileWithMetadata
 			if err := request.BindArguments(&doc); err != nil {
 				return mcp.NewToolResultError("ERROR WHILE ACCESSING DOC ID"), nil
 			}
 
-			sub, err := identity.GetSubFromRequest(ctx, request.Header)
-			if err != nil {
-				return mcp.NewToolResultError("COULDN'T ACCESS CURRENT USER"), err
-			}
+			userId := doc.Metadata.UserId
 
-			if _, err := client.Collection("profile").Doc(sub).Set(ctx, doc); err != nil {
+			if _, err := client.Collection("profile").Doc(userId).Set(ctx, doc); err != nil {
 				log.Printf("error while storing profile in firestore: %v\n", err)
 				return mcp.NewToolResultError("ERROR WHILE STORING IN FIRESTORE"), nil
 			}
-			return mcp.NewToolResultStructured(map[string]any{"id": sub, "doc": doc}, sub), nil
+			return mcp.NewToolResultStructured(doc, userId), nil
 		}
 }
