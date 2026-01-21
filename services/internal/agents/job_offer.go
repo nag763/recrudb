@@ -3,7 +3,10 @@ package agents
 import (
 	"context"
 	_ "embed"
+	"nag763/recrudb/api/internal/agents/config"
+	"nag763/recrudb/api/internal/agents/hooks"
 	"nag763/recrudb/api/internal/clients"
+	"slices"
 
 	"google.golang.org/adk/agent"
 	"google.golang.org/adk/agent/llmagent"
@@ -11,6 +14,7 @@ import (
 	"google.golang.org/adk/model"
 	"google.golang.org/adk/tool"
 	"google.golang.org/adk/tool/geminitool"
+	"google.golang.org/genai"
 )
 
 //go:embed prompts/profile_scorer.txt
@@ -25,9 +29,15 @@ var companyLookupPrompt string
 //go:embed prompts/recap_agent.txt
 var recapAgentPrompt string
 
-func NewJobOfferAgent(ctx context.Context, model model.LLM) (agent.Agent, error) {
+//go:embed prompts/store_offer.txt
+var storeOfferAgentPrompt string
 
-	mcpTools, err := clients.GetMcpTools(context.Background(), []string{"get_profile"})
+func NewJobOfferAgent(ctx context.Context, model model.LLM) (agent.Agent, error) {
+	offerScorerAllowedTools := []string{"get_profile"}
+	offerStorerAllowedTools := []string{"stores_offer"}
+	allowedTools := slices.Concat(offerScorerAllowedTools, offerStorerAllowedTools)
+
+	mcpTools, err := clients.GetMcpTools(context.Background(), allowedTools)
 
 	parseOfferAgent, err := llmagent.New(llmagent.Config{
 		Name:        "parse_offer_agent",
@@ -53,12 +63,18 @@ func NewJobOfferAgent(ctx context.Context, model model.LLM) (agent.Agent, error)
 	}
 
 	offerScorerAgent, err := llmagent.New(llmagent.Config{
-		Name:        "offer_scorer",
-		Model:       model,
-		Description: "Goal is to match my profile with the offer, on a score out of 100",
-		Instruction: profileScorerPrompt,
-		OutputKey:   "job_offer_score",
-		Toolsets:    []tool.Toolset{mcpTools},
+		Name:                "offer_scorer",
+		Model:               model,
+		Description:         "Goal is to match my profile with the offer, on a score out of 100",
+		Instruction:         profileScorerPrompt,
+		OutputKey:           "job_offer_score",
+		Toolsets:            []tool.Toolset{mcpTools},
+		BeforeToolCallbacks: []llmagent.BeforeToolCallback{hooks.InjectMetadata},
+		GenerateContentConfig: &genai.GenerateContentConfig{
+			ToolConfig: &genai.ToolConfig{
+				FunctionCallingConfig: config.RestrictConfigTo(offerScorerAllowedTools),
+			},
+		},
 	})
 	if err != nil {
 		return nil, err
@@ -69,10 +85,24 @@ func NewJobOfferAgent(ctx context.Context, model model.LLM) (agent.Agent, error)
 		Description: "Recap informations of other agents into a few lines",
 		Model:       model,
 		Instruction: recapAgentPrompt,
+		OutputKey:   "recap",
 	})
 	if err != nil {
 		return nil, err
 	}
+
+	storeOfferAgent, err := llmagent.New(llmagent.Config{
+		Name:        "store_offer_agent",
+		Description: "Stores the offer details",
+		Model:       model,
+		Instruction: storeOfferAgentPrompt,
+		Toolsets:    []tool.Toolset{mcpTools},
+		GenerateContentConfig: &genai.GenerateContentConfig{
+			ToolConfig: &genai.ToolConfig{
+				FunctionCallingConfig: config.RestrictConfigTo(offerStorerAllowedTools),
+			},
+		},
+	})
 
 	jobOfferMatcher, err := sequentialagent.New(sequentialagent.Config{
 		AgentConfig: agent.Config{
@@ -83,6 +113,7 @@ func NewJobOfferAgent(ctx context.Context, model model.LLM) (agent.Agent, error)
 				lookupCompanyAgent,
 				offerScorerAgent,
 				recapAgent,
+				storeOfferAgent,
 			},
 		},
 	})

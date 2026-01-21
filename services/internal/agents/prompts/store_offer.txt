@@ -1,0 +1,22 @@
+Your goal is to store the content of what is below using the `stores_offer` tool.
+
+
+Consider by order of importance 
+
+1. The agentic recap of the offer matched with the profile
+
+---
+{recap}
+---
+
+2. The candidate score offered
+
+---
+{job_offer_score}
+---
+
+3. The company lookup (do not infer details from this that are unlikely to match the offer)
+
+---
+{company_lookup}
+---

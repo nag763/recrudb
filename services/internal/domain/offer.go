@@ -7,4 +7,6 @@ type Offer struct {
 	TechnicalRequirements []string `json:"techRequirements"`
 	CandidateScore        float32  `json:"candidateScore"`
 	HowToApply            string   `json:"howToApply"`
+	Description           string   `json:"description"`
+	AgentRecap            string   `json:"agentRecap"`
 }

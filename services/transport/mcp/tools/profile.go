@@ -4,7 +4,6 @@ import (
 	"context"
 	"log"
 	"nag763/recrudb/api/internal/domain"
-	"nag763/recrudb/api/internal/identity"
 
 	"cloud.google.com/go/firestore"
 	"github.com/mark3labs/mcp-go/mcp"
@@ -15,12 +14,14 @@ func NewGetProfileTool(ctx context.Context, client *firestore.Client) (tool mcp.
 	return mcp.NewTool("get_profile",
 			mcp.WithDescription("Get user profile"),
 		), func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-			sub, err := identity.GetSubFromRequest(ctx, request.Header)
-			if err != nil {
-				return mcp.NewToolResultError("couldn't extract sub"), nil
+			var metadata domain.MetadataOnly
+			log.Printf("tool called")
+			if err := request.BindArguments(&metadata); err != nil {
+				return mcp.NewToolResultError("ERROR WHILE ACCESSING DOC ID"), nil
 			}
+			log.Printf("profile get %+v", metadata)
 
-			doc, err := domain.GetProfile(ctx, client, sub)
+			doc, err := domain.GetProfile(ctx, client, metadata.Metadata.UserId)
 			if err != nil {
 				return mcp.NewToolResultError("couldn't access profile"), nil
 			}
@@ -40,7 +41,7 @@ func NewStoreProfileTool(client *firestore.Client) (tool mcp.Tool, handler serve
 
 			userId := doc.Metadata.UserId
 
-			if _, err := client.Collection("profile").Doc(userId).Set(ctx, doc); err != nil {
+			if _, err := client.Collection("profile").Doc(userId).Set(ctx, doc.Document); err != nil {
 				log.Printf("error while storing profile in firestore: %v\n", err)
 				return mcp.NewToolResultError("ERROR WHILE STORING IN FIRESTORE"), nil
 			}

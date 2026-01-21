@@ -17,10 +17,9 @@ import (
 //go:embed prompts/cv_analyzer.txt
 var cvAnalyzer string
 
-var allowedTools = []string{"store_cv"}
-
 func NewCvAnalyzer(ctx context.Context, model model.LLM) (agent.Agent, error) {
 
+	allowedTools := []string{"store_cv"}
 	tools, err := clients.GetMcpTools(ctx, allowedTools)
 	if err != nil {
 		return nil, err

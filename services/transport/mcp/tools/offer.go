@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"nag763/recrudb/api/internal/domain"
-	"time"
 
 	"cloud.google.com/go/firestore"
 	"github.com/google/uuid"
@@ -20,13 +19,16 @@ func NewStoreOfferTool(client *firestore.Client) (tool mcp.Tool, handler server.
 		),
 		func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 			uuid := uuid.NewString()
-			args := request.GetArguments()
-			args["timestamp"] = time.Now()
-			if _, err := client.Collection("offers").Doc(uuid).Set(ctx, request.GetArguments()); err != nil {
+
+			var offer *domain.Offer
+			if err := request.BindArguments(&offer); err != nil {
+				return mcp.NewToolResultError("ERROR WHILE ACCESSING DOC ID"), nil
+			}
+
+			if _, err := client.Collection("offers").Doc(uuid).Set(ctx, offer); err != nil {
 				log.Printf("error while storing job offer in firestore: %v\n", err)
 				return mcp.NewToolResultError("ERROR WHILE STORING IN FIRESTORE"), nil
 			}
-			log.Printf("job offer stored under uuid %s\n", uuid)
 			return mcp.NewToolResultText(uuid), nil
 		}
 }

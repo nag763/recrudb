@@ -12,3 +12,5 @@ type withMetadata[T any] struct {
 	mcpDocument[T]
 	Metadata Metadata `json:"metadata"`
 }
+
+type MetadataOnly = withMetadata[struct{}]
