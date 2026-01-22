@@ -4,13 +4,13 @@ type Metadata struct {
 	UserId string `json:"userId,omitempty"`
 }
 
-type mcpDocument[T any] struct {
+type McpDocument[T any] struct {
 	Document T
 }
 
-type withMetadata[T any] struct {
-	mcpDocument[T]
-	Metadata Metadata `json:"metadata"`
+type WithMetadata[T any] struct {
+	McpDocument[T]
+	Metadata Metadata `json:"_meta"`
 }
 
-type MetadataOnly = withMetadata[struct{}]
+type MetadataOnly = WithMetadata[struct{}]
