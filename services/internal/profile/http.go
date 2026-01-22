@@ -1,8 +1,8 @@
 package profile
 
 import (
-	"nag763/recrudb/api/internal/domain"
-	"nag763/recrudb/api/internal/identity"
+	"nag763/recrudb/api/internal/pkg/identity"
+	"nag763/recrudb/api/internal/response"
 	"net/http"
 
 	"github.com/go-chi/render"
@@ -24,19 +24,19 @@ func (h *ProfileHandler) HandleGetProfile(w http.ResponseWriter, r *http.Request
 	ctx := r.Context()
 	sub, err := identity.GetSubFromRequest(ctx, r.Header)
 	if err != nil {
-		render.Render(w, r, domain.ErrUnauthorizedResponse(err))
+		render.Render(w, r, response.ErrUnauthorizedResponse(err))
 		return
 	}
 
 	doc, err := h.profileRepository.GetProfile(ctx, sub)
 	if err != nil {
 		if status.Code(err) == codes.NotFound {
-			render.Render(w, r, domain.NoContentResponse())
+			render.Render(w, r, response.NoContentResponse())
 			return
 		}
-		render.Render(w, r, domain.ErrInternalResponse(err))
+		render.Render(w, r, response.ErrInternalResponse(err))
 		return
 	}
 
-	render.Render(w, r, domain.SuccessResponse(doc))
+	render.Render(w, r, response.SuccessResponse(doc))
 }

@@ -3,7 +3,7 @@ package profile
 import (
 	"context"
 	"log"
-	"nag763/recrudb/api/internal/domain"
+	"nag763/recrudb/api/internal/metadata"
 
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
@@ -23,7 +23,7 @@ func (t *ProfileTool) NewGetProfileTool() (tool mcp.Tool, handler server.ToolHan
 	return mcp.NewTool("get_profile",
 			mcp.WithDescription("Get user profile"),
 		), func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-			var metadata domain.MetadataOnly
+			var metadata metadata.MetadataOnly
 			if err := request.BindArguments(&metadata); err != nil {
 				return mcp.NewToolResultError("ERROR WHILE ACCESSING DOC ID"), nil
 			}

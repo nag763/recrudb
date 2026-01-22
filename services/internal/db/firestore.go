@@ -2,7 +2,7 @@ package db
 
 import (
 	"context"
-	"nag763/recrudb/api/internal/utils"
+	"nag763/recrudb/api/internal/pkg/utils"
 
 	"cloud.google.com/go/firestore"
 	"go.uber.org/fx"

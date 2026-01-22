@@ -4,8 +4,8 @@ import (
 	"context"
 	"nag763/recrudb/api/internal/agents"
 	"nag763/recrudb/api/internal/agents/runner"
-	"nag763/recrudb/api/internal/domain"
 	"nag763/recrudb/api/internal/profile"
+	"nag763/recrudb/api/internal/response"
 	"net/http"
 	"time"
 
@@ -20,7 +20,7 @@ func NewHttpServer(lc fx.Lifecycle, profileHandler *profile.ProfileHandler) *chi
 	r := chi.NewRouter()
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
-		render.Render(w, r, domain.ErrNotFoundResponse())
+		render.Render(w, r, response.ErrNotFoundResponse())
 	})
 
 	r.Use(middleware.Timeout(time.Second * 30))

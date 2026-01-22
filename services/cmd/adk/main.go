@@ -5,7 +5,7 @@ import (
 	"log"
 	"nag763/recrudb/api/internal/agents"
 	"nag763/recrudb/api/internal/clients"
-	"nag763/recrudb/api/internal/utils"
+	"nag763/recrudb/api/internal/pkg/utils"
 	"os"
 
 	"google.golang.org/adk/agent"

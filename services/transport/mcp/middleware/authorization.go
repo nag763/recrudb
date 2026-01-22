@@ -3,7 +3,7 @@ package middleware
 import (
 	"context"
 	"log"
-	"nag763/recrudb/api/internal/identity"
+	"nag763/recrudb/api/internal/pkg/identity"
 
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"

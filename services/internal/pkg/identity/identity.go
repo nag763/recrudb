@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"nag763/recrudb/api/internal/utils"
+	"nag763/recrudb/api/internal/pkg/utils"
 	"net/http"
 	"strings"
 

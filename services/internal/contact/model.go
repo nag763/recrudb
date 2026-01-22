@@ -1,4 +1,4 @@
-package domain
+package contact
 
 type Contact struct {
 	Email       string `json:"email,omitempty"`

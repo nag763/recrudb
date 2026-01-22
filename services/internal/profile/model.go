@@ -1,16 +1,18 @@
 package profile
 
 import (
-	"nag763/recrudb/api/internal/domain"
+	"nag763/recrudb/api/internal/address"
+	"nag763/recrudb/api/internal/contact"
+	"nag763/recrudb/api/internal/metadata"
 	"time"
 )
 
 type Profile struct {
 	Firstname   string
-	Lastname    string         `json:",omitempty"`
-	Contact     domain.Contact `json:",omitempty"`
-	Skills      []string       `json:",omitempty"`
-	LookingFor  string         `json:",omitempty"`
+	Lastname    string          `json:",omitempty"`
+	Contact     contact.Contact `json:",omitempty"`
+	Skills      []string        `json:",omitempty"`
+	LookingFor  string          `json:",omitempty"`
 	Experiences []struct {
 		StartDate time.Time `json:",omitempty"`
 		EndDate   time.Time `json:",omitempty"`
@@ -24,8 +26,8 @@ type Profile struct {
 		Name string `json:",omitempty"`
 		Link string `json:",omitempty"`
 	}
-	Location domain.Address `json:",omitempty"`
+	Location address.Address `json:",omitempty"`
 }
 
-type ProfileMcp = domain.McpDocument[Profile]
-type ProfileMcpWithMeta = domain.WithMetadata[Profile]
+type ProfileMcp = metadata.McpDocument[Profile]
+type ProfileMcpWithMeta = metadata.WithMetadata[Profile]

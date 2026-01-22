@@ -1,16 +1,10 @@
-package domain
+package response
 
 import (
-	"errors"
-	"fmt"
 	"net/http"
 
 	"github.com/go-chi/render"
 )
-
-type HttpRequest struct {
-	Content string `json:"content"`
-}
 
 type HttpResponse[T any] struct {
 	Success    bool   `json:"success"`
@@ -20,13 +14,6 @@ type HttpResponse[T any] struct {
 }
 
 type HttpStringResponse = HttpResponse[string]
-
-func (r *HttpRequest) validate() error {
-	if r.Content == "" {
-		return errors.New("content musn't be empty")
-	}
-	return nil
-}
 
 func SuccessResponse[T any](content T) render.Renderer {
 	return &HttpResponse[T]{
@@ -74,13 +61,6 @@ func ErrNotFoundResponse() render.Renderer {
 		StatusCode: 404,
 	}
 
-}
-
-func (h *HttpRequest) Bind(r *http.Request) error {
-	if err := h.validate(); err != nil {
-		return fmt.Errorf("malformed request : %v", err)
-	}
-	return nil
 }
 
 func (h *HttpResponse[T]) Render(w http.ResponseWriter, r *http.Request) error {

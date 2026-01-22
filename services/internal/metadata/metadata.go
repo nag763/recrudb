@@ -1,4 +1,4 @@
-package domain
+package metadata
 
 type Metadata struct {
 	UserId string `json:"userId,omitempty"`

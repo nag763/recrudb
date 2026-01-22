@@ -1,4 +1,4 @@
-package domain
+package address
 
 type Address struct {
 	AddressLine1 string `json:"line1,omitempty"`

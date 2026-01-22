@@ -13,7 +13,7 @@ import (
 	"google.golang.org/adk/tool/mcptoolset"
 	"google.golang.org/api/idtoken"
 
-	"nag763/recrudb/api/internal/utils"
+	"nag763/recrudb/api/internal/pkg/utils"
 )
 
 func stripPath(raw string) string {

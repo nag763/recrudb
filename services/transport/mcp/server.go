@@ -3,8 +3,8 @@ package mcp
 import (
 	"context"
 	"nag763/recrudb/api/internal/offer"
+	"nag763/recrudb/api/internal/pkg/utils"
 	"nag763/recrudb/api/internal/profile"
-	"nag763/recrudb/api/internal/utils"
 	"nag763/recrudb/api/transport/mcp/middleware"
 
 	"github.com/mark3labs/mcp-go/server"
