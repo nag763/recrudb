@@ -38,7 +38,7 @@ func InternalResponse(err error) render.Renderer {
 	}
 }
 
-func CleintInvalidRequest(err error) render.Renderer {
+func InvalidRequest(err error) render.Renderer {
 	return &HttpStringResponse{
 		Success:    false,
 		Error:      err.Error(),

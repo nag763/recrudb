@@ -11,13 +11,14 @@ import (
 	"go.uber.org/fx"
 )
 
-func NewMcpServer(lc fx.Lifecycle, profileTool *profile.ProfileTool, offerTool *offer.OfferTool) *server.SSEServer {
+func NewMcpServer(lc fx.Lifecycle, profileTool *profile.ProfileTool, offerTool *offer.OfferTool, middlewareRepository *middleware.MiddlewareRepository) *server.SSEServer {
 
 	s := server.NewMCPServer(
 		"RecruDB Agent Tools",
 		"1.0.0",
 		server.WithToolCapabilities(true),
-		server.WithToolHandlerMiddleware(middleware.AuthorizationHook),
+		server.WithToolHandlerMiddleware(middlewareRepository.AuthorizationMiddleware.NewToolHandlerMiddleware),
+		server.WithToolHandlerMiddleware(middlewareRepository.LoggingMiddleware.ToolMiddleware),
 	)
 
 	s.AddTool(profileTool.NewGetProfileTool())

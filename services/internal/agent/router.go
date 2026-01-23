@@ -28,7 +28,7 @@ func NewAgentRouter(agentService *AgentService) *AgentRouter {
 
 			httpRequest := &request.HttpRequest{}
 			if err := render.Bind(r, httpRequest); err != nil {
-				render.Render(w, r, response.CleintInvalidRequest(err))
+				render.Render(w, r, response.InvalidRequest(err))
 				return
 			}
 
