@@ -32,7 +32,7 @@ func NewAgentRouter(agentService *AgentService) *AgentRouter {
 				return
 			}
 
-			resp, err := runner.Run(r.Context(), RunParams{
+			resp, err := runner.Run(RunParams{
 				Input:        httpRequest.Content,
 				UserId:       sub,
 				ClearSession: httpRequest.ClearSession,

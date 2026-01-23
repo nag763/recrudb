@@ -18,7 +18,7 @@ type Runner struct {
 	sessionService session.Service
 }
 
-func NewAgentRunner(config *AgentConfig, repository *AgentRepository, initalizer AgentInitializer) (*Runner, error) {
+func NewAgentRunner(config *AgentConfig, sessionService session.Service, initalizer AgentInitializer) (*Runner, error) {
 	ctx := context.Background()
 
 	agent, err := initalizer(ctx, config.Model)
@@ -28,7 +28,7 @@ func NewAgentRunner(config *AgentConfig, repository *AgentRepository, initalizer
 
 	runner, err := runner.New(runner.Config{
 		Agent:          agent,
-		SessionService: repository.SessionService,
+		SessionService: sessionService,
 		AppName:        agent.Name(),
 	})
 	if err != nil {
@@ -39,7 +39,7 @@ func NewAgentRunner(config *AgentConfig, repository *AgentRepository, initalizer
 		ctx:            ctx,
 		runner:         *runner,
 		appName:        agent.Name(),
-		sessionService: repository.SessionService,
+		sessionService: sessionService,
 	}, nil
 }
 
@@ -49,7 +49,7 @@ type RunParams struct {
 	ClearSession bool
 }
 
-func (r Runner) Run(ctx context.Context, params RunParams) (string, error) {
+func (r Runner) Run(params RunParams) (string, error) {
 
 	userMsg := &genai.Content{
 		Parts: []*genai.Part{{Text: params.Input}},
@@ -58,7 +58,7 @@ func (r Runner) Run(ctx context.Context, params RunParams) (string, error) {
 
 	var sb strings.Builder
 
-	request, err := r.sessionService.Create(ctx, &session.CreateRequest{
+	request, err := r.sessionService.Create(r.ctx, &session.CreateRequest{
 		AppName: r.appName,
 		UserID:  params.UserId,
 	})
@@ -80,7 +80,7 @@ func (r Runner) Run(ctx context.Context, params RunParams) (string, error) {
 		}()
 	}
 
-	for event, err := range r.runner.Run(ctx, params.UserId, sessionId, userMsg, agent.RunConfig{
+	for event, err := range r.runner.Run(r.ctx, params.UserId, sessionId, userMsg, agent.RunConfig{
 		StreamingMode: agent.StreamingModeSSE,
 	}) {
 		if err != nil {
