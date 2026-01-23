@@ -10,7 +10,7 @@ type McpDocument[T any] struct {
 
 type WithMetadata[T any] struct {
 	McpDocument[T]
-	Metadata Metadata `json:"_meta"`
+	Metadata Metadata `json:"metadata"`
 }
 
 type MetadataOnly = WithMetadata[struct{}]

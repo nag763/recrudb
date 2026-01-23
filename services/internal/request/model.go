@@ -7,7 +7,8 @@ import (
 )
 
 type HttpRequest struct {
-	Content string `json:"content"`
+	Content      string `json:"content"`
+	ClearSession bool   `json:"clearSession,omitempty"`
 }
 
 func (r *HttpRequest) validate() error {

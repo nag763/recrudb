@@ -2,12 +2,10 @@ package api
 
 import (
 	"context"
-	"nag763/recrudb/api/internal/agents"
-	"nag763/recrudb/api/internal/agents/runner"
+	"nag763/recrudb/api/internal/agent"
 	"nag763/recrudb/api/internal/profile"
 	"nag763/recrudb/api/internal/response"
 	"net/http"
-	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -15,23 +13,21 @@ import (
 	"go.uber.org/fx"
 )
 
-func NewHttpServer(lc fx.Lifecycle, profileHandler *profile.ProfileHandler) *chi.Mux {
+func NewHttpServer(lc fx.Lifecycle, profileHandler *profile.ProfileHandler, agentRouter *agent.AgentRouter) *chi.Mux {
 
 	r := chi.NewRouter()
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
-		render.Render(w, r, response.ErrNotFoundResponse())
+		render.Render(w, r, response.NotFoundResponse())
 	})
 
-	r.Use(middleware.Timeout(time.Second * 30))
+	// r.Use(middleware.Timeout(time.Minute))
+
+	r.Use(middleware.Recoverer)
 	r.Use(middleware.Logger, middleware.Recoverer)
 
 	r.Route("/api/v1", func(r chi.Router) {
-		r.Route("/agents", func(r chi.Router) {
-			r.Post("/jobOffer", runner.SessionlessHttpRunner(agents.NewJobOfferAgent))
-			r.Post("/reachOut", runner.SessionlessHttpRunner(agents.NewReachOutAgent))
-			r.Post("/cvAnalyzer", runner.SessionlessHttpRunner(agents.NewCvAnalyzer))
-		})
+		r.Mount("/agents", agentRouter.Router)
 		r.Get("/profile/me", profileHandler.HandleGetProfile)
 	})
 

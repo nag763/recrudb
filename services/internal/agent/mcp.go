@@ -1,4 +1,4 @@
-package clients
+package agent
 
 import (
 	"context"
@@ -52,7 +52,7 @@ func (s *idTokenSource) Token() (*oauth2.Token, error) {
 func getTokenSource(ctx context.Context, audience string) (oauth2.TokenSource, error) {
 	ts, err := idtoken.NewTokenSource(ctx, audience)
 	if err != nil {
-		if err.Error() != `idtoken: unsupported credentials type` {
+		if err.Error() != "idtoken: unsupported credentials type: \"authorized_user\"" {
 			return nil, err
 		}
 		gts, err := google.DefaultTokenSource(ctx)
@@ -72,7 +72,7 @@ func getHttpClient(ctx context.Context, endpoint string) (*http.Client, error) {
 	return oauth2.NewClient(ctx, tokenSource), nil
 }
 
-func GetMcpTools(ctx context.Context, allowedTools []string) (tool.Toolset, error) {
+func getMcpTools(ctx context.Context, allowedTools []string) (tool.Toolset, error) {
 
 	endpoint := utils.GetEnvOrDefault(
 		"MCP_ENDPOINT",

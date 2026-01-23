@@ -15,7 +15,7 @@ type HttpResponse[T any] struct {
 
 type HttpStringResponse = HttpResponse[string]
 
-func SuccessResponse[T any](content T) render.Renderer {
+func Success[T any](content T) render.Renderer {
 	return &HttpResponse[T]{
 		Success:    true,
 		Content:    content,
@@ -23,14 +23,14 @@ func SuccessResponse[T any](content T) render.Renderer {
 	}
 }
 
-func NoContentResponse() render.Renderer {
+func NoContent() render.Renderer {
 	return &HttpStringResponse{
 		Success:    true,
 		StatusCode: 204,
 	}
 }
 
-func ErrInternalResponse(err error) render.Renderer {
+func InternalResponse(err error) render.Renderer {
 	return &HttpStringResponse{
 		Success:    false,
 		Error:      err.Error(),
@@ -38,7 +38,7 @@ func ErrInternalResponse(err error) render.Renderer {
 	}
 }
 
-func ErrInvalidResponse(err error) render.Renderer {
+func CleintInvalidRequest(err error) render.Renderer {
 	return &HttpStringResponse{
 		Success:    false,
 		Error:      err.Error(),
@@ -46,7 +46,7 @@ func ErrInvalidResponse(err error) render.Renderer {
 	}
 }
 
-func ErrUnauthorizedResponse(err error) render.Renderer {
+func Unauthorized(err error) render.Renderer {
 	return &HttpStringResponse{
 		Success:    false,
 		Error:      err.Error(),
@@ -54,7 +54,7 @@ func ErrUnauthorizedResponse(err error) render.Renderer {
 	}
 }
 
-func ErrNotFoundResponse() render.Renderer {
+func NotFoundResponse() render.Renderer {
 	return &HttpStringResponse{
 		Success:    false,
 		Error:      "this route doesn't exist",

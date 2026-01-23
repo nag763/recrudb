@@ -1,11 +1,8 @@
-package agents
+package agent
 
 import (
 	"context"
 	_ "embed"
-	"nag763/recrudb/api/internal/agents/config"
-	"nag763/recrudb/api/internal/agents/hooks"
-	"nag763/recrudb/api/internal/clients"
 	"slices"
 
 	"google.golang.org/adk/agent"
@@ -37,7 +34,7 @@ func NewJobOfferAgent(ctx context.Context, model model.LLM) (agent.Agent, error)
 	offerStorerAllowedTools := []string{"stores_offer"}
 	allowedTools := slices.Concat(offerScorerAllowedTools, offerStorerAllowedTools)
 
-	mcpTools, err := clients.GetMcpTools(context.Background(), allowedTools)
+	mcpTools, err := getMcpTools(context.Background(), allowedTools)
 
 	parseOfferAgent, err := llmagent.New(llmagent.Config{
 		Name:        "parse_offer_agent",
@@ -69,10 +66,10 @@ func NewJobOfferAgent(ctx context.Context, model model.LLM) (agent.Agent, error)
 		Instruction:         profileScorerPrompt,
 		OutputKey:           "job_offer_score",
 		Toolsets:            []tool.Toolset{mcpTools},
-		BeforeToolCallbacks: []llmagent.BeforeToolCallback{hooks.InjectMetadata},
+		BeforeToolCallbacks: []llmagent.BeforeToolCallback{injectMetadata},
 		GenerateContentConfig: &genai.GenerateContentConfig{
 			ToolConfig: &genai.ToolConfig{
-				FunctionCallingConfig: config.RestrictConfigTo(offerScorerAllowedTools),
+				FunctionCallingConfig: restrictConfigTo(offerScorerAllowedTools),
 			},
 		},
 	})
@@ -99,7 +96,7 @@ func NewJobOfferAgent(ctx context.Context, model model.LLM) (agent.Agent, error)
 		Toolsets:    []tool.Toolset{mcpTools},
 		GenerateContentConfig: &genai.GenerateContentConfig{
 			ToolConfig: &genai.ToolConfig{
-				FunctionCallingConfig: config.RestrictConfigTo(offerStorerAllowedTools),
+				FunctionCallingConfig: restrictConfigTo(offerStorerAllowedTools),
 			},
 		},
 	})

@@ -1,11 +1,8 @@
-package agents
+package agent
 
 import (
 	"context"
 	_ "embed"
-	"nag763/recrudb/api/internal/agents/config"
-	"nag763/recrudb/api/internal/agents/hooks"
-	"nag763/recrudb/api/internal/clients"
 
 	"google.golang.org/adk/agent"
 	"google.golang.org/adk/agent/llmagent"
@@ -20,7 +17,7 @@ var cvAnalyzer string
 func NewCvAnalyzer(ctx context.Context, model model.LLM) (agent.Agent, error) {
 
 	allowedTools := []string{"store_cv"}
-	tools, err := clients.GetMcpTools(ctx, allowedTools)
+	tools, err := getMcpTools(ctx, allowedTools)
 	if err != nil {
 		return nil, err
 	}
@@ -31,10 +28,10 @@ func NewCvAnalyzer(ctx context.Context, model model.LLM) (agent.Agent, error) {
 		Description:         "Analyze CV and store details.",
 		Instruction:         cvAnalyzer,
 		Toolsets:            []tool.Toolset{tools},
-		BeforeToolCallbacks: []llmagent.BeforeToolCallback{hooks.InjectMetadata},
+		BeforeToolCallbacks: []llmagent.BeforeToolCallback{injectMetadata},
 		GenerateContentConfig: &genai.GenerateContentConfig{
 			ToolConfig: &genai.ToolConfig{
-				FunctionCallingConfig: config.RestrictConfigTo(allowedTools),
+				FunctionCallingConfig: restrictConfigTo(allowedTools),
 			},
 		},
 	})

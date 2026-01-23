@@ -24,19 +24,19 @@ func (h *ProfileHandler) HandleGetProfile(w http.ResponseWriter, r *http.Request
 	ctx := r.Context()
 	sub, err := identity.GetSubFromRequest(ctx, r.Header)
 	if err != nil {
-		render.Render(w, r, response.ErrUnauthorizedResponse(err))
+		render.Render(w, r, response.Unauthorized(err))
 		return
 	}
 
 	doc, err := h.profileRepository.GetProfile(ctx, sub)
 	if err != nil {
 		if status.Code(err) == codes.NotFound {
-			render.Render(w, r, response.NoContentResponse())
+			render.Render(w, r, response.NoContent())
 			return
 		}
-		render.Render(w, r, response.ErrInternalResponse(err))
+		render.Render(w, r, response.InternalResponse(err))
 		return
 	}
 
-	render.Render(w, r, response.SuccessResponse(doc))
+	render.Render(w, r, response.Success(doc))
 }
