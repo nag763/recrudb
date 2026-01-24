@@ -5,20 +5,27 @@ import (
 	"nag763/recrudb/api/internal/offer"
 	"nag763/recrudb/api/internal/pkg/utils"
 	"nag763/recrudb/api/internal/profile"
-	"nag763/recrudb/api/transport/mcp/middleware"
 
 	"github.com/mark3labs/mcp-go/server"
 	"go.uber.org/fx"
 )
 
-func NewMcpServer(lc fx.Lifecycle, profileTool *profile.ProfileTool, offerTool *offer.OfferTool, middlewareRepository *middleware.MiddlewareRepository) *server.SSEServer {
+type McpParams struct {
+	fx.In
+	Middlewares []server.ToolHandlerMiddleware `group:"mcp_middlewares"`
+}
+
+func NewMcpServer(lc fx.Lifecycle, mcpParams McpParams, profileTool *profile.ProfileTool, offerTool *offer.OfferTool) *server.SSEServer {
+
+	opts := []server.ServerOption{}
+	for _, middleware := range mcpParams.Middlewares {
+		opts = append(opts, server.WithToolHandlerMiddleware(middleware))
+	}
 
 	s := server.NewMCPServer(
 		"RecruDB Agent Tools",
 		"1.0.0",
 		server.WithToolCapabilities(true),
-		server.WithToolHandlerMiddleware(middlewareRepository.AuthorizationMiddleware.NewToolHandlerMiddleware),
-		server.WithToolHandlerMiddleware(middlewareRepository.LoggingMiddleware.ToolMiddleware),
 	)
 
 	s.AddTool(profileTool.NewGetProfileTool())

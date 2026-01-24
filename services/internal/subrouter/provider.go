@@ -1,8 +1,14 @@
 package subrouter
 
 import (
+	"github.com/go-chi/chi/v5"
 	"go.uber.org/fx"
 )
+
+type SubRouter struct {
+	Path   string
+	Router chi.Router
+}
 
 func asRouter(f any) any {
 	return fx.Annotate(

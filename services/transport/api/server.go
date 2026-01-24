@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"log"
 	"nag763/recrudb/api/internal/profile"
 	"nag763/recrudb/api/internal/response"
 	"nag763/recrudb/api/internal/subrouter"
@@ -26,8 +25,6 @@ func NewHttpServer(lc fx.Lifecycle, p RouterParams, profileHandler *profile.Prof
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		render.Render(w, r, response.NotFoundResponse())
 	})
-
-	log.Printf("subrouters ? %+v", p)
 
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Logger, middleware.Recoverer)

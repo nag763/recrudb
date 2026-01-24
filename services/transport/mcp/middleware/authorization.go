@@ -9,21 +9,15 @@ import (
 	"go.uber.org/zap"
 )
 
-type AuthorizationMiddleware struct {
-	log *zap.SugaredLogger
-}
-
-func NewAuthorizationMiddleware(log *zap.SugaredLogger) *AuthorizationMiddleware {
-	return &AuthorizationMiddleware{log}
-}
-
-func (m *AuthorizationMiddleware) NewToolHandlerMiddleware(next server.ToolHandlerFunc) server.ToolHandlerFunc {
-	return func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-		if _, err := identity.VerifyGoogleIDTokenFromRequest(ctx, req.Header); err != nil {
-			m.log.Warnw("tool authorization rejected", "tool", req.Params.Name)
-			return nil, err
+func NewAuthorizationMiddleware(log *zap.SugaredLogger) server.ToolHandlerMiddleware {
+	return func(thf server.ToolHandlerFunc) server.ToolHandlerFunc {
+		return func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+			if _, err := identity.VerifyGoogleIDTokenFromRequest(ctx, req.Header); err != nil {
+				log.Warnw("tool authorization rejected", "tool", req.Params.Name)
+				return nil, err
+			}
+			log.Debug("tool authorization accepted")
+			return thf(ctx, req)
 		}
-		m.log.Debug("tool authorization accepted")
-		return next(ctx, req)
 	}
 }

@@ -10,25 +10,19 @@ import (
 	"go.uber.org/zap"
 )
 
-type LoggingMiddleware struct {
-	log *zap.SugaredLogger
-}
+func NewLoggingMiddleware(log *zap.SugaredLogger) server.ToolHandlerMiddleware {
+	return func(thf server.ToolHandlerFunc) server.ToolHandlerFunc {
+		return func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+			start := time.Now()
+			uuid := uuid.NewString()
+			log.Info("tool call started", "trace", uuid, "params", req.Params.Name)
 
-func NewLoggingMiddleware(log *zap.SugaredLogger) *LoggingMiddleware {
-	return &LoggingMiddleware{log}
-}
+			result, err := thf(ctx, req)
 
-func (m *LoggingMiddleware) ToolMiddleware(next server.ToolHandlerFunc) server.ToolHandlerFunc {
-	return func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-		start := time.Now()
-		uuid := uuid.NewString()
-		m.log.Info("tool call started", "trace", uuid, "params", req.Params.Name)
+			duration := time.Since(start)
+			log.Infow("tool call ended", "trace", uuid, "success", err != nil, "tool", req.Params.Name, "duration", duration, "error=", err)
 
-		result, err := next(ctx, req)
-
-		duration := time.Since(start)
-		m.log.Infow("tool call ended", "trace", uuid, "success", err != nil, "tool", req.Params.Name, "duration", duration, "error=", err)
-
-		return result, err
+			return result, err
+		}
 	}
 }
