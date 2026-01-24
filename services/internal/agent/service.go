@@ -7,19 +7,21 @@ type AgentService struct {
 }
 
 func NewAgentService(config *AgentConfig) (*AgentService, error) {
-	runners := make(map[string]*Runner, 2)
 	sessionService := session.InMemoryService()
-	cvAnalyzerRunner, err := NewAgentRunner(config, sessionService, NewCvAnalyzer)
-	if err != nil {
-		return nil, err
-	}
-	runners["cvAnalyzer"] = cvAnalyzerRunner
 
-	jobOfferAgent, err := NewAgentRunner(config, sessionService, NewJobOfferAgent)
-	if err != nil {
-		return nil, err
+	definitions := map[string]AgentInitializer{
+		"/cvAnalyzer": NewCvAnalyzer,
+		"/jobOffer":   NewJobOfferAgent,
 	}
-	runners["jobOffer"] = jobOfferAgent
+
+	runners := make(map[string]*Runner, len(definitions))
+	for path, init := range definitions {
+		runner, err := NewAgentRunner(config, sessionService, init)
+		if err != nil {
+			return nil, err
+		}
+		runners[path] = runner
+	}
 
 	return &AgentService{
 		Runners: runners,

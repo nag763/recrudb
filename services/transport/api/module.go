@@ -6,6 +6,8 @@ import (
 )
 
 var Module = fx.Module("api",
-	fx.Provide(NewHttpServer),
+	fx.Provide(
+		NewHttpServer,
+	),
 	fx.Invoke(func(*chi.Mux) {}),
 )

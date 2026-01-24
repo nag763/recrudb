@@ -2,9 +2,10 @@ package api
 
 import (
 	"context"
-	"nag763/recrudb/api/internal/agent"
+	"log"
 	"nag763/recrudb/api/internal/profile"
 	"nag763/recrudb/api/internal/response"
+	"nag763/recrudb/api/internal/subrouter"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -13,7 +14,12 @@ import (
 	"go.uber.org/fx"
 )
 
-func NewHttpServer(lc fx.Lifecycle, profileHandler *profile.ProfileHandler, agentRouter *agent.AgentRouter) *chi.Mux {
+type RouterParams struct {
+	fx.In
+	SubRouters []subrouter.SubRouter `group:"subrouters"`
+}
+
+func NewHttpServer(lc fx.Lifecycle, p RouterParams, profileHandler *profile.ProfileHandler) *chi.Mux {
 
 	r := chi.NewRouter()
 
@@ -21,14 +27,15 @@ func NewHttpServer(lc fx.Lifecycle, profileHandler *profile.ProfileHandler, agen
 		render.Render(w, r, response.NotFoundResponse())
 	})
 
-	// r.Use(middleware.Timeout(time.Minute))
+	log.Printf("subrouters ? %+v", p)
 
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Logger, middleware.Recoverer)
 
 	r.Route("/api/v1", func(r chi.Router) {
-		r.Mount("/agents", agentRouter.Router)
-		r.Get("/profile/me", profileHandler.HandleGetProfile)
+		for _, sub := range p.SubRouters {
+			r.Mount(sub.Path, sub.Router)
+		}
 	})
 
 	lc.Append(fx.Hook{
