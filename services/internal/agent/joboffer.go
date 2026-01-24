@@ -1,14 +1,13 @@
 package agent
 
 import (
-	"context"
 	_ "embed"
+	"nag763/recrudb/api/internal/injection"
 	"slices"
 
 	"google.golang.org/adk/agent"
 	"google.golang.org/adk/agent/llmagent"
 	"google.golang.org/adk/agent/workflowagents/sequentialagent"
-	"google.golang.org/adk/model"
 	"google.golang.org/adk/tool"
 	"google.golang.org/adk/tool/geminitool"
 	"google.golang.org/genai"
@@ -29,16 +28,16 @@ var recapAgentPrompt string
 //go:embed prompts/store_offer.txt
 var storeOfferAgentPrompt string
 
-func NewJobOfferAgent(ctx context.Context, model model.LLM) (agent.Agent, error) {
+func NewJobOfferAgent(agentConfig *AgentConfig) (*injection.HttpAgent, error) {
 	offerScorerAllowedTools := []string{"get_profile"}
 	offerStorerAllowedTools := []string{"stores_offer"}
 	allowedTools := slices.Concat(offerScorerAllowedTools, offerStorerAllowedTools)
 
-	mcpTools, err := getMcpTools(context.Background(), allowedTools)
+	mcpTools, err := getMcpTools(allowedTools)
 
 	parseOfferAgent, err := llmagent.New(llmagent.Config{
 		Name:        "parse_offer_agent",
-		Model:       model,
+		Model:       agentConfig.Model,
 		Description: "Parse a job offer.",
 		Instruction: offerParserPrompt,
 		OutputKey:   "summed_up_offer",
@@ -49,7 +48,7 @@ func NewJobOfferAgent(ctx context.Context, model model.LLM) (agent.Agent, error)
 
 	lookupCompanyAgent, err := llmagent.New(llmagent.Config{
 		Name:        "lookup_company",
-		Model:       model,
+		Model:       agentConfig.Model,
 		Description: "Look up on the company and provides a recap",
 		Instruction: companyLookupPrompt,
 		OutputKey:   "company_lookup",
@@ -61,7 +60,7 @@ func NewJobOfferAgent(ctx context.Context, model model.LLM) (agent.Agent, error)
 
 	offerScorerAgent, err := llmagent.New(llmagent.Config{
 		Name:                "offer_scorer",
-		Model:               model,
+		Model:               agentConfig.Model,
 		Description:         "Goal is to match my profile with the offer, on a score out of 100",
 		Instruction:         profileScorerPrompt,
 		OutputKey:           "job_offer_score",
@@ -80,7 +79,7 @@ func NewJobOfferAgent(ctx context.Context, model model.LLM) (agent.Agent, error)
 	recapAgent, err := llmagent.New(llmagent.Config{
 		Name:        "recap_agent",
 		Description: "Recap informations of other agents into a few lines",
-		Model:       model,
+		Model:       agentConfig.Model,
 		Instruction: recapAgentPrompt,
 		OutputKey:   "recap",
 	})
@@ -91,7 +90,7 @@ func NewJobOfferAgent(ctx context.Context, model model.LLM) (agent.Agent, error)
 	storeOfferAgent, err := llmagent.New(llmagent.Config{
 		Name:        "store_offer_agent",
 		Description: "Stores the offer details",
-		Model:       model,
+		Model:       agentConfig.Model,
 		Instruction: storeOfferAgentPrompt,
 		Toolsets:    []tool.Toolset{mcpTools},
 		GenerateContentConfig: &genai.GenerateContentConfig{
@@ -100,6 +99,9 @@ func NewJobOfferAgent(ctx context.Context, model model.LLM) (agent.Agent, error)
 			},
 		},
 	})
+	if err != nil {
+		return nil, err
+	}
 
 	jobOfferMatcher, err := sequentialagent.New(sequentialagent.Config{
 		AgentConfig: agent.Config{
@@ -118,5 +120,8 @@ func NewJobOfferAgent(ctx context.Context, model model.LLM) (agent.Agent, error)
 		return nil, err
 	}
 
-	return jobOfferMatcher, nil
+	return &injection.HttpAgent{
+		Path:  "/jobOffer",
+		Agent: jobOfferMatcher,
+	}, nil
 }

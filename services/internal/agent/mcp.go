@@ -72,14 +72,14 @@ func getHttpClient(ctx context.Context, endpoint string) (*http.Client, error) {
 	return oauth2.NewClient(ctx, tokenSource), nil
 }
 
-func getMcpTools(ctx context.Context, allowedTools []string) (tool.Toolset, error) {
+func getMcpTools(allowedTools []string) (tool.Toolset, error) {
 
 	endpoint := utils.GetEnvOrDefault(
 		"MCP_ENDPOINT",
 		"http://localhost:3000/sse",
 	)
 
-	httpClient, err := getHttpClient(ctx, endpoint)
+	httpClient, err := getHttpClient(context.Background(), endpoint)
 	if err != nil {
 		return nil, err
 	}

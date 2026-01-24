@@ -8,6 +8,7 @@ import (
 
 var Module = fx.Module("agent",
 	fx.Provide(NewAgentConfig),
-	fx.Provide(NewAgentService),
+	injection.AsAgentRouter(NewCvAnalyzer),
+	injection.AsAgentRouter(NewJobOfferAgent),
 	injection.AsRouterProvider(NewAgentRouter),
 )

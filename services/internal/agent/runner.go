@@ -18,13 +18,8 @@ type Runner struct {
 	sessionService session.Service
 }
 
-func NewAgentRunner(config *AgentConfig, sessionService session.Service, initalizer AgentInitializer) (*Runner, error) {
+func NewAgentRunner(sessionService session.Service, agent agent.Agent) (*Runner, error) {
 	ctx := context.Background()
-
-	agent, err := initalizer(ctx, config.Model)
-	if err != nil {
-		return nil, err
-	}
 
 	runner, err := runner.New(runner.Config{
 		Agent:          agent,
