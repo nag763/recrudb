@@ -10,12 +10,13 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/mark3labs/mcp-go v0.43.2
 	github.com/modelcontextprotocol/go-sdk v1.2.0
+	go.uber.org/fx v1.24.0
+	go.uber.org/zap v1.27.1
 	golang.org/x/oauth2 v0.34.0
-	google.golang.org/adk v0.3.0
+	google.golang.org/adk v0.3.1-0.20260123125504-aec89487da29
 	google.golang.org/api v0.260.0
 	google.golang.org/genai v1.42.0
 	google.golang.org/grpc v1.78.0
-	go.uber.org/fx v1.24.0 
 )
 
 require (
@@ -23,9 +24,7 @@ require (
 	cloud.google.com/go/auth/oauth2adapt v0.2.8 // indirect
 	cloud.google.com/go/compute/metadata v0.9.0 // indirect
 	cloud.google.com/go/longrunning v0.8.0 // indirect
-	github.com/a2aproject/a2a-go v0.3.4 // indirect
 	github.com/ajg/form v1.5.1 // indirect
-	github.com/awalterschulze/gographviz v2.0.3+incompatible // indirect
 	github.com/bahlo/generic-list-go v0.2.0 // indirect
 	github.com/buger/jsonparser v1.1.1 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
@@ -38,11 +37,9 @@ require (
 	github.com/google/safehtml v0.1.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.3.11 // indirect
 	github.com/googleapis/gax-go/v2 v2.16.0 // indirect
-	github.com/gorilla/mux v1.8.1 // indirect
 	github.com/gorilla/websocket v1.5.3 // indirect
 	github.com/invopop/jsonschema v0.13.0 // indirect
 	github.com/mailru/easyjson v0.9.1 // indirect
-	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/spf13/cast v1.10.0 // indirect
 	github.com/wk8/go-ordered-map/v2 v2.1.8 // indirect
 	github.com/yosida95/uritemplate/v3 v3.0.2 // indirect
@@ -55,7 +52,6 @@ require (
 	go.opentelemetry.io/otel/trace v1.39.0 // indirect
 	go.uber.org/dig v1.19.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
-	go.uber.org/zap v1.27.1 // indirect
 	golang.org/x/crypto v0.47.0 // indirect
 	golang.org/x/net v0.49.0 // indirect
 	golang.org/x/sync v0.19.0 // indirect
