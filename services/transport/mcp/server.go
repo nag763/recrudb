@@ -4,7 +4,6 @@ import (
 	"context"
 	"nag763/recrudb/api/internal/injection"
 	"nag763/recrudb/api/internal/pkg/utils"
-	"nag763/recrudb/api/internal/profile"
 
 	"github.com/mark3labs/mcp-go/server"
 	"go.uber.org/fx"
@@ -16,7 +15,7 @@ type McpParams struct {
 	Middlewares []server.ToolHandlerMiddleware `group:"mcp_middlewares"`
 }
 
-func NewMcpServer(lc fx.Lifecycle, mcpParams McpParams, profileTool *profile.ProfileTool) *server.SSEServer {
+func NewMcpServer(lc fx.Lifecycle, mcpParams McpParams) *server.SSEServer {
 
 	opts := []server.ServerOption{server.WithToolCapabilities(true)}
 	for _, middleware := range mcpParams.Middlewares {
