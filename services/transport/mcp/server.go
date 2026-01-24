@@ -2,7 +2,7 @@ package mcp
 
 import (
 	"context"
-	"nag763/recrudb/api/internal/offer"
+	"nag763/recrudb/api/internal/injection"
 	"nag763/recrudb/api/internal/pkg/utils"
 	"nag763/recrudb/api/internal/profile"
 
@@ -12,10 +12,11 @@ import (
 
 type McpParams struct {
 	fx.In
+	Tools       []injection.Tool               `group:"mcp_tools"`
 	Middlewares []server.ToolHandlerMiddleware `group:"mcp_middlewares"`
 }
 
-func NewMcpServer(lc fx.Lifecycle, mcpParams McpParams, profileTool *profile.ProfileTool, offerTool *offer.OfferTool) *server.SSEServer {
+func NewMcpServer(lc fx.Lifecycle, mcpParams McpParams, profileTool *profile.ProfileTool) *server.SSEServer {
 
 	opts := []server.ServerOption{server.WithToolCapabilities(true)}
 	for _, middleware := range mcpParams.Middlewares {
@@ -28,10 +29,9 @@ func NewMcpServer(lc fx.Lifecycle, mcpParams McpParams, profileTool *profile.Pro
 		opts...,
 	)
 
-	s.AddTool(profileTool.NewGetProfileTool())
-	s.AddTool(profileTool.NewStoreProfileTool())
-
-	s.AddTool(offerTool.NewStoreOfferTool())
+	for _, tool := range mcpParams.Tools {
+		s.AddTool(tool.Tool, tool.Handler)
+	}
 
 	httpServer := server.NewSSEServer(s)
 

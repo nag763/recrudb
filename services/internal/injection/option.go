@@ -23,6 +23,10 @@ func AsMcpMiddlewareProvider(f any) fx.Option {
 	return asValueProvider(f, "mcp_middlewares")
 }
 
+func AsMcpToolProvider(f any) fx.Option {
+	return asValueProvider(f, "mcp_tools")
+}
+
 func AsAgentRouter(f any) fx.Option {
 	return asValueProvider(f, "http_agent")
 }

@@ -8,7 +8,8 @@ import (
 
 var Module = fx.Module("profile",
 	fx.Provide(NewProfileRepository),
-	fx.Provide(NewProfileTool),
 	fx.Provide(NewProfileHandler),
 	injection.AsRouterProvider(NewProfileRouter),
+	injection.AsMcpToolProvider(NewGetProfileTool),
+	injection.AsMcpToolProvider(NewStoreProfileTool),
 )
