@@ -51,3 +51,23 @@ func NewStoreProfileTool(profileRepository *ProfileRepository) injection.Tool {
 		},
 	}
 }
+
+func NewStoreOfferTool(profileRepository *ProfileRepository) injection.Tool {
+	return injection.Tool{
+		Tool: mcp.NewTool("stores_offer",
+			mcp.WithDescription("Stores offers details"),
+			mcp.WithInputSchema[metadata.McpDocument[Offer]](),
+		),
+		Handler: func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+			var offer *metadata.WithMetadata[Offer]
+			if err := request.BindArguments(&offer); err != nil {
+				return mcp.NewToolResultError("ERROR WHILE ACCESSING DOC ID"), nil
+			}
+
+			if _, err := profileRepository.StoreOffer(ctx, offer.Metadata.UserId, offer.Document); err != nil {
+				return mcp.NewToolResultError("ERROR WHILE STORING IN FIRESTORE"), nil
+			}
+			return mcp.NewToolResultText("OK"), nil
+		},
+	}
+}

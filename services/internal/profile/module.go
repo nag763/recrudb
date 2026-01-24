@@ -12,4 +12,5 @@ var Module = fx.Module("profile",
 	injection.AsRouterProvider(NewProfileRouter),
 	injection.AsMcpToolProvider(NewGetProfileTool),
 	injection.AsMcpToolProvider(NewStoreProfileTool),
+	injection.AsMcpToolProvider(NewStoreOfferTool),
 )

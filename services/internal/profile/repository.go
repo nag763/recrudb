@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"cloud.google.com/go/firestore"
+	"github.com/google/uuid"
 )
 
 type ProfileRepository struct {
@@ -31,4 +32,8 @@ func (r *ProfileRepository) GetProfile(ctx context.Context, id string) (*Profile
 
 func (r *ProfileRepository) StoreProfile(ctx context.Context, id string, profile Profile) (*firestore.WriteResult, error) {
 	return r.firestoreClient.Collection("profile").Doc(id).Set(ctx, profile)
+}
+
+func (r *ProfileRepository) StoreOffer(ctx context.Context, id string, offer Offer) (*firestore.WriteResult, error) {
+	return r.firestoreClient.Collection("profile").Doc(id).Collection("offer").Doc(uuid.NewString()).Set(ctx, offer)
 }

@@ -2,7 +2,6 @@ package main
 
 import (
 	"nag763/recrudb/api/internal/db"
-	"nag763/recrudb/api/internal/offer"
 	"nag763/recrudb/api/internal/pkg/logger"
 	"nag763/recrudb/api/internal/profile"
 	"nag763/recrudb/api/transport/mcp"
@@ -16,7 +15,6 @@ func main() {
 		logger.Module,
 		db.Module,
 		profile.Module,
-		offer.Module,
 		middleware.Module,
 		mcp.Module,
 	).Run()

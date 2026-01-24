@@ -8,7 +8,9 @@ import (
 
 func NewProfileRouter(profileHandler *ProfileHandler) injection.SubRouter {
 	r := chi.NewMux()
+
 	r.Get("/me", profileHandler.HandleGetProfile)
+
 	return injection.SubRouter{
 		Router: r,
 		Path:   "/profile",
