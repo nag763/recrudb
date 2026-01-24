@@ -17,6 +17,7 @@ func main() {
 		profile.Module,
 		agent.Module,
 		api.Module,
+
 		fx.Invoke(func(*chi.Mux) {}),
 	).Run()
 }

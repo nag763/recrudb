@@ -15,7 +15,7 @@ func NewLoggingMiddleware(log *zap.SugaredLogger) server.ToolHandlerMiddleware {
 		return func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 			start := time.Now()
 			uuid := uuid.NewString()
-			log.Info("tool call started", "trace", uuid, "params", req.Params.Name)
+			log.Infow("tool call started", "trace", uuid, "params", req.Params.Name)
 
 			result, err := thf(ctx, req)
 

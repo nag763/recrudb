@@ -3,22 +3,21 @@ package api
 import (
 	"context"
 	"nag763/recrudb/api/internal/injection"
-	"nag763/recrudb/api/internal/profile"
 	"nag763/recrudb/api/internal/response"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/render"
 	"go.uber.org/fx"
 )
 
 type RouterParams struct {
 	fx.In
-	SubRouters []injection.SubRouter `group:"subrouters"`
+	Middlewares []func(http.Handler) http.Handler `group:"api_middlewares"`
+	SubRouters  []injection.SubRouter             `group:"subrouters"`
 }
 
-func NewHttpServer(lc fx.Lifecycle, p RouterParams, profileHandler *profile.ProfileHandler) *chi.Mux {
+func NewHttpServer(lc fx.Lifecycle, p RouterParams) *chi.Mux {
 
 	r := chi.NewRouter()
 
@@ -26,8 +25,7 @@ func NewHttpServer(lc fx.Lifecycle, p RouterParams, profileHandler *profile.Prof
 		render.Render(w, r, response.NotFoundResponse())
 	})
 
-	r.Use(middleware.Recoverer)
-	r.Use(middleware.Logger, middleware.Recoverer)
+	r.Use(p.Middlewares...)
 
 	r.Route("/api/v1", func(r chi.Router) {
 		for _, sub := range p.SubRouters {
