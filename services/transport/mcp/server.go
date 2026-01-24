@@ -17,7 +17,7 @@ type McpParams struct {
 
 func NewMcpServer(lc fx.Lifecycle, mcpParams McpParams, profileTool *profile.ProfileTool, offerTool *offer.OfferTool) *server.SSEServer {
 
-	opts := []server.ServerOption{}
+	opts := []server.ServerOption{server.WithToolCapabilities(true)}
 	for _, middleware := range mcpParams.Middlewares {
 		opts = append(opts, server.WithToolHandlerMiddleware(middleware))
 	}
@@ -25,7 +25,7 @@ func NewMcpServer(lc fx.Lifecycle, mcpParams McpParams, profileTool *profile.Pro
 	s := server.NewMCPServer(
 		"RecruDB Agent Tools",
 		"1.0.0",
-		server.WithToolCapabilities(true),
+		opts...,
 	)
 
 	s.AddTool(profileTool.NewGetProfileTool())

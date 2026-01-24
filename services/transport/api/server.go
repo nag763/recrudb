@@ -2,9 +2,9 @@ package api
 
 import (
 	"context"
+	"nag763/recrudb/api/internal/injection"
 	"nag763/recrudb/api/internal/profile"
 	"nag763/recrudb/api/internal/response"
-	"nag763/recrudb/api/internal/subrouter"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -15,7 +15,7 @@ import (
 
 type RouterParams struct {
 	fx.In
-	SubRouters []subrouter.SubRouter `group:"subrouters"`
+	SubRouters []injection.SubRouter `group:"subrouters"`
 }
 
 func NewHttpServer(lc fx.Lifecycle, p RouterParams, profileHandler *profile.ProfileHandler) *chi.Mux {

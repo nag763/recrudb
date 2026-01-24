@@ -1,7 +1,7 @@
 package agent
 
 import (
-	"nag763/recrudb/api/internal/subrouter"
+	"nag763/recrudb/api/internal/injection"
 
 	"go.uber.org/fx"
 )
@@ -9,5 +9,5 @@ import (
 var Module = fx.Module("agent",
 	fx.Provide(NewAgentConfig),
 	fx.Provide(NewAgentService),
-	subrouter.AsRouterProvider(NewAgentRouter),
+	injection.AsRouterProvider(NewAgentRouter),
 )

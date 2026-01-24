@@ -1,12 +1,12 @@
 package middleware
 
 import (
-	"nag763/recrudb/api/internal/middleware"
+	"nag763/recrudb/api/internal/injection"
 
 	"go.uber.org/fx"
 )
 
 var Module = fx.Module("middelware_mcp",
-	middleware.AsMcpMiddlewareProvider(NewAuthorizationMiddleware),
-	middleware.AsMcpMiddlewareProvider(NewLoggingMiddleware),
+	injection.AsMcpMiddlewareProvider(NewAuthorizationMiddleware),
+	injection.AsMcpMiddlewareProvider(NewLoggingMiddleware),
 )
