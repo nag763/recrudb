@@ -9,25 +9,25 @@ import (
 	"google.golang.org/api/iterator"
 )
 
-type ProfileRepository struct {
+type FirestoreProfileRepository struct {
 	firestoreClient *firestore.Client
 }
 
-func NewProfileRepository(firestoreClient *firestore.Client) *ProfileRepository {
-	return &ProfileRepository{
+func NewFirestoreProfileRepository(firestoreClient *firestore.Client) *FirestoreProfileRepository {
+	return &FirestoreProfileRepository{
 		firestoreClient,
 	}
 }
 
-func (r *ProfileRepository) getProfileDocument(id string) *firestore.DocumentRef {
+func (r *FirestoreProfileRepository) getProfileDocument(id string) *firestore.DocumentRef {
 	return r.firestoreClient.Collection("profile").Doc(id)
 }
 
-func (r *ProfileRepository) getProfileDocumentOffers(id string) *firestore.CollectionRef {
+func (r *FirestoreProfileRepository) getProfileDocumentOffers(id string) *firestore.CollectionRef {
 	return r.getProfileDocument(id).Collection("offers")
 }
 
-func (r *ProfileRepository) GetProfile(ctx context.Context, id string) (*Profile, error) {
+func (r *FirestoreProfileRepository) GetProfile(ctx context.Context, id string) (*Profile, error) {
 	doc, err := r.getProfileDocument(id).Get(ctx)
 	if err != nil {
 		return nil, err
@@ -40,11 +40,19 @@ func (r *ProfileRepository) GetProfile(ctx context.Context, id string) (*Profile
 	return &p, nil
 }
 
-func (r *ProfileRepository) StoreProfile(ctx context.Context, id string, profile Profile) (*firestore.WriteResult, error) {
-	return r.getProfileDocument(id).Set(ctx, profile)
+func (r *FirestoreProfileRepository) StoreProfile(ctx context.Context, id string, profile Profile) (string, error) {
+	if _, err := r.getProfileDocument(id).Set(ctx, profile); err != nil {
+		return "", nil
+	}
+	return id, nil
 }
 
-func (r *ProfileRepository) GetOffers(ctx context.Context, id string) (*[]OfferShort, error) {
+func (r *FirestoreProfileRepository) DeleteProfile(ctx context.Context, id string) error {
+	_, err := r.getProfileDocument(id).Delete(ctx)
+	return err
+}
+
+func (r *FirestoreProfileRepository) GetOffers(ctx context.Context, id string) ([]OfferShort, error) {
 	iter := r.getProfileDocumentOffers(id).OrderBy("CreatedAt", firestore.Desc).Documents(ctx)
 	defer iter.Stop()
 
@@ -75,9 +83,31 @@ func (r *ProfileRepository) GetOffers(ctx context.Context, id string) (*[]OfferS
 		})
 	}
 
-	return &offerShort, nil
+	return offerShort, nil
 }
 
-func (r *ProfileRepository) StoreOffer(ctx context.Context, profileId string, offer Offer) (*firestore.WriteResult, error) {
-	return r.getProfileDocumentOffers(profileId).Doc(uuid.NewString()).Set(ctx, offer)
+func (r *FirestoreProfileRepository) GetOffer(ctx context.Context, profileId, id string) (*Offer, error) {
+	doc, err := r.getProfileDocumentOffers(profileId).Doc(id).Get(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var o Offer
+	if err := doc.DataTo(&o); err != nil {
+		return nil, err
+	}
+	return &o, nil
+}
+
+func (r *FirestoreProfileRepository) DeleteOffer(ctx context.Context, profileId, id string) error {
+	_, err := r.getProfileDocumentOffers(profileId).Doc(id).Delete(ctx)
+	return err
+}
+
+func (r *FirestoreProfileRepository) StoreOffer(ctx context.Context, profileId string, offer Offer) (string, error) {
+	uuid := uuid.NewString()
+	if _, err := r.getProfileDocumentOffers(profileId).Doc(uuid).Set(ctx, offer); err != nil {
+		return "", err
+	}
+	return uuid, nil
 }

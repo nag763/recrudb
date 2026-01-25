@@ -8,7 +8,7 @@ import (
 
 var Module = fx.Module("profile",
 	fx.Provide(
-		fx.Annotate(NewProfileRepository,
+		fx.Annotate(NewFirestoreProfileRepository,
 			fx.As(new(Repository)),
 		),
 	),
