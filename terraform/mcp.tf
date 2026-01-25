@@ -2,14 +2,12 @@ resource "google_cloud_run_v2_service" "mcp" {
   name     = "recrudb-mcp"
   location = var.region
   ingress  = "INGRESS_TRAFFIC_INTERNAL_ONLY"
-  provider = google-beta
 
   template {
-
+    timeout = "300s"
+    service_account = google_service_account.cr_mcp_identity.email
     containers {
-      image          = "scratch"
-      base_image_uri = "us-central1-docker.pkg.dev/serverless-runtimes/google-22/runtimes/go125"
-      command        = ["./mcp"]
+      image = "us-docker.pkg.dev/cloudrun/container/hello"
       ports {
         container_port = 3000
       }
@@ -19,14 +17,6 @@ resource "google_cloud_run_v2_service" "mcp" {
 
           cpu    = "1"
           memory = "512Mi"
-        }
-      }
-
-      source_code {
-        cloud_storage_source {
-          bucket     = google_storage_bucket.bucket.name
-          object     = google_storage_bucket_object.mcp.name
-          generation = google_storage_bucket_object.mcp.generation
         }
       }
 
@@ -52,8 +42,22 @@ resource "google_cloud_run_v2_service" "mcp" {
   depends_on = [google_project_service.gcp_services]
 }
 
+
+resource "google_service_account" "cr_mcp_identity" {
+  account_id   = "recrudb-mcp-sa"
+  display_name = "Cloud Run Firestore API Identity"
+}
+
+# Granting Firestore & Vertex AI access
+resource "google_project_iam_member" "mcpm_roles" {
+  for_each = toset(["roles/datastore.user"])
+  project = google_service_account.cr_mcp_identity.project
+  role    = each.key
+  member  = google_service_account.cr_mcp_identity.member
+}
+
 resource "google_cloud_run_v2_service_iam_member" "cr_access" {
-  for_each = toset([module.function_job_offer.service_account.member, module.function_cv_analyzer.service_account.member])
+  for_each = toset([google_service_account.cr_api_identity.member])
   name     = google_cloud_run_v2_service.mcp.name
   location = google_cloud_run_v2_service.mcp.location
   role     = "roles/run.invoker"
