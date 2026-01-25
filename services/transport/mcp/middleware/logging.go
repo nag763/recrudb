@@ -20,7 +20,8 @@ func NewLoggingMiddleware(log *zap.SugaredLogger) server.ToolHandlerMiddleware {
 			result, err := thf(ctx, req)
 
 			duration := time.Since(start)
-			log.Infow("tool call ended", "trace", uuid, "success", err != nil, "tool", req.Params.Name, "duration", duration, "error=", err)
+
+			log.Infow("tool call ended", "trace", uuid, "success", result.IsError || err != nil, "tool", req.Params.Name, "duration", duration, "error", err)
 
 			return result, err
 		}

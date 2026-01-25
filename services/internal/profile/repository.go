@@ -27,13 +27,6 @@ func (r *ProfileRepository) getProfileDocumentOffers(id string) *firestore.Colle
 	return r.getProfileDocument(id).Collection("offers")
 }
 
-func storeWithTimestamp(ctx context.Context, docRef *firestore.DocumentRef, data interface{}) (*firestore.WriteResult, error) {
-	if _, err := docRef.Set(ctx, data); err != nil {
-		return nil, err
-	}
-	return docRef.Set(ctx, map[string]interface{}{"CreatedAt": firestore.ServerTimestamp}, firestore.MergeAll)
-}
-
 func (r *ProfileRepository) GetProfile(ctx context.Context, id string) (*Profile, error) {
 	doc, err := r.getProfileDocument(id).Get(ctx)
 	if err != nil {
@@ -48,8 +41,7 @@ func (r *ProfileRepository) GetProfile(ctx context.Context, id string) (*Profile
 }
 
 func (r *ProfileRepository) StoreProfile(ctx context.Context, id string, profile Profile) (*firestore.WriteResult, error) {
-	docRef := r.getProfileDocument(id)
-	return storeWithTimestamp(ctx, docRef, profile)
+	return r.getProfileDocument(id).Set(ctx, profile)
 }
 
 func (r *ProfileRepository) GetOffers(ctx context.Context, id string) (*[]OfferShort, error) {
@@ -64,25 +56,28 @@ func (r *ProfileRepository) GetOffers(ctx context.Context, id string) (*[]OfferS
 			break
 		}
 		if err != nil {
-			return nil, fmt.Errorf("failed to iterate over documents")
+			return nil, fmt.Errorf("failed to iterate over documents %w", err)
 		}
 
 		offerName, err := doc.DataAt("Name")
 		if err != nil {
 			offerName = ""
 		}
+		name, ok := offerName.(string)
+		if !ok {
+			name = ""
+		}
 
 		offerShort = append(offerShort, OfferShort{
 			Id:        doc.Ref.ID,
 			CreatedAt: doc.CreateTime,
-			Name:      offerName.(string),
+			Name:      name,
 		})
 	}
 
 	return &offerShort, nil
 }
 
-func (r *ProfileRepository) StoreOffer(ctx context.Context, id string, offer Offer) (*firestore.WriteResult, error) {
-	docRef := r.getProfileDocumentOffers(id).Doc(uuid.NewString())
-	return storeWithTimestamp(ctx, docRef, offer)
+func (r *ProfileRepository) StoreOffer(ctx context.Context, profileId string, offer Offer) (*firestore.WriteResult, error) {
+	return r.getProfileDocumentOffers(profileId).Doc(uuid.NewString()).Set(ctx, offer)
 }

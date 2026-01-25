@@ -35,16 +35,16 @@ type OfferShort struct {
 }
 
 type Offer struct {
-	EnterpriseName        string   `json:"enterpriseName"`
-	Contact               Contact  `json:"contact"`
-	Address               Address  `json:"address"`
-	TechnicalRequirements []string `json:"techRequirements"`
-	CandidateScore        float32  `json:"candidateScore"`
-	HowToApply            string   `json:"howToApply"`
-	Description           string   `json:"description"`
-	AgentRecap            string   `json:"agentRecap"`
-	Name                  string   `json:"name"`
-	CreatedAt             string   `json:"-"`
+	EnterpriseName        string    `json:"enterpriseName"`
+	Contact               Contact   `json:"contact"`
+	Address               Address   `json:"address"`
+	TechnicalRequirements []string  `json:"techRequirements"`
+	CandidateScore        float32   `json:"candidateScore"`
+	HowToApply            string    `json:"howToApply"`
+	Description           string    `json:"description"`
+	AgentRecap            string    `json:"agentRecap"`
+	Name                  string    `json:"name"`
+	CreatedAt             time.Time `json:"-" firestore:"CreatedAt,serverTimestamp"`
 }
 
 type Address struct {
@@ -75,7 +75,7 @@ type Profile struct {
 		Link string `json:",omitempty"`
 	}
 	Location  Address   `json:",omitempty"`
-	CreatedAt time.Time `json:"-"`
+	CreatedAt time.Time `json:"-" firestore:"CreatedAt,serverTimestamp"`
 }
 
 type ProfileMcp = metadata.McpDocument[Profile]
