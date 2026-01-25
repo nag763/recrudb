@@ -1,5 +1,6 @@
 Your goal is to store the content of what is below using the `stores_offer` tool.
 
+In the `Name` field, try to concatenate the Enterprise name and the position, ie "Google - UX Designer"
 
 Consider by order of importance 
 

@@ -88,11 +88,12 @@ func NewJobOfferAgent(agentConfig *AgentConfig) (*injection.HttpAgent, error) {
 	}
 
 	storeOfferAgent, err := llmagent.New(llmagent.Config{
-		Name:        "store_offer_agent",
-		Description: "Stores the offer details",
-		Model:       agentConfig.Model,
-		Instruction: storeOfferAgentPrompt,
-		Toolsets:    []tool.Toolset{mcpTools},
+		Name:                "store_offer_agent",
+		Description:         "Stores the offer details",
+		Model:               agentConfig.Model,
+		Instruction:         storeOfferAgentPrompt,
+		Toolsets:            []tool.Toolset{mcpTools},
+		BeforeToolCallbacks: []llmagent.BeforeToolCallback{injectMetadata},
 		GenerateContentConfig: &genai.GenerateContentConfig{
 			ToolConfig: &genai.ToolConfig{
 				FunctionCallingConfig: restrictConfigTo(offerStorerAllowedTools),

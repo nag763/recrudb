@@ -7,6 +7,7 @@ import (
 	"nag763/recrudb/api/internal/metadata"
 
 	"github.com/mark3labs/mcp-go/mcp"
+	"go.uber.org/zap"
 )
 
 func NewGetProfileTool(profileRepository *ProfileRepository) injection.Tool {
@@ -52,7 +53,7 @@ func NewStoreProfileTool(profileRepository *ProfileRepository) injection.Tool {
 	}
 }
 
-func NewStoreOfferTool(profileRepository *ProfileRepository) injection.Tool {
+func NewStoreOfferTool(profileRepository *ProfileRepository, logger *zap.SugaredLogger) injection.Tool {
 	return injection.Tool{
 		Tool: mcp.NewTool("stores_offer",
 			mcp.WithDescription("Stores offers details"),

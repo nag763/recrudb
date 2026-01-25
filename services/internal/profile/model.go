@@ -28,6 +28,12 @@ func NewCommunication() Communication {
 	}
 }
 
+type OfferShort struct {
+	Id        string    `json:"id"`
+	CreatedAt time.Time `json:"createdAt"`
+	Name      string    `json:"name,omitempty" firestore:"name"`
+}
+
 type Offer struct {
 	EnterpriseName        string   `json:"enterpriseName"`
 	Contact               Contact  `json:"contact"`
@@ -37,6 +43,8 @@ type Offer struct {
 	HowToApply            string   `json:"howToApply"`
 	Description           string   `json:"description"`
 	AgentRecap            string   `json:"agentRecap"`
+	Name                  string   `json:"name"`
+	CreatedAt             string   `json:"-"`
 }
 
 type Address struct {
@@ -66,7 +74,8 @@ type Profile struct {
 		Name string `json:",omitempty"`
 		Link string `json:",omitempty"`
 	}
-	Location Address `json:",omitempty"`
+	Location  Address   `json:",omitempty"`
+	CreatedAt time.Time `json:"-"`
 }
 
 type ProfileMcp = metadata.McpDocument[Profile]
