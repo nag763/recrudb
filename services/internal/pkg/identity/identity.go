@@ -12,11 +12,14 @@ import (
 )
 
 func extractBearer(req http.Header) (string, error) {
-	authorizationHeader := req.Get("Authorization")
-	if authorizationHeader == "" {
-		return "", errors.New("Authorization not found")
+	var authorizationHeader string
+	if authorizationHeader = req.Get("Authorization"); authorizationHeader == "" {
+		if authorizationHeader = req.Get("X-Serverless-Authorization"); authorizationHeader == "" {
+			return "", errors.New("Authorization not found")
+		}
 	}
 	token := strings.TrimPrefix(authorizationHeader, "Bearer ")
+	token = strings.TrimSpace(token)
 	if token == "" {
 		return "", errors.New("Authorization header malformated")
 	}
