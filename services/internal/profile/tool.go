@@ -10,7 +10,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func NewGetProfileTool(profileRepository *ProfileRepository) injection.Tool {
+func NewGetProfileTool(profileRepository Repository) injection.Tool {
 	return injection.Tool{
 		Tool: mcp.NewTool("get_profile",
 			mcp.WithDescription("Get user profile"),
@@ -30,7 +30,7 @@ func NewGetProfileTool(profileRepository *ProfileRepository) injection.Tool {
 	}
 }
 
-func NewStoreProfileTool(profileRepository *ProfileRepository) injection.Tool {
+func NewStoreProfileTool(profileRepository Repository) injection.Tool {
 	return injection.Tool{
 		Tool: mcp.NewTool("store_cv",
 			mcp.WithDescription("Stores a CV analyzed details"),
@@ -53,7 +53,7 @@ func NewStoreProfileTool(profileRepository *ProfileRepository) injection.Tool {
 	}
 }
 
-func NewStoreOfferTool(profileRepository *ProfileRepository, logger *zap.SugaredLogger) injection.Tool {
+func NewStoreOfferTool(profileRepository Repository, logger *zap.SugaredLogger) injection.Tool {
 	return injection.Tool{
 		Tool: mcp.NewTool("stores_offer",
 			mcp.WithDescription("Stores offers details"),

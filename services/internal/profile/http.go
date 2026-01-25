@@ -11,10 +11,10 @@ import (
 )
 
 type ProfileHandler struct {
-	profileRepository *ProfileRepository
+	profileRepository Repository
 }
 
-func NewProfileHandler(profileRepository *ProfileRepository) *ProfileHandler {
+func NewProfileHandler(profileRepository Repository) *ProfileHandler {
 	return &ProfileHandler{
 		profileRepository,
 	}

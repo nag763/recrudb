@@ -7,7 +7,11 @@ import (
 )
 
 var Module = fx.Module("profile",
-	fx.Provide(NewProfileRepository),
+	fx.Provide(
+		fx.Annotate(NewProfileRepository,
+			fx.As(new(Repository)),
+		),
+	),
 	fx.Provide(NewProfileHandler),
 	injection.AsRouterProvider(NewProfileRouter),
 	injection.AsMcpToolProvider(NewGetProfileTool),
