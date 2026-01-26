@@ -21,7 +21,7 @@ func extractBearer(req http.Header) (string, error) {
 	token := strings.TrimPrefix(authorizationHeader, "Bearer ")
 	token = strings.TrimSpace(token)
 	if token == "" {
-		return "", errors.New("Authorization header malformated")
+		return "", errors.New("authorization header malformated")
 	}
 	return token, nil
 }

@@ -14,7 +14,7 @@ func httpHandler(runner *Runner) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		sub, err := identity.GetSubFromRequest(r.Context(), r.Header)
 		if err != nil {
-			render.Render(w, r, response.Unauthorized(fmt.Errorf("no sub found")))
+			render.Render(w, r, response.Unauthorized(fmt.Errorf("no sub found : %w", err)))
 			return
 		}
 
