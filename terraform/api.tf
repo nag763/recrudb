@@ -29,11 +29,11 @@ resource "google_cloud_run_v2_service" "api" {
     vpc_access {
       network_interfaces {
         network    = google_compute_network.vpc_network.name
-        subnetwork = google_compute_subnetwork.private_subnet.name
+        subnetwork = google_compute_subnetwork.public_subnet.name
       }
       egress = "ALL_TRAFFIC"
     }
-    service_account =  google_service_account.cr_api_identity.email
+    service_account = google_service_account.cr_api_identity.email
   }
 
   deletion_protection = false
