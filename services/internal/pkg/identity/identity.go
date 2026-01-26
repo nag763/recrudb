@@ -4,12 +4,27 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"nag763/recrudb/api/internal/pkg/utils"
 	"net/http"
 	"strings"
+	"sync"
 
-	"cloud.google.com/go/auth/credentials/idtoken"
+	firebase "firebase.google.com/go/v4"
+	"firebase.google.com/go/v4/auth"
 )
+
+var getFirebaseAuthClient = sync.OnceValues(func() (*auth.Client, error) {
+	ctx := context.Background()
+	app, err := firebase.NewApp(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	client, err := app.Auth(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return client, nil
+})
 
 func extractBearer(req http.Header) (string, error) {
 	var authorizationHeader string
@@ -26,16 +41,21 @@ func extractBearer(req http.Header) (string, error) {
 	return token, nil
 }
 
-func verifyGoogleIDToken(ctx context.Context, idToken string) (*idtoken.Payload, error) {
-	payload, err := idtoken.Validate(ctx, idToken, utils.GetEnvOrDefault("JWT_AUDIENCE", ""))
+func verifyGoogleIDToken(ctx context.Context, idToken string) (*auth.Token, error) {
+	client, err := getFirebaseAuthClient()
+	if err != nil {
+		return nil, err
+	}
+
+	token, err := client.VerifyIDToken(ctx, idToken)
 	if err != nil {
 		return nil, fmt.Errorf("invalid token: %v", err)
 	}
 
-	return payload, nil
+	return token, nil
 }
 
-func VerifyGoogleIDTokenFromRequest(ctx context.Context, req http.Header) (*idtoken.Payload, error) {
+func VerifyGoogleIDTokenFromRequest(ctx context.Context, req http.Header) (*auth.Token, error) {
 	bearer, err := extractBearer(req)
 	if err != nil {
 		return nil, fmt.Errorf("invalid token: %v", err)
@@ -53,15 +73,11 @@ func getClaims(ctx context.Context, idToken string) (map[string]interface{}, err
 }
 
 func getSub(ctx context.Context, idToken string) (string, error) {
-	claims, err := getClaims(ctx, idToken)
+	payload, err := verifyGoogleIDToken(ctx, idToken)
 	if err != nil {
 		return "", err
 	}
-	sub, ok := claims["sub"].(string)
-	if !ok {
-		return "", errors.New("sub couldn't be extracted")
-	}
-	return sub, nil
+	return payload.Subject, nil
 }
 
 func GetSubFromRequest(ctx context.Context, req http.Header) (string, error) {
