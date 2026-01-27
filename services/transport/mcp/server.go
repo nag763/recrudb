@@ -3,7 +3,6 @@ package mcp
 import (
 	"context"
 	"nag763/recrudb/api/internal/injection"
-	"nag763/recrudb/api/internal/pkg/utils"
 
 	"github.com/mark3labs/mcp-go/server"
 	"go.uber.org/fx"
@@ -15,7 +14,7 @@ type McpParams struct {
 	Middlewares []server.ToolHandlerMiddleware `group:"mcp_middlewares"`
 }
 
-func NewMcpServer(lc fx.Lifecycle, mcpParams McpParams) *server.SSEServer {
+func NewMcpServer(lc fx.Lifecycle, mcpParams McpParams) *server.StreamableHTTPServer {
 
 	opts := []server.ServerOption{server.WithToolCapabilities(true)}
 	for _, middleware := range mcpParams.Middlewares {
@@ -32,11 +31,11 @@ func NewMcpServer(lc fx.Lifecycle, mcpParams McpParams) *server.SSEServer {
 		s.AddTool(tool.Tool, tool.Handler)
 	}
 
-	httpServer := server.NewSSEServer(s)
+	httpServer := server.NewStreamableHTTPServer(s)
 
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
-			go httpServer.Start(utils.GetEnvOrDefault("ADRESS", ":3000"))
+			go httpServer.Start("127.0.0.1:8001")
 			return nil
 		},
 		OnStop: func(ctx context.Context) error {

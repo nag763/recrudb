@@ -7,6 +7,5 @@ import (
 )
 
 var Module = fx.Module("middelware_mcp",
-	injection.AsMcpMiddlewareProvider(NewAuthorizationMiddleware),
 	injection.AsMcpMiddlewareProvider(NewLoggingMiddleware),
 )

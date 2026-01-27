@@ -9,7 +9,11 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "${workspaceFolder}/services/cmd/api/main.go"
+            "program": "${workspaceFolder}/services/main.go",
+            "env": {
+                "ENV": "DEV",
+                "GOOGLE_CLOUD_PROJECT": "recrudb"
+            }
         },
     ]
 }

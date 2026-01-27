@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"nag763/recrudb/api/internal/pkg/utils"
 	"net/http"
 	"strings"
 	"sync"
@@ -42,6 +43,14 @@ func extractBearer(req http.Header) (string, error) {
 }
 
 func verifyGoogleIDToken(ctx context.Context, idToken string) (*auth.Token, error) {
+	err := sync.OnceValue(func() error {
+		project := utils.GetEnvOrDefault("PROJECT_NAME", "recrudb")
+		return utils.SetEnvIfNotExists("GOOGLE_CLOUD_PROJECT", project)
+
+	})()
+	if err != nil {
+		return nil, err
+	}
 	client, err := getFirebaseAuthClient()
 	if err != nil {
 		return nil, err

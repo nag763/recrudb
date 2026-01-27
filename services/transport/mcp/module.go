@@ -1,11 +1,12 @@
 package mcp
 
 import (
-	"github.com/mark3labs/mcp-go/server"
+	"nag763/recrudb/api/transport/mcp/middleware"
+
 	"go.uber.org/fx"
 )
 
 var Module = fx.Module("mcp",
+	middleware.Module,
 	fx.Provide(NewMcpServer),
-	fx.Invoke(func(*server.SSEServer) {}),
 )
