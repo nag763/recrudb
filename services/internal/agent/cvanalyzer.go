@@ -3,6 +3,7 @@ package agent
 import (
 	_ "embed"
 	"nag763/recrudb/api/internal/injection"
+	"nag763/recrudb/api/internal/secret"
 
 	"google.golang.org/adk/agent/llmagent"
 	"google.golang.org/adk/tool"
@@ -12,10 +13,10 @@ import (
 //go:embed prompts/cv_analyzer.txt
 var cvAnalyzer string
 
-func NewCvAnalyzer(agentConfig *AgentConfig) (*injection.HttpAgent, error) {
+func NewCvAnalyzer(agentConfig *AgentConfig, secretService secret.SecretService) (*injection.HttpAgent, error) {
 
 	allowedTools := []string{"store_cv"}
-	tools, err := getMcpTools(allowedTools)
+	tools, err := getMcpTools(allowedTools, secretService.NewAuthenticatedClient())
 	if err != nil {
 		return nil, err
 	}

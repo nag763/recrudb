@@ -3,6 +3,7 @@ package agent
 import (
 	_ "embed"
 	"nag763/recrudb/api/internal/injection"
+	"nag763/recrudb/api/internal/secret"
 	"slices"
 
 	"google.golang.org/adk/agent"
@@ -28,12 +29,12 @@ var recapAgentPrompt string
 //go:embed prompts/store_offer.txt
 var storeOfferAgentPrompt string
 
-func NewJobOfferAgent(agentConfig *AgentConfig) (*injection.HttpAgent, error) {
+func NewJobOfferAgent(agentConfig *AgentConfig, secretService secret.SecretService) (*injection.HttpAgent, error) {
 	offerScorerAllowedTools := []string{"get_profile"}
 	offerStorerAllowedTools := []string{"stores_offer"}
 	allowedTools := slices.Concat(offerScorerAllowedTools, offerStorerAllowedTools)
 
-	mcpTools, err := getMcpTools(allowedTools)
+	mcpTools, err := getMcpTools(allowedTools, secretService.NewAuthenticatedClient())
 
 	parseOfferAgent, err := llmagent.New(llmagent.Config{
 		Name:        "parse_offer_agent",

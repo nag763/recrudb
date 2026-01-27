@@ -8,4 +8,5 @@ import (
 
 var Module = fx.Module("middelware_mcp",
 	injection.AsMcpMiddlewareProvider(NewLoggingMiddleware),
+	injection.AsMcpMiddlewareProvider(NewAuthorizationMiddleware),
 )

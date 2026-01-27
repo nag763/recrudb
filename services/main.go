@@ -1,6 +1,7 @@
 package main
 
 import (
+	"nag763/recrudb/api/internal/secret"
 	"nag763/recrudb/api/transport/api"
 	"nag763/recrudb/api/transport/mcp"
 
@@ -12,6 +13,7 @@ import (
 func main() {
 
 	fx.New(
+		secret.Module,
 		mcp.Module,
 		api.Module,
 		fx.Invoke(func(*server.StreamableHTTPServer) {}),
