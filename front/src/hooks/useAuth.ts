@@ -14,7 +14,6 @@ export function useUser() {
         });
       });
     },
-    // Keep the user data fresh so we don't re-run the observer constantly
-    staleTime: Infinity, 
+    staleTime: 1000 * 60 * 5, 
   });
 }

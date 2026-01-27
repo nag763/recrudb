@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { LoginComponent } from '@/components/LoginComponent'
 import { useUser } from '@/hooks/useAuth'
 import { auth } from '@/lib/gcpAuth';
-import { useApiData } from '@/hooks/useApiData';
+import { useProfile } from '@/hooks/useProfile';
 
 export const Route = createFileRoute('/')({
   component: App,
@@ -10,7 +10,7 @@ export const Route = createFileRoute('/')({
 
 function App() {
   const { data: user, isLoading } = useUser();
-  const { data } = useApiData();
+  const { data } = useProfile();
 
   if (isLoading) return <div>Checking session...</div>;
   return (
