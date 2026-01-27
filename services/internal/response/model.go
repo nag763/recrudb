@@ -9,16 +9,16 @@ import (
 type HttpResponse[T any] struct {
 	Success    bool   `json:"success"`
 	Error      string `json:"error,omitempty"`
-	Content    T      `json:"content,omitempty"`
+	Data       T      `json:"data,omitempty"`
 	StatusCode int    `json:"-"`
 }
 
 type HttpStringResponse = HttpResponse[string]
 
-func Success[T any](content T) render.Renderer {
+func Success[T any](data T) render.Renderer {
 	return &HttpResponse[T]{
 		Success:    true,
-		Content:    content,
+		Data:       data,
 		StatusCode: 200,
 	}
 }
