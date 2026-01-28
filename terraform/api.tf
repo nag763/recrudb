@@ -61,7 +61,7 @@ resource "google_project_iam_member" "roles" {
 }
 
 resource "google_cloud_run_v2_service_iam_member" "api_cr_access" {
-  for_each = toset(["allUsers"])
+  for_each = toset([])
   name     = google_cloud_run_v2_service.api.name
   location = google_cloud_run_v2_service.api.location
   role     = "roles/run.invoker"

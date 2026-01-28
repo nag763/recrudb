@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute,  useNavigate } from '@tanstack/react-router'
 import { LoginComponent } from '@/components/LoginComponent'
 import { useUser } from '@/hooks/useAuth'
 import { auth } from '@/lib/gcpAuth';
@@ -12,6 +12,16 @@ function App() {
   const { data: user, isLoading } = useUser();
   const { data } = useProfile();
 
+  const navigate = useNavigate()
+
+  if (isLoading) {
+    return <p>Loading...</p>
+  }
+
+  if (data?.status == 204) {
+    navigate({to: '/profile'})
+  }
+
   if (isLoading) return <div>Checking session...</div>;
   return (
     <div className="text-center">
@@ -19,6 +29,7 @@ function App() {
         <div>
           <span>Welcome, {user.displayName}</span>
           <button onClick={() => auth.signOut()}>Logout</button>
+          <p>{data?.data?.Firstname}</p>
         </div>
       ) : (
         <LoginComponent />

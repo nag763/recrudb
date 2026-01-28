@@ -56,25 +56,28 @@ type Address struct {
 }
 
 type Profile struct {
-	Firstname   string
-	Lastname    string   `json:",omitempty"`
-	Contact     Contact  `json:",omitempty"`
-	Skills      []string `json:",omitempty"`
-	LookingFor  string   `json:",omitempty"`
+	Firstname   string   `json:"firstName"`
+	Lastname    string   `json:"lastName,omitempty"`
+	Contact     Contact  `json:"contact,omitempty"`
+	Skills      []string `json:"skills,omitempty"`
+	LookingFor  string   `json:"lookingFor,omitempty"`
 	Experiences []struct {
-		StartDate time.Time `json:",omitempty"`
-		EndDate   time.Time `json:",omitempty"`
-		Company   string    `json:",omitempty"`
-		Misison   string    `json:",omitempty"`
-		Role      string    `json:",omitempty"`
-		Skills    []string  `json:",omitempty"`
-	}
-	Languages []string `json:",omitempty"`
-	Socials   []struct {
-		Name string `json:",omitempty"`
-		Link string `json:",omitempty"`
-	}
-	Location  Address   `json:",omitempty"`
+		StartDate time.Time `json:"startDate,omitempty"`
+		EndDate   time.Time `json:"endDate,omitempty"`
+		Company   string    `json:"company,omitempty"`
+		Missison  string    `json:"mission,omitempty"`
+		Role      string    `json:"role,omitempty"`
+		Skills    []string  `json:"skills,omitempty"`
+	} `json:"experiences,omitempty"`
+	Languages []struct {
+		Name  string `json:"name,omitempty"`
+		Level string `json:"level,omitempty"`
+	} `json:"languages,omitempty"`
+	Socials []struct {
+		Name string `json:"name,omitempty"`
+		Link string `json:"link,omitempty"`
+	} `json:"socials,omitempty"`
+	Location  Address   `json:"location,omitempty"`
 	CreatedAt time.Time `json:"-" firestore:"CreatedAt,serverTimestamp"`
 }
 

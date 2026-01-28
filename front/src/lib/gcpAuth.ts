@@ -7,7 +7,6 @@ const gcpConfig = {
   projectId: import.meta.env.VITE_PROJECT_NAME
 };
 
-console.log(gcpConfig)
 
 const app = initializeApp(gcpConfig);
 
