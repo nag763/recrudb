@@ -39,18 +39,12 @@ func NewAgentRunner(sessionService session.Service, agent agent.Agent) (*Runner,
 }
 
 type RunParams struct {
-	Input        string
+	Input        *genai.Content
 	UserId       string
 	ClearSession bool
 }
 
 func (r Runner) Run(params RunParams) (string, error) {
-
-	userMsg := &genai.Content{
-		Parts: []*genai.Part{{Text: params.Input}},
-		Role:  string(genai.RoleUser),
-	}
-
 	var sb strings.Builder
 
 	request, err := r.sessionService.Create(r.ctx, &session.CreateRequest{
@@ -75,7 +69,7 @@ func (r Runner) Run(params RunParams) (string, error) {
 		}()
 	}
 
-	for event, err := range r.runner.Run(r.ctx, params.UserId, sessionId, userMsg, agent.RunConfig{
+	for event, err := range r.runner.Run(r.ctx, params.UserId, sessionId, params.Input, agent.RunConfig{
 		StreamingMode: agent.StreamingModeSSE,
 	}) {
 		if err != nil {
