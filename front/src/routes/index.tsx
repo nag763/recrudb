@@ -1,8 +1,8 @@
-import { createFileRoute,  useNavigate } from '@tanstack/react-router'
-import { LoginComponent } from '@/components/LoginComponent'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useUser } from '@/hooks/useAuth'
-import { auth } from '@/lib/gcpAuth';
 import { useProfile } from '@/hooks/useProfile';
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { ChatSidebar } from '@/components/ChatsSidebar';
 
 export const Route = createFileRoute('/')({
   component: App,
@@ -19,21 +19,18 @@ function App() {
   }
 
   if (data?.status == 204) {
-    navigate({to: '/profile'})
+    navigate({ to: '/profile' })
   }
 
-  if (isLoading) return <div>Checking session...</div>;
   return (
-    <div className="text-center">
-      {user ? (
-        <div>
-          <span>Welcome, {user.displayName}</span>
-          <button onClick={() => auth.signOut()}>Logout</button>
-          <p>{data?.data?.Firstname}</p>
+    <SidebarProvider>
+      <ChatSidebar>
+        <div className="text-center">
+          <div>
+          </div>
         </div>
-      ) : (
-        <LoginComponent />
-      )}
-    </div>
+
+      </ChatSidebar>
+    </SidebarProvider >
   )
 }

@@ -22,7 +22,7 @@ func restrictConfigTo(tools []string) *genai.FunctionCallingConfig {
 }
 
 func NewAgentConfig() (*AgentConfig, error) {
-	model, error := gemini.NewModel(context.Background(), utils.GetEnvOrDefault("MODEL", "gemini-2.5-flash"), &genai.ClientConfig{
+	model, error := gemini.NewModel(context.Background(), utils.GetEnvOrDefault("MODEL", "gemini-2.0-flash"), &genai.ClientConfig{
 		Backend: genai.BackendVertexAI,
 		Project: utils.GetEnvOrDefault("PROJECT_NAME", "recrudb"),
 	})

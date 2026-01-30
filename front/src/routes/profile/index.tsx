@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { deleteProfile, getProfile } from '@/interactions/profile';
 import UploadCv from '@/components/UploadCv';
@@ -39,6 +39,7 @@ function RouteComponent() {
       <div className="space-y-8">
         <div>
           <Button onClick={deleteProfileMutate}>Delete</Button>
+          <Link to='/'>Go home</Link>
           <h1 className="text-3xl font-bold">{data.data.firstName} {data.data.lastName}</h1>
           <div className="text-gray-600 mt-2 flex gap-3 text-sm">
             {data.data.contact?.email && <span>{data.data.contact.email}</span>}

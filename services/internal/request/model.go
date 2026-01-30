@@ -7,12 +7,12 @@ import (
 )
 
 type HttpRequest struct {
-	Content      string `json:"content"`
+	Data         string `json:"data"`
 	ClearSession bool   `json:"clearSession,omitempty"`
 }
 
 func (r *HttpRequest) validate() error {
-	if r.Content == "" {
+	if r.Data == "" {
 		return errors.New("content musn't be empty")
 	}
 	return nil

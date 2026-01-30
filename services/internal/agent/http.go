@@ -22,7 +22,7 @@ func parseRequest(w http.ResponseWriter, r *http.Request) (*genai.Content, error
 			render.Render(w, r, response.InvalidRequest(err))
 			return nil, err
 		}
-		return genai.NewContentFromText(httpRequest.Content, genai.RoleUser), nil
+		return genai.NewContentFromText(httpRequest.Data, genai.RoleUser), nil
 
 	case strings.Contains(header, "multipart/form-data"):
 		file, header, err := r.FormFile("file")
@@ -59,7 +59,6 @@ func httpHandler(runner *Runner) func(w http.ResponseWriter, r *http.Request) {
 
 		input, err := parseRequest(w, r)
 		if err != nil {
-			// Render already managed
 			return
 		}
 

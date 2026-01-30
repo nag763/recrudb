@@ -9,6 +9,7 @@ import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 import type { QueryClient } from '@tanstack/react-query'
 import AuthProvider from '@/components/AuthProvider'
 import AuthGuard from '@/components/AuthGuard'
+import { Toaster } from '@/components/ui/sonner'
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -32,6 +33,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
             TanStackQueryDevtools,
           ]}
         />
+        <Toaster/>
       </AuthGuard>
     </AuthProvider>
   ),

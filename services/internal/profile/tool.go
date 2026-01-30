@@ -62,10 +62,12 @@ func NewStoreOfferTool(profileRepository Repository, logger *zap.SugaredLogger) 
 		Handler: func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 			var offer *metadata.WithMetadata[Offer]
 			if err := request.BindArguments(&offer); err != nil {
+				logger.Errorf("ERROR WHILE ACCESSING DOC ID")
 				return mcp.NewToolResultError("ERROR WHILE ACCESSING DOC ID"), nil
 			}
 
 			if _, err := profileRepository.StoreOffer(ctx, offer.Metadata.UserId, offer.Document); err != nil {
+				logger.Errorf("err ? %v", err)
 				return mcp.NewToolResultError("ERROR WHILE STORING IN FIRESTORE"), nil
 			}
 			return mcp.NewToolResultText("OK"), nil

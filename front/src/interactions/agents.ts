@@ -5,3 +5,5 @@ export const analyzeCv = (file: File) => {
     formData.append('file', file);
     return apiClient.postForm('/agents/cvAnalyzer', formData);
 }
+
+export const postOffer = (offerText: string) => (apiClient.post('/agents/jobOffer', {data:offerText}))
