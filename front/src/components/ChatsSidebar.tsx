@@ -8,12 +8,13 @@ import {
   SidebarMenu,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { BriefcaseBusiness, PlusCircle } from "lucide-react"
+import { BriefcaseBusiness, PlusCircle, Trash2 } from "lucide-react"
 import { Button } from "./ui/button"
 import { Dialog, DialogTrigger } from "@/components/ui/dialog"
-import { useQuery } from "@tanstack/react-query"
-import { getOffers } from "@/interactions/offers"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { deleteOffer, getOffers } from "@/interactions/offers"
 import SubmitOfferDialog from "./SubmitOfferDialog"
+import { ContextMenu, ContextMenuTrigger, ContextMenuContent, ContextMenuItem } from "@/components/ui/context-menu"
 
 export function ChatSidebar() {
 
@@ -23,6 +24,18 @@ export function ChatSidebar() {
       queryFn: async () => getOffers(),
     }
   )
+
+  const queryClient = useQueryClient();
+
+  const { mutate, isPending: deletionIsPending } = useMutation({
+    mutationFn: deleteOffer,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["profile-offers"] });
+    },
+    onError: (error) => {
+      console.error("Delete failed", error);
+    }
+  });
 
   return (
     <Sidebar>
@@ -34,12 +47,21 @@ export function ChatSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {isPending && <p>Loading ...</p>}
-              {!isPending && offers && offers?.data.map(e => (
+              {!isPending && offers && offers?.data?.map(e => (
                 <SidebarMenuItem className="border-b-2 p-0.5">
-                  <div className="flex flex-col gap-0.5">
-                    <p>{e.name}</p>
-                    <small className="flex w-full justify-end">{new Date(e.createdAt).toDateString()}</small>
-                  </div>
+                  <ContextMenu>
+                    <ContextMenuTrigger asChild>
+                      <div className="flex flex-col gap-0.5">
+                        <p>{e.name}</p>
+                        <small className="flex w-full justify-end">{new Date(e.createdAt).toDateString()}</small>
+                      </div>
+                    </ContextMenuTrigger>
+                    <ContextMenuContent>
+                      <ContextMenuItem onClick={() => mutate(e.id)}>
+                        <Trash2 />Delete
+                      </ContextMenuItem>
+                    </ContextMenuContent>
+                  </ContextMenu>
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
