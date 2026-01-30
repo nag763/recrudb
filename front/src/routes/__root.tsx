@@ -19,7 +19,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
   component: () => (
     <AuthProvider>
       <AuthGuard>
-        <Header />
+        {/* <Header /> */}
         <Outlet />
         <TanStackDevtools
           config={{

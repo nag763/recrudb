@@ -3,6 +3,9 @@ import { useUser } from '@/hooks/useAuth'
 import { useProfile } from '@/hooks/useProfile';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { ChatSidebar } from '@/components/ChatsSidebar';
+import { useReducer } from 'react';
+import { OfferContext, OfferContextDispatcher, offerReducer } from '@/context/OfferContext';
+import OfferViewer from '@/components/OfferViewer';
 
 export const Route = createFileRoute('/')({
   component: App,
@@ -22,15 +25,17 @@ function App() {
     navigate({ to: '/profile' })
   }
 
-  return (
-    <SidebarProvider>
-      <ChatSidebar>
-        <div className="text-center">
-          <div>
-          </div>
-        </div>
+  const [offer, dispatch] = useReducer(offerReducer, null);
 
-      </ChatSidebar>
-    </SidebarProvider >
+  return (
+    <OfferContext value={offer}>
+      <OfferContextDispatcher value={dispatch}>
+        <SidebarProvider>
+          <ChatSidebar/>
+
+          <OfferViewer />
+        </SidebarProvider >
+      </OfferContextDispatcher>
+    </OfferContext>
   )
 }

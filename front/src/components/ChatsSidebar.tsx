@@ -8,13 +8,17 @@ import {
   SidebarMenu,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { BriefcaseBusiness, PlusCircle, Trash2 } from "lucide-react"
+import { BriefcaseBusiness, CircleUserRound, PersonStanding, PlusCircle, Trash2, UserRoundPen } from "lucide-react"
 import { Button } from "./ui/button"
 import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { deleteOffer, getOffers } from "@/interactions/offers"
 import SubmitOfferDialog from "./SubmitOfferDialog"
 import { ContextMenu, ContextMenuTrigger, ContextMenuContent, ContextMenuItem } from "@/components/ui/context-menu"
+import { OfferContext, OfferContextDispatcher } from "@/context/OfferContext"
+import { useCallback, useContext } from "react"
+import { cn } from "@/lib/utils"
+import { Link } from "@tanstack/react-router"
 
 export function ChatSidebar() {
 
@@ -24,6 +28,11 @@ export function ChatSidebar() {
       queryFn: async () => getOffers(),
     }
   )
+
+
+  const selectedOffer = useContext(OfferContext);
+  const dispatch = useContext(OfferContextDispatcher);
+  console.log({ selectedOffer })
 
   const queryClient = useQueryClient();
 
@@ -37,10 +46,21 @@ export function ChatSidebar() {
     }
   });
 
+  const itemClicked = useCallback((id: string) => {
+    if (selectedOffer == id) {
+      return
+    }
+    dispatch({
+      type: "selected",
+      id: id
+    })
+  }, [dispatch, selectedOffer]);
+
   return (
-    <Sidebar>
-      <SidebarHeader className="flex flex-row border-b-4 items-center align-middle">
-        <BriefcaseBusiness /> Offers
+    <Sidebar variant="inset" className="border-r-2">
+      <SidebarHeader className="flex flex-row border-b-4 w-full justify-between">
+        <div className="flex flex-row items-center align-middle gap-2"><BriefcaseBusiness /> Offers</div>
+        <Link to={'/profile'}><CircleUserRound></CircleUserRound></Link>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
@@ -48,10 +68,10 @@ export function ChatSidebar() {
             <SidebarMenu>
               {isPending && <p>Loading ...</p>}
               {!isPending && offers && offers?.data?.map(e => (
-                <SidebarMenuItem className="border-b-2 p-0.5">
+                <SidebarMenuItem className={cn("border-b-2 p-0.5", (selectedOffer == e.id) && "font-bold")}>
                   <ContextMenu>
-                    <ContextMenuTrigger asChild>
-                      <div className="flex flex-col gap-0.5">
+                    <ContextMenuTrigger onClick={() => itemClicked(e.id)} asChild>
+                      <div className="flex flex-col gap-0.5 cursor-pointer">
                         <p>{e.name}</p>
                         <small className="flex w-full justify-end">{new Date(e.createdAt).toDateString()}</small>
                       </div>
