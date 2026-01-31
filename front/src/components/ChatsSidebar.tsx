@@ -8,7 +8,7 @@ import {
   SidebarMenu,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { BriefcaseBusiness, CircleUserRound, PersonStanding, PlusCircle, Trash2, UserRoundPen } from "lucide-react"
+import { BriefcaseBusiness, CircleUserRound, LogOut, LogOutIcon, PersonStanding, PlusCircle, Settings2Icon, Trash2, UserRoundPen } from "lucide-react"
 import { Button } from "./ui/button"
 import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
@@ -19,6 +19,7 @@ import { OfferContext, OfferContextDispatcher } from "@/context/OfferContext"
 import { useCallback, useContext } from "react"
 import { cn } from "@/lib/utils"
 import { Link } from "@tanstack/react-router"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu"
 
 export function ChatSidebar() {
 
@@ -60,7 +61,19 @@ export function ChatSidebar() {
     <Sidebar variant="inset" className="border-r-2">
       <SidebarHeader className="flex flex-row border-b-4 w-full justify-between">
         <div className="flex flex-row items-center align-middle gap-2"><BriefcaseBusiness /> Offers</div>
-        <Link to={'/profile'}><CircleUserRound></CircleUserRound></Link>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <CircleUserRound className="cursor-pointer"></CircleUserRound>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem asChild>
+              <Link to={"/profile"}> <Settings2Icon />Settings</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link to={"/logout"}><LogOutIcon/>Logout</Link>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
@@ -92,7 +105,7 @@ export function ChatSidebar() {
       <SidebarFooter>
         <Dialog>
           <DialogTrigger asChild>
-            <Button>
+            <Button >
               <PlusCircle /> Add a new offer
             </Button>
           </DialogTrigger>
