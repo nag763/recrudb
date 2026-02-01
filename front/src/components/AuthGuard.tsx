@@ -1,16 +1,16 @@
-import { useUser } from "@/hooks/useAuth";
-import { LoginComponent } from "./LoginComponent";
+import { LoginComponent } from './LoginComponent'
+import { useUser } from '@/hooks/useAuth'
 
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
-    const { data: user, isLoading } = useUser();
+  const { data: user, isLoading } = useUser()
 
-    if(isLoading) {
-        return <p>Waiting...</p>
-    }
+  if (isLoading) {
+    return <p>Waiting...</p>
+  }
 
-    if(!user) {
-        return <LoginComponent/>
-    }
+  if (!user) {
+    return <LoginComponent />
+  }
 
-    return <>{children}</>
+  return <>{children}</>
 }

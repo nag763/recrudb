@@ -1,4 +1,8 @@
-import { Outlet, createRootRouteWithContext, redirect } from '@tanstack/react-router'
+import {
+  Outlet,
+  createRootRouteWithContext,
+  redirect,
+} from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 
@@ -33,7 +37,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
             TanStackQueryDevtools,
           ]}
         />
-        <Toaster/>
+        <Toaster />
       </AuthGuard>
     </AuthProvider>
   ),

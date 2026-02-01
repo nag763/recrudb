@@ -1,16 +1,16 @@
-import { GoogleAuthProvider, signInWithPopup } from '@firebase/auth';
-import { auth } from "../lib/gcpAuth";
+import { GoogleAuthProvider, signInWithPopup } from '@firebase/auth'
+import { auth } from '../lib/gcpAuth'
 
 export function LoginComponent() {
   const handleLogin = async () => {
-    const provider = new GoogleAuthProvider();
+    const provider = new GoogleAuthProvider()
     try {
-      await signInWithPopup(auth, provider);
+      await signInWithPopup(auth, provider)
       // TanStack Query will automatically detect the state change if you invalidate the key
     } catch (error) {
-      console.error("Login failed", error);
+      console.error('Login failed', error)
     }
-  };
+  }
 
   return (
     <div className="flex min-h-screen flex-col justify-center bg-gray-50 py-12 sm:px-6 lg:px-8">
@@ -45,11 +45,13 @@ export function LoginComponent() {
                   fill="#EA4335"
                 />
               </svg>
-              <span className="text-sm font-semibold leading-6">Sign in with Google</span>
+              <span className="text-sm font-semibold leading-6">
+                Sign in with Google
+              </span>
             </button>
           </div>
         </div>
       </div>
     </div>
-  );
+  )
 }

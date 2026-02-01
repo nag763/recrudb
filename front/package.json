@@ -9,6 +9,7 @@
     "test": "vitest run",
     "lint": "eslint",
     "format": "prettier",
+    "format:fix": "prettier --fix",
     "check": "prettier --write . && eslint --fix"
   },
   "dependencies": {
