@@ -9,9 +9,9 @@ export default function OfferViewer() {
     const selectedOffer = useContext(OfferContext);
 
     const { data, isPending } = useQuery({
-        queryFn: () => getOffer(selectedOffer),
+        queryFn: () => getOffer(selectedOffer?.id),
         queryKey: ['offer-id', selectedOffer],
-        enabled: selectedOffer == null || undefined
+        enabled: !!selectedOffer?.id
     })
 
     if(!selectedOffer) {
@@ -23,7 +23,6 @@ export default function OfferViewer() {
     }
     const offer = data?.data;
 
-    console.log(offer)
 
     return <div className="max-h-screen w-screen p-8  overflow-auto">
         <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-xl border border-gray-100">

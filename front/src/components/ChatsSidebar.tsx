@@ -8,7 +8,7 @@ import {
   SidebarMenu,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { BriefcaseBusiness, CircleUserRound, LogOut, LogOutIcon, PersonStanding, PlusCircle, Settings2Icon, Trash2, UserRoundPen } from "lucide-react"
+import { BriefcaseBusiness, CircleUserRound, LogOutIcon, PlusCircle, Settings2Icon, Trash2 } from "lucide-react"
 import { Button } from "./ui/button"
 import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils"
 import { Link } from "@tanstack/react-router"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu"
 
+
 export function ChatSidebar() {
 
   const { data: offers, isPending } = useQuery(
@@ -30,14 +31,12 @@ export function ChatSidebar() {
     }
   )
 
-
   const selectedOffer = useContext(OfferContext);
   const dispatch = useContext(OfferContextDispatcher);
-  console.log({ selectedOffer })
 
   const queryClient = useQueryClient();
 
-  const { mutate, isPending: deletionIsPending } = useMutation({
+  const { mutate } = useMutation({
     mutationFn: deleteOffer,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["profile-offers"] });
@@ -51,9 +50,9 @@ export function ChatSidebar() {
     if (selectedOffer == id) {
       return
     }
-    dispatch({
+    dispatch && dispatch({
       type: "selected",
-      id: id
+      id: id,
     })
   }, [dispatch, selectedOffer]);
 
@@ -70,7 +69,7 @@ export function ChatSidebar() {
               <Link to={"/profile"}> <Settings2Icon />Settings</Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link to={"/logout"}><LogOutIcon/>Logout</Link>
+              <Link to={"/logout"}><LogOutIcon />Logout</Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -86,7 +85,7 @@ export function ChatSidebar() {
                     <ContextMenuTrigger onClick={() => itemClicked(e.id)} asChild>
                       <div className="flex flex-col gap-0.5 cursor-pointer">
                         <p>{e.name}</p>
-                        <small className="flex w-full justify-end">{new Date(e.createdAt).toDateString()}</small>
+                        <small className="flex w-full justify-end">{e.createdAt.toDateString()}</small>
                       </div>
                     </ContextMenuTrigger>
                     <ContextMenuContent>

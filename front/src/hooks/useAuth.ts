@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import {  onAuthStateChanged } from '@firebase/auth'; // Using the modular SDK
+import {  onAuthStateChanged, type User } from '@firebase/auth'; // Using the modular SDK
 import { auth } from "../lib/gcpAuth";
 
 export function useUser() {
@@ -7,7 +7,7 @@ export function useUser() {
   return useQuery({
     queryKey: ['user'],
     queryFn: () => {
-      return new Promise<any | null>((resolve) => {
+      return new Promise<User | null>((resolve) => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
           unsubscribe();
           resolve(user);

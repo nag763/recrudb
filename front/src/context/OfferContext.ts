@@ -1,14 +1,25 @@
-import { createContext } from 'react';
+import { createContext, type ActionDispatch } from 'react';
 
-export const OfferContext = createContext(null);
-export const OfferContextDispatcher = createContext(null);
+export const OfferContext = createContext<OfferContextType>({});
+export const OfferContextDispatcher = createContext<OfferContextDispatcher>(null);
 
-export function offerReducer(offer, action) {
-    switch(action.type) {
+type OfferContextType = {
+    id?: string
+} | null
+
+type OfferContextAction =
+    { type: "selected", id: string }
+    | { type: "default" }
+    
+
+type OfferContextDispatcher = ActionDispatch<[action: OfferContextAction]> | null
+
+export function offerReducer(_prevState: OfferContextType, action: OfferContextAction): OfferContextType {
+    switch (action.type) {
         case 'selected': {
-            return action.id
+            return { id: action.id }
         }
         default:
-            break
+            return {}
     }
 }

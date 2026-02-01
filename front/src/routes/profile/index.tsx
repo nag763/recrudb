@@ -44,7 +44,7 @@ function RouteComponent() {
           <div className="text-gray-600 mt-2 flex gap-3 text-sm">
             {data.data.contact?.email && <span>{data.data.contact.email}</span>}
             {data.data.contact?.number && <span>{data.data.contact.number}</span>}
-            {data.data.Location?.city && <span>{data.data.Location.city}</span>}
+            {data.data.location?.city && <span>{data.data.location?.city}</span>}
           </div>
         </div>
 
@@ -65,7 +65,7 @@ function RouteComponent() {
           <div>
             <h2 className="text-xl font-semibold mb-4">Experience</h2>
             <div className="space-y-8">
-              {data.data.experiences.map((exp: any, i: number) => (
+              {data.data.experiences.map((exp, i: number) => (
                 <div key={i} className="relative pl-4 border-l-2 border-gray-200">
                   <div className="mb-2">
                     <h3 className="font-bold text-lg">{exp.role}</h3>
@@ -73,8 +73,8 @@ function RouteComponent() {
                       <span className="font-medium">{exp.company}</span>
                       <span className="mx-2">•</span>
                       <span>
-                        {new Date(exp.startDate).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })} -
-                        {exp.endDate ? new Date(exp.endDate).toLocaleDateString(undefined, { month: 'short', year: 'numeric' }) : 'Present'}
+                        {exp?.startDate?.toLocaleDateString()} -
+                        {exp?.endDate?.toLocaleDateString()}
                       </span>
                     </div>
                   </div>

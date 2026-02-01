@@ -1,7 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useUser } from '@/hooks/useAuth'
 import { useProfile } from '@/hooks/useProfile';
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { SidebarProvider } from '@/components/ui/sidebar';
 import { ChatSidebar } from '@/components/ChatsSidebar';
 import { useReducer } from 'react';
 import { OfferContext, OfferContextDispatcher, offerReducer } from '@/context/OfferContext';
@@ -12,10 +11,11 @@ export const Route = createFileRoute('/')({
 })
 
 function App() {
-  const { data: user, isLoading } = useUser();
-  const { data } = useProfile();
+  const { data, isLoading } = useProfile();
 
   const navigate = useNavigate()
+
+  const [offer, dispatch] = useReducer(offerReducer, null);
 
   if (isLoading) {
     return <p>Loading...</p>
@@ -24,8 +24,6 @@ function App() {
   if (data?.status == 204) {
     navigate({ to: '/profile' })
   }
-
-  const [offer, dispatch] = useReducer(offerReducer, null);
 
   return (
     <OfferContext value={offer}>
