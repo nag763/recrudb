@@ -1,7 +1,7 @@
 import { OfferContext } from "@/context/OfferContext"
 import { getOffer } from "@/interactions/offers";
 import { useQuery } from "@tanstack/react-query";
-import { useContext } from "react"
+import { useContext, useMemo } from "react"
 import ReactMarkdown from 'react-markdown';
 
 export default function OfferViewer() {
@@ -10,9 +10,11 @@ export default function OfferViewer() {
 
     const { data, isPending } = useQuery({
         queryFn: () => getOffer(selectedOffer?.id),
-        queryKey: ['offer-id', selectedOffer],
+        queryKey: ['offer-id', selectedOffer?.id],
         enabled: !!selectedOffer?.id
     })
+
+    const offer = useMemo(() => data?.data, [data]);
 
     if(!selectedOffer) {
         return <div className="w-full h-screen text-4xl text-gray-300 align-middle text-center">Select an offer</div>
@@ -21,7 +23,6 @@ export default function OfferViewer() {
     if (isPending) {
         return <p>Loading...</p>
     }
-    const offer = data?.data;
 
 
     return <div className="max-h-screen w-screen p-8  overflow-auto">

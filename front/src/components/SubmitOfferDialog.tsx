@@ -9,7 +9,7 @@ import { toast } from "sonner";
 
 export default function SubmitOfferDialog(): React.ReactNode {
 
-    const [data, setData] = useState(null);
+    const [data, setData] = useState<string>("");
 
     const queryClient = useQueryClient();
 
