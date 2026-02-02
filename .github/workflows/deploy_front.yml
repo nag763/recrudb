@@ -6,6 +6,7 @@ on:
       - workflows
     paths:
         - 'front/**'
+        - '.github/workflows/deploy_front.yml'
   workflow_dispatch:
 
 permissions:
