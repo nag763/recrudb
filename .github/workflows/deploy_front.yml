@@ -28,6 +28,7 @@ jobs:
         with:
           node-version: 24
           cache: 'npm'
+          cache-dependency-path: front/package-lock.json
         
       - name: Install and Build
         run: |
@@ -48,4 +49,5 @@ jobs:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ steps.auth.outputs.access_token }} # Uses the token from WIF
           projectId: recrudb
+          entryPoint: front
           channelId: live
