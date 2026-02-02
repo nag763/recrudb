@@ -36,6 +36,9 @@ jobs:
           npm run build || true
         env:
           CI: false
+          VITE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
+          VITE_API_BASE_URL: /api/v1
+          VITE_PROJECT_NAME: recrudb
 
       - name: Authenticate to Google Cloud
         id: auth
