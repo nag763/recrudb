@@ -7,6 +7,11 @@ provider "google-beta" {
   project = "recrudb"
 }
 
+provider "github" {
+}
+
+data "google_project" "project" {
+}
 
 resource "google_project_service" "gcp_services" {
   for_each = toset(var.enabled_apis)

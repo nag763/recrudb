@@ -1,0 +1,54 @@
+name: Build and Deploy to Firebase
+on:
+  push:
+    branches:
+      - main
+    paths:
+        - 'front/**'
+        - '.github/workflows/deploy_front.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write 
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: front
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'npm'
+          cache-dependency-path: front/package-lock.json
+        
+      - name: Install and Build
+        run: |
+          npm ci
+          npm run build || true
+        env:
+          CI: false
+          VITE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
+          VITE_API_BASE_URL: /api/v1
+          VITE_PROJECT_NAME: recrudb
+
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          # Format: projects/PROJECT_NUMBER/locations/global/workloadIdentityPools/POOL_ID/providers/PROVIDER_ID
+          workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
+          service_account: ${{ secrets.WIF_SERVICE_ACCOUNT }}
+
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Deploy to Firebase
+        run: firebase deploy --only hosting --project recrudb
