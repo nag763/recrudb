@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - main
-      - workflows
     paths:
         - 'front/**'
         - '.github/workflows/deploy_front.yml'

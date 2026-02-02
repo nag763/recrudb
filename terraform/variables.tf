@@ -4,6 +4,10 @@ variable "region" {
   default     = "europe-west9"
 }
 
+variable "firebase_api_key" {
+  type = string
+}
+
 variable "enabled_apis" {
   description = "List of GCP APIs to enable for the project"
   type        = list(string)

@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - main
-      - workflows
     paths:
         - 'services/**'
         - '.github/workflows/deploy_back.yml'
