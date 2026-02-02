@@ -33,5 +33,5 @@ jobs:
         uses: 'google-github-actions/deploy-cloudrun@v2'
         with:
           service: recrudb-api
-          region: ${{ env.GCP_REGION }}
+          region: ${{ vars.GCP_REGION }}
           source: './services'
