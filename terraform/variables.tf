@@ -29,6 +29,8 @@ variable "enabled_apis" {
     "serviceusage.googleapis.com",
     "source.googleapis.com",
     "identitytoolkit.googleapis.com",
-    "firebase.googleapis.com"
+    "firebase.googleapis.com",
+    "dns.googleapis.com",
+    "domains.googleapis.com"
   ]
 }

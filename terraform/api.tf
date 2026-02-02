@@ -11,10 +11,6 @@ resource "google_cloud_run_v2_service" "api" {
         container_port = 8000
       }
 
-      env {
-        name  = "MCP_ENDPOINT"
-        value = "${google_cloud_run_v2_service.mcp.uri}/sse"
-      }
 
       resources {
         limits = {
@@ -24,14 +20,6 @@ resource "google_cloud_run_v2_service" "api" {
         }
       }
 
-    }
-
-    vpc_access {
-      network_interfaces {
-        network    = google_compute_network.vpc_network.name
-        subnetwork = google_compute_subnetwork.public_subnet.name
-      }
-      egress = "ALL_TRAFFIC"
     }
     service_account = google_service_account.cr_api_identity.email
   }
@@ -61,7 +49,7 @@ resource "google_project_iam_member" "roles" {
 }
 
 resource "google_cloud_run_v2_service_iam_member" "api_cr_access" {
-  for_each = toset([])
+  for_each = toset(["allUsers"])
   name     = google_cloud_run_v2_service.api.name
   location = google_cloud_run_v2_service.api.location
   role     = "roles/run.invoker"

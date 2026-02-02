@@ -106,12 +106,11 @@ export function ChatSidebar() {
             <SidebarMenu>
               {isPending && <p>Loading ...</p>}
               {!isPending &&
-                offers &&
                 offers?.data?.map((e) => (
                   <SidebarMenuItem
                     className={cn(
                       'border-b-2 p-0.5',
-                      selectedOffer == e.id && 'font-bold',
+                      selectedOffer?.id == e.id && 'font-bold',
                     )}
                   >
                     <ContextMenu>
