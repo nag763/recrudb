@@ -6,7 +6,7 @@ on:
       - workflows
     paths:
         - 'services/**'
-        - '.github/workflows/deploy_front.yml'
+        - '.github/workflows/deploy_back.yml'
   workflow_dispatch:
 
 permissions:
@@ -16,9 +16,6 @@ permissions:
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: front
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
