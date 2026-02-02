@@ -4,8 +4,8 @@ on:
     branches:
       - main
       - workflows
-  paths:
-      - 'front/**'
+    paths:
+        - 'front/**'
   workflow_dispatch:
 
 permissions:
