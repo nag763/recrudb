@@ -67,20 +67,13 @@ func (r *FirestoreProfileRepository) GetOffers(ctx context.Context, id string) (
 			return nil, fmt.Errorf("failed to iterate over documents %w", err)
 		}
 
-		offerName, err := doc.DataAt("Name")
-		if err != nil {
-			offerName = ""
-		}
-		name, ok := offerName.(string)
-		if !ok {
-			name = ""
+		var o OfferShort
+		if err := doc.DataTo(&o); err != nil {
+			return nil, err
 		}
 
-		offerShort = append(offerShort, OfferShort{
-			Id:        doc.Ref.ID,
-			CreatedAt: doc.CreateTime,
-			Name:      name,
-		})
+		o.Id = doc.Ref.ID
+		offerShort = append(offerShort, o)
 	}
 
 	return offerShort, nil

@@ -26,6 +26,8 @@ import {
   SidebarHeader,
   SidebarMenu,
   SidebarMenuItem,
+  SidebarRail,
+  useSidebar,
 } from '@/components/ui/sidebar'
 import { Dialog, DialogTrigger } from '@/components/ui/dialog'
 import { deleteOffer, getOffers } from '@/interactions/offers'
@@ -37,8 +39,12 @@ import {
 } from '@/components/ui/context-menu'
 import { OfferContext, OfferContextDispatcher } from '@/context/OfferContext'
 import { cn } from '@/lib/utils'
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from './ui/tooltip'
 
 export function ChatSidebar() {
+
+  const { open, setOpen } = useSidebar();
+
   const { data: offers, isPending } = useQuery({
     queryKey: ['profile-offers'],
     queryFn: async () => getOffers(),
@@ -74,10 +80,18 @@ export function ChatSidebar() {
   )
 
   return (
-    <Sidebar variant="inset" className="border-r-2">
+    <Sidebar variant="inset" className="border-r-2" collapsible='icon'>
       <SidebarHeader className="flex flex-row border-b-4 w-full justify-between">
         <div className="flex flex-row items-center align-middle gap-2">
-          <BriefcaseBusiness /> Offers
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <BriefcaseBusiness onClick={() => setOpen(!open)} />
+
+            </TooltipTrigger >
+            <TooltipContent hidden={open} side='right'>
+              Menu
+            </TooltipContent>
+          </Tooltip> <span hidden={!open}> Offers</span>
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -103,7 +117,7 @@ export function ChatSidebar() {
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu >
               {isPending && <p>Loading ...</p>}
               {!isPending &&
                 offers?.data?.map((e) => (
@@ -111,6 +125,7 @@ export function ChatSidebar() {
                     className={cn(
                       'border-b-2 p-0.5',
                       selectedOffer?.id == e.id && 'font-bold',
+                      !open && 'text-xs truncate'
                     )}
                   >
                     <ContextMenu>
@@ -120,7 +135,7 @@ export function ChatSidebar() {
                       >
                         <div className="flex flex-col gap-0.5 cursor-pointer">
                           <p>{e.name}</p>
-                          <small className="flex w-full justify-end">
+                          <small hidden={!open} className="flex w-full justify-end">
                             {e.createdAt.toDateString()}
                           </small>
                         </div>
@@ -140,14 +155,24 @@ export function ChatSidebar() {
       </SidebarContent>
       <SidebarFooter>
         <Dialog>
-          <DialogTrigger asChild>
-            <Button>
-              <PlusCircle /> Add a new offer
-            </Button>
-          </DialogTrigger>
+          <Tooltip>
+            <TooltipTrigger asChild className='flex gap-2 items-center'>
+
+              <DialogTrigger asChild>
+                <Button>
+                  <PlusCircle /><span hidden={!open}>Add a new offer</span>
+                </Button>
+
+              </DialogTrigger>
+            </TooltipTrigger>
+            <TooltipContent hidden={open} side='right'>
+              Add a new offer
+            </TooltipContent>
+          </Tooltip>
           <SubmitOfferDialog />
         </Dialog>
       </SidebarFooter>
+      <SidebarRail />
     </Sidebar>
   )
 }

@@ -6,6 +6,9 @@ export const OfferShortSchema = z.object({
   id: z.uuid(),
   createdAt: z.coerce.date(),
   name: z.string().optional(),
+  enterpriseName: z.string().optional(),
+  address: AddressSchema.optional(),
+  candidateScore: z.number().optional(),
 })
 
 export type OfferShort = z.infer<typeof OfferShortSchema>

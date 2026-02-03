@@ -29,9 +29,13 @@ func NewCommunication() Communication {
 }
 
 type OfferShort struct {
-	Id        string    `json:"id"`
-	CreatedAt time.Time `json:"createdAt"`
-	Name      string    `json:"name,omitempty" firestore:"name"`
+	Id             string    `json:"id"`
+	CreatedAt      time.Time `json:"createdAt"`
+	Name           string    `json:"name,omitempty" firestore:"name"`
+	EnterpriseName string    `json:"enterpriseName"`
+	Address        Address   `json:"address"`
+	CandidateScore float32   `json:"candidateScore"`
+	CompanyLogo    string    `json:"companyLogo"`
 }
 
 type Offer struct {
@@ -45,6 +49,7 @@ type Offer struct {
 	AgentRecap            string    `json:"agentRecap"`
 	Name                  string    `json:"name"`
 	CreatedAt             time.Time `json:"-" firestore:"CreatedAt,serverTimestamp"`
+	CompanyLogo           string    `json:"companyLogo,omitempty"`
 }
 
 type Address struct {
