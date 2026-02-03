@@ -5,18 +5,24 @@ import {
   PlusCircle,
   Settings2Icon,
   Trash2,
-} from 'lucide-react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useCallback, useContext } from 'react'
-import { Link } from '@tanstack/react-router'
-import { Button } from './ui/button'
-import SubmitOfferDialog from './SubmitOfferDialog'
+} from 'lucide-react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useCallback, useContext } from 'react';
+import { Link } from '@tanstack/react-router';
+import { Button } from './ui/button';
+import SubmitOfferDialog from './SubmitOfferDialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from './ui/dropdown-menu'
+} from './ui/dropdown-menu';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from './ui/tooltip';
 import {
   Sidebar,
   SidebarContent,
@@ -28,70 +34,68 @@ import {
   SidebarMenuItem,
   SidebarRail,
   useSidebar,
-} from '@/components/ui/sidebar'
-import { Dialog, DialogTrigger } from '@/components/ui/dialog'
-import { deleteOffer, getOffers } from '@/interactions/offers'
+} from '@/components/ui/sidebar';
+import { Dialog, DialogTrigger } from '@/components/ui/dialog';
+import { deleteOffer, getOffers } from '@/interactions/offers';
 import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuTrigger,
-} from '@/components/ui/context-menu'
-import { OfferContext, OfferContextDispatcher } from '@/context/OfferContext'
-import { cn } from '@/lib/utils'
-import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from './ui/tooltip'
+} from '@/components/ui/context-menu';
+import { OfferContext, OfferContextDispatcher } from '@/context/OfferContext';
+import { cn } from '@/lib/utils';
 
 export function ChatSidebar() {
-
   const { open, setOpen } = useSidebar();
 
   const { data: offers, isPending } = useQuery({
     queryKey: ['profile-offers'],
     queryFn: async () => getOffers(),
-  })
+  });
 
-  const selectedOffer = useContext(OfferContext)
-  const dispatch = useContext(OfferContextDispatcher)
+  const selectedOffer = useContext(OfferContext);
+  const dispatch = useContext(OfferContextDispatcher);
 
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   const { mutate } = useMutation({
     mutationFn: deleteOffer,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['profile-offers'] })
+      queryClient.invalidateQueries({ queryKey: ['profile-offers'] });
     },
     onError: (error) => {
-      console.error('Delete failed', error)
+      console.error('Delete failed', error);
     },
-  })
+  });
 
   const itemClicked = useCallback(
     (id: string) => {
       if (selectedOffer == id) {
-        return
+        return;
       }
       dispatch &&
         dispatch({
           type: 'selected',
           id: id,
-        })
+        });
     },
     [dispatch, selectedOffer],
-  )
+  );
 
   return (
-    <Sidebar variant="inset" className="border-r-2" collapsible='icon'>
+    <Sidebar variant="inset" className="border-r-2" collapsible="icon">
       <SidebarHeader className="flex flex-row border-b-4 w-full justify-between">
         <div className="flex flex-row items-center align-middle gap-2">
           <Tooltip>
             <TooltipTrigger asChild>
               <BriefcaseBusiness onClick={() => setOpen(!open)} />
-
-            </TooltipTrigger >
-            <TooltipContent hidden={open} side='right'>
+            </TooltipTrigger>
+            <TooltipContent hidden={open} side="right">
               Menu
             </TooltipContent>
-          </Tooltip> <span hidden={!open}> Offers</span>
+          </Tooltip>{' '}
+          <span hidden={!open}> Offers</span>
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -117,7 +121,7 @@ export function ChatSidebar() {
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent>
-            <SidebarMenu >
+            <SidebarMenu>
               {isPending && <p>Loading ...</p>}
               {!isPending &&
                 offers?.data?.map((e) => (
@@ -125,7 +129,7 @@ export function ChatSidebar() {
                     className={cn(
                       'border-b-2 p-0.5',
                       selectedOffer?.id == e.id && 'font-bold',
-                      !open && 'text-xs truncate'
+                      !open && 'text-xs truncate',
                     )}
                   >
                     <ContextMenu>
@@ -135,7 +139,10 @@ export function ChatSidebar() {
                       >
                         <div className="flex flex-col gap-0.5 cursor-pointer">
                           <p>{e.name}</p>
-                          <small hidden={!open} className="flex w-full justify-end">
+                          <small
+                            hidden={!open}
+                            className="flex w-full justify-end"
+                          >
                             {e.createdAt.toDateString()}
                           </small>
                         </div>
@@ -156,16 +163,15 @@ export function ChatSidebar() {
       <SidebarFooter>
         <Dialog>
           <Tooltip>
-            <TooltipTrigger asChild className='flex gap-2 items-center'>
-
+            <TooltipTrigger asChild className="flex gap-2 items-center">
               <DialogTrigger asChild>
                 <Button>
-                  <PlusCircle /><span hidden={!open}>Add a new offer</span>
+                  <PlusCircle />
+                  <span hidden={!open}>Add a new offer</span>
                 </Button>
-
               </DialogTrigger>
             </TooltipTrigger>
-            <TooltipContent hidden={open} side='right'>
+            <TooltipContent hidden={open} side="right">
               Add a new offer
             </TooltipContent>
           </Tooltip>
@@ -174,5 +180,5 @@ export function ChatSidebar() {
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }

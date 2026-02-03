@@ -1,36 +1,33 @@
-import { useQuery } from '@tanstack/react-query'
-import { useContext, useMemo } from 'react'
-import ReactMarkdown from 'react-markdown'
-import { getOffer } from '@/interactions/offers'
-import { OfferContext } from '@/context/OfferContext'
-import { Skeleton } from './ui/skeleton'
-import OfferCards from './OfferCards'
+import { useQuery } from '@tanstack/react-query';
+import { useContext, useMemo } from 'react';
+import ReactMarkdown from 'react-markdown';
+import { Skeleton } from './ui/skeleton';
+import OfferCards from './OfferCards';
+import { getOffer } from '@/interactions/offers';
+import { OfferContext } from '@/context/OfferContext';
 
 export default function OfferViewer() {
-
-  const selectedOffer = useContext(OfferContext)
+  const selectedOffer = useContext(OfferContext);
 
   const { data, isPending } = useQuery({
     queryFn: () => getOffer(selectedOffer?.id),
     queryKey: ['offer-id', selectedOffer?.id],
     enabled: !!selectedOffer?.id,
-  })
+  });
 
-
-
-  const offer = useMemo(() => data?.data, [data])
-
+  const offer = useMemo(() => data?.data, [data]);
 
   return (
-    <div className='flex justify-between w-full'>
+    <div className="flex justify-between w-full">
       {/* Offer grid */}
       <div className="w-full h-screen grid grid-cols-3 p-10 gap-4  text-center">
         <OfferCards />
       </div>
-      {(selectedOffer && isPending) && <Skeleton className='max-h-screen w-full p-10 overflow-auto max-w-4xl mx-auto bg-white shadow-lg rounded-xl border border-gray-100' />}
-      {offer &&
+      {selectedOffer && isPending && (
+        <Skeleton className="max-h-screen w-full p-10 overflow-auto max-w-4xl mx-auto bg-white shadow-lg rounded-xl border border-gray-100" />
+      )}
+      {offer && (
         <div className="max-h-screen w-full p-10 overflow-auto max-w-4xl mx-auto bg-white shadow-lg rounded-xl border border-gray-100">
-
           {/* Header */}
           <div className="flex justify-between items-start border-b pb-4 mb-6">
             <div>
@@ -85,8 +82,7 @@ export default function OfferViewer() {
             <p className="text-teal-700 text-sm mb-3">{offer.howToApply}</p>
           </div>
         </div>
-      }
+      )}
     </div>
-  )
-
+  );
 }

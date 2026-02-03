@@ -1,6 +1,6 @@
-import { z } from 'zod'
-import { ContactSchema } from './contact'
-import { AddressSchema } from './address'
+import { z } from 'zod';
+import { ContactSchema } from './contact';
+import { AddressSchema } from './address';
 
 export const OfferShortSchema = z.object({
   id: z.uuid(),
@@ -9,9 +9,9 @@ export const OfferShortSchema = z.object({
   enterpriseName: z.string().optional(),
   address: AddressSchema.optional(),
   candidateScore: z.number().optional(),
-})
+});
 
-export type OfferShort = z.infer<typeof OfferShortSchema>
+export type OfferShort = z.infer<typeof OfferShortSchema>;
 
 export const OfferSchema = z.object({
   enterpriseName: z.string().optional(),
@@ -23,6 +23,6 @@ export const OfferSchema = z.object({
   description: z.string().optional(),
   agentRecap: z.string().optional(),
   name: z.string().optional(),
-})
+});
 
-export type Offer = z.infer<typeof OfferSchema>
+export type Offer = z.infer<typeof OfferSchema>;

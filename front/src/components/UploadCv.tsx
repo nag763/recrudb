@@ -1,30 +1,30 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useCallback } from 'react'
-import { Field } from './ui/field'
-import { Input } from './ui/input'
-import { analyzeCv } from '@/interactions/agents'
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useCallback } from 'react';
+import { Field } from './ui/field';
+import { Input } from './ui/input';
+import { analyzeCv } from '@/interactions/agents';
 
 export default function UploadCv() {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   const { mutate, isPending: cvSubmitIsPending } = useMutation({
     mutationFn: (newFile) => analyzeCv(newFile),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['profile'] })
+      queryClient.invalidateQueries({ queryKey: ['profile'] });
     },
     onError: (error) => {
-      console.error('Upload failed', error)
+      console.error('Upload failed', error);
     },
-  })
+  });
 
   const onFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      mutate(e.target.files[0])
+      mutate(e.target.files[0]);
     }
-  }, [])
+  }, []);
 
   if (cvSubmitIsPending) {
-    return <p>Your CV is being processed...</p>
+    return <p>Your CV is being processed...</p>;
   }
 
   return (
@@ -40,5 +40,5 @@ export default function UploadCv() {
       </Field>
       <p>To create your profile, start by submitting your CV </p>
     </form>
-  )
+  );
 }

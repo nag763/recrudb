@@ -1,39 +1,39 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import {  useCallback, useState } from 'react'
-import { toast } from 'sonner'
-import { DialogFooter, DialogHeader } from './ui/dialog'
-import { Button } from './ui/button'
-import { Textarea } from './ui/textarea'
-import type {FormEvent} from 'react';
-import { postOffer } from '@/interactions/agents'
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useCallback, useState } from 'react';
+import { toast } from 'sonner';
+import { DialogFooter, DialogHeader } from './ui/dialog';
+import { Button } from './ui/button';
+import { Textarea } from './ui/textarea';
+import type { FormEvent } from 'react';
+import { postOffer } from '@/interactions/agents';
 import {
   DialogClose,
   DialogContent,
   DialogDescription,
   DialogTitle,
-} from '@/components/ui/dialog'
+} from '@/components/ui/dialog';
 
 export default function SubmitOfferDialog(): React.ReactNode {
-  const [data, setData] = useState<string>('')
+  const [data, setData] = useState<string>('');
 
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: postOffer,
     onSuccess: () => {
-      setData('')
-      queryClient.invalidateQueries({ queryKey: ['profile-offers'] })
-      toast.success('Your offer has been registered')
+      setData('');
+      queryClient.invalidateQueries({ queryKey: ['profile-offers'] });
+      toast.success('Your offer has been registered');
     },
-  })
+  });
 
   const onFormSubmitCallback = useCallback(
     (e: FormEvent) => {
-      e.preventDefault()
-      mutation.mutate(data)
+      e.preventDefault();
+      mutation.mutate(data);
     },
     [mutation],
-  )
+  );
 
   return (
     <DialogContent className="sm:max-w-md flex flex-col gap-8">
@@ -66,5 +66,5 @@ export default function SubmitOfferDialog(): React.ReactNode {
         </DialogFooter>
       </form>
     </DialogContent>
-  )
+  );
 }

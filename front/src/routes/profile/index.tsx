@@ -1,30 +1,30 @@
-import { Link, createFileRoute } from '@tanstack/react-router'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { deleteProfile, getProfile } from '@/interactions/profile'
-import UploadCv from '@/components/UploadCv'
-import { Button } from '@/components/ui/button'
+import { Link, createFileRoute } from '@tanstack/react-router';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { deleteProfile, getProfile } from '@/interactions/profile';
+import UploadCv from '@/components/UploadCv';
+import { Button } from '@/components/ui/button';
 
 export const Route = createFileRoute('/profile/')({
   component: RouteComponent,
-})
+});
 
 function RouteComponent() {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   const { data, isPending: profileIsPending } = useQuery({
     queryKey: ['profile'],
     queryFn: () => getProfile(),
-  })
+  });
 
   const { mutate: deleteProfileMutate } = useMutation({
     mutationFn: () => deleteProfile(),
     onSuccess: () => {
-      queryClient.invalidateQueries(['profile'])
+      queryClient.invalidateQueries(['profile']);
     },
-  })
+  });
 
   if (profileIsPending) {
-    return <p>Loading...</p>
+    return <p>Loading...</p>;
   }
 
   return (
@@ -111,5 +111,5 @@ function RouteComponent() {
         </div>
       )}
     </div>
-  )
+  );
 }

@@ -1,48 +1,48 @@
-import axios from 'axios'
-import type {AxiosResponse, InternalAxiosRequestConfig} from 'axios';
-import type z from 'zod'
-import { auth } from '@/lib/gcpAuth'
+import axios from 'axios';
+import type { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
+import type z from 'zod';
+import { auth } from '@/lib/gcpAuth';
 
 declare module 'axios' {
   export interface AxiosRequestConfig {
-    schema?: z.ZodSchema
+    schema?: z.ZodSchema;
   }
 }
 
 const injectBearer = async (config: InternalAxiosRequestConfig) => {
-  const user = auth.currentUser
+  const user = auth.currentUser;
 
   if (user) {
-    const token = await user.getIdToken()
-    config.headers.Authorization = `Bearer ${token}`
+    const token = await user.getIdToken();
+    config.headers.Authorization = `Bearer ${token}`;
   }
 
-  return config
-}
+  return config;
+};
 
 const parseResponse = (
   response: AxiosResponse,
 ): AxiosResponse<any, any, {}> => {
   if (response?.data?.success) {
-    const data = response.data.data
-    const schema = response.config.schema
+    const data = response.data.data;
+    const schema = response.config.schema;
     if (!schema) {
-      return { ...response, data: response.data?.data }
+      return { ...response, data: response.data?.data };
     }
-    const parsed = schema.safeParse(data)
+    const parsed = schema.safeParse(data);
     if (!parsed.success) {
       console.error({
         message: 'error while parsing for schema',
         schema,
         data,
         error: parsed.error,
-      })
-      throw parsed.error
+      });
+      throw parsed.error;
     }
-    return { ...response, data: parsed?.data }
+    return { ...response, data: parsed?.data };
   }
-  return response
-}
+  return response;
+};
 
 const createClient = (contentType?: string) =>
   axios.create({
@@ -50,12 +50,12 @@ const createClient = (contentType?: string) =>
     headers: {
       'Content-Type': contentType,
     },
-  })
+  });
 
-const apiClient = createClient('application/json')
+const apiClient = createClient('application/json');
 
-apiClient.interceptors.request.use(injectBearer)
+apiClient.interceptors.request.use(injectBearer);
 
-apiClient.interceptors.response.use(parseResponse)
+apiClient.interceptors.response.use(parseResponse);
 
-export default apiClient
+export default apiClient;
