@@ -8,7 +8,7 @@ export default function UploadCv() {
   const queryClient = useQueryClient();
 
   const { mutate, isPending: cvSubmitIsPending } = useMutation({
-    mutationFn: (newFile) => analyzeCv(newFile),
+    mutationFn: (newFile: File) => analyzeCv(newFile),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['profile'] });
     },

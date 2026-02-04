@@ -10,7 +10,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useContext } from 'react';
 import { Link } from '@tanstack/react-router';
 import { Button } from './ui/button';
-import SubmitOfferDialog from './SubmitOfferDialog';
+import SubmitOfferDialog from './offer/SubmitOfferDialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -43,8 +43,8 @@ import {
   ContextMenuItem,
   ContextMenuTrigger,
 } from '@/components/ui/context-menu';
-import { OfferContext, OfferContextDispatcher } from '@/context/OfferContext';
 import { cn } from '@/lib/utils';
+import useSelectOffer from '@/hooks/useSelectOffer';
 
 export function ChatSidebar() {
   const { open, setOpen } = useSidebar();
@@ -53,9 +53,6 @@ export function ChatSidebar() {
     queryKey: ['profile-offers'],
     queryFn: async () => getOffers(),
   });
-
-  const selectedOffer = useContext(OfferContext);
-  const dispatch = useContext(OfferContextDispatcher);
 
   const queryClient = useQueryClient();
 
@@ -69,22 +66,7 @@ export function ChatSidebar() {
     },
   });
 
-  const itemClicked = useCallback(
-    (id: string) => {
-      if (selectedOffer?.id == id) {
-        dispatch && dispatch({
-          type: "default"
-        })
-        return;
-      }
-      dispatch &&
-        dispatch({
-          type: 'selected',
-          id: id,
-        });
-    },
-    [dispatch, selectedOffer],
-  );
+  const {selectedOffer, onOfferSelected: itemClicked} = useSelectOffer();
 
   return (
     <Sidebar variant="inset" className="border-r-2" collapsible="icon">

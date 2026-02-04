@@ -1,9 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useState } from 'react';
 import { toast } from 'sonner';
-import { DialogFooter, DialogHeader } from './ui/dialog';
-import { Button } from './ui/button';
-import { Textarea } from './ui/textarea';
+import { DialogFooter, DialogHeader } from '../ui/dialog';
+import { Button } from '../ui/button';
+import { Textarea } from '../ui/textarea';
 import type { FormEvent } from 'react';
 import { postOffer } from '@/interactions/agents';
 import {

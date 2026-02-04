@@ -8,7 +8,7 @@ import {
   OfferContextDispatcher,
   offerReducer,
 } from '@/context/OfferContext';
-import OfferViewer from '@/components/OfferViewer';
+import OfferViewer from '@/components/offer/OfferViewer';
 
 export const Route = createFileRoute('/')({
   component: App,
