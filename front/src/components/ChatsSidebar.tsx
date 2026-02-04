@@ -33,7 +33,7 @@ export function ChatSidebar() {
         <div className="flex flex-row items-center align-middle gap-2">
           <Tooltip>
             <TooltipTrigger asChild>
-              <BriefcaseBusiness onClick={() => setOpen(!open)} />
+              <img src='/recrudb.webp' className='cursor-pointer' height={32} width={32} onClick={() => setOpen(!open)} />
             </TooltipTrigger>
             <TooltipContent hidden={open} side="right">
               Menu
@@ -41,8 +41,8 @@ export function ChatSidebar() {
           </Tooltip>{' '}
           <span hidden={!open}> Offers</span>
         </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+        <DropdownMenu >
+          <DropdownMenuTrigger hidden={!open} asChild>
             <CircleUserRound className="cursor-pointer"></CircleUserRound>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
