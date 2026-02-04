@@ -5,6 +5,7 @@ import { Skeleton } from './ui/skeleton';
 import OfferCards from './OfferCards';
 import { getOffer } from '@/interactions/offers';
 import { OfferContext } from '@/context/OfferContext';
+import { cn } from '@/lib/utils';
 
 export default function OfferViewer() {
   const selectedOffer = useContext(OfferContext);
@@ -14,19 +15,21 @@ export default function OfferViewer() {
     queryKey: ['offer-id', selectedOffer?.id],
     enabled: !!selectedOffer?.id,
   });
+  console.log(selectedOffer)
 
+  const offerSelected = useMemo(() => selectedOffer?.id != undefined, [selectedOffer]);
   const offer = useMemo(() => data?.data, [data]);
 
   return (
     <div className="flex justify-between w-full">
       {/* Offer grid */}
-      <div className="w-full h-screen grid grid-cols-3 p-10 gap-4  text-center">
+      <div className={cn("w-full max-h-screen overflow-scroll grid grid-cols-3 p-10 gap-4 text-center", selectedOffer && "p-6")}>
         <OfferCards />
       </div>
-      {selectedOffer && isPending && (
+      {offerSelected && isPending && (
         <Skeleton className="max-h-screen w-full p-10 overflow-auto max-w-4xl mx-auto bg-white shadow-lg rounded-xl border border-gray-100" />
       )}
-      {offer && (
+      {offerSelected && offer && (
         <div className="max-h-screen w-full p-10 overflow-auto max-w-4xl mx-auto bg-white shadow-lg rounded-xl border border-gray-100">
           {/* Header */}
           <div className="flex justify-between items-start border-b pb-4 mb-6">

@@ -15,7 +15,12 @@ export default function OfferCards() {
 
   const itemClicked = useCallback(
     (id: string) => {
-      if (selectedOffer == id) {
+      if (selectedOffer?.id == id) {
+        dispatch && dispatch(
+          {
+            type: "default"
+          }
+        )
         return;
       }
       dispatch &&
