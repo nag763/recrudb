@@ -1,9 +1,11 @@
-import { MapPin } from 'lucide-react';
+import { MapPin, TrendingUp } from 'lucide-react';
 import { Badge } from '../ui/badge';
 import type { OfferShort } from '@/types/offer';
 import { cn } from '@/lib/utils';
 import useSelectOffer from '@/hooks/useSelectOffer';
 import { useMemo } from 'react';
+import { useSidebar } from '../ui/sidebar';
+import { TooltipContent, Tooltip, TooltipTrigger } from '../ui/tooltip';
 
 interface OfferCardProps {
   offer: OfferShort;
@@ -11,15 +13,15 @@ interface OfferCardProps {
 }
 
 export default function OfferCard({ offer }: OfferCardProps) {
-  const {selectedOffer, onOfferSelected: onClick} = useSelectOffer();
-  const selected = useMemo(() => selectedOffer?.id == offer.id, [selectedOffer] );
+  const { selectedOffer, onOfferSelected: onClick } = useSelectOffer();
+  const selected = useMemo(() => selectedOffer?.id == offer.id, [selectedOffer]);
   return (
     <div
       onClick={() => onClick(offer.id)}
       key={offer.id}
       className={cn("bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md cursor-pointer",
         "transition-shadow duration-200 flex flex-col justify-between",
-         selected && "border-4 border-indigo-200")}
+        selected && "border-4 border-indigo-200")}
     >
       <div>
         <div className="flex justify-between items-start">
@@ -34,16 +36,27 @@ export default function OfferCard({ offer }: OfferCardProps) {
               variant="outline"
               className="bg-green-100 text-green-800 border-green-200 text-xs"
             >
-              High match
+              {selectedOffer?.id ?
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <TrendingUp />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>This offer matches your profile</p>
+                  </TooltipContent>
+                </Tooltip> :
+                <span>High match</span>
+              }
             </Badge>
           )}
         </div>
-        <div className="flex items-center text-sm text-gray-600 mt-2">
+
+      </div>
+      <div className="flex justify-between text-xs text-gray-400 items-center ">
+        <div className="flex text-gray-600 ">
           <MapPin className="w-4 h-4 mr-1" />
           <span>{offer.address?.city || offer.address?.country}</span>
         </div>
-      </div>
-      <div className="text-right text-xs text-gray-400 mt-4">
         <p>{offer.createdAt.toLocaleDateString()}</p>
       </div>
     </div>

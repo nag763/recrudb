@@ -2,15 +2,9 @@ import {
   BriefcaseBusiness,
   CircleUserRound,
   LogOutIcon,
-  PlusCircle,
   Settings2Icon,
-  Trash2,
 } from 'lucide-react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useCallback, useContext } from 'react';
 import { Link } from '@tanstack/react-router';
-import { Button } from './ui/button';
-import SubmitOfferDialog from './offer/SubmitOfferDialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,53 +14,18 @@ import {
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from './ui/tooltip';
 import {
   Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuItem,
   SidebarRail,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { Dialog, DialogTrigger } from '@/components/ui/dialog';
-import { deleteOffer, getOffers } from '@/interactions/offers';
-import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuTrigger,
-} from '@/components/ui/context-menu';
-import { cn } from '@/lib/utils';
-import useSelectOffer from '@/hooks/useSelectOffer';
+import OfferSidebar from './offer/OfferSidebar';
 
 export function ChatSidebar() {
   const { open, setOpen } = useSidebar();
-
-  const { data: offers, isPending } = useQuery({
-    queryKey: ['profile-offers'],
-    queryFn: async () => getOffers(),
-  });
-
-  const queryClient = useQueryClient();
-
-  const { mutate } = useMutation({
-    mutationFn: deleteOffer,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['profile-offers'] });
-    },
-    onError: (error) => {
-      console.error('Delete failed', error);
-    },
-  });
-
-  const {selectedOffer, onOfferSelected: itemClicked} = useSelectOffer();
 
   return (
     <Sidebar variant="inset" className="border-r-2" collapsible="icon">
@@ -103,66 +62,7 @@ export function ChatSidebar() {
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarHeader>
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {isPending && <p>Loading ...</p>}
-              {!isPending &&
-                offers?.data?.map((e) => (
-                  <SidebarMenuItem
-                    className={cn(
-                      'border-b-2 p-0.5',
-                      selectedOffer?.id == e.id && 'font-bold',
-                      !open && 'text-xs truncate',
-                    )}
-                  >
-                    <ContextMenu>
-                      <ContextMenuTrigger
-                        onClick={() => itemClicked(e.id)}
-                        asChild
-                      >
-                        <div className="flex flex-col gap-0.5 cursor-pointer">
-                          <p>{e.name}</p>
-                          <small
-                            hidden={!open}
-                            className="flex w-full justify-end"
-                          >
-                            {e.createdAt.toDateString()}
-                          </small>
-                        </div>
-                      </ContextMenuTrigger>
-                      <ContextMenuContent>
-                        <ContextMenuItem onClick={() => mutate(e.id)}>
-                          <Trash2 />
-                          Delete
-                        </ContextMenuItem>
-                      </ContextMenuContent>
-                    </ContextMenu>
-                  </SidebarMenuItem>
-                ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-      <SidebarFooter>
-        <Dialog>
-          <Tooltip>
-            <TooltipTrigger asChild className="flex gap-2 items-center">
-              <DialogTrigger asChild>
-                <Button>
-                  <PlusCircle />
-                  <span hidden={!open}>Add a new offer</span>
-                </Button>
-              </DialogTrigger>
-            </TooltipTrigger>
-            <TooltipContent hidden={open} side="right">
-              Add a new offer
-            </TooltipContent>
-          </Tooltip>
-          <SubmitOfferDialog />
-        </Dialog>
-      </SidebarFooter>
+      <OfferSidebar />
       <SidebarRail />
     </Sidebar>
   );
