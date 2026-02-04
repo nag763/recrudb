@@ -36,6 +36,7 @@ type OfferShort struct {
 	Address        Address   `json:"address"`
 	CandidateScore float32   `json:"candidateScore"`
 	CompanyLogo    string    `json:"companyLogo"`
+	Position       string    `json:"position"`
 }
 
 type Offer struct {
@@ -45,6 +46,7 @@ type Offer struct {
 	TechnicalRequirements []string  `json:"techRequirements"`
 	CandidateScore        float32   `json:"candidateScore"`
 	HowToApply            string    `json:"howToApply"`
+	Position              string    `json:"position"`
 	Description           string    `json:"description"`
 	AgentRecap            string    `json:"agentRecap"`
 	Name                  string    `json:"name"`
