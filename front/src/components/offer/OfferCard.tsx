@@ -4,12 +4,10 @@ import type { OfferShort } from '@/types/offer';
 import { cn } from '@/lib/utils';
 import useSelectOffer from '@/hooks/useSelectOffer';
 import { useMemo } from 'react';
-import { useSidebar } from '../ui/sidebar';
 import { TooltipContent, Tooltip, TooltipTrigger } from '../ui/tooltip';
 
 interface OfferCardProps {
   offer: OfferShort;
-  selected: boolean
 }
 
 export default function OfferCard({ offer }: OfferCardProps) {

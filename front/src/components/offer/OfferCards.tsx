@@ -1,21 +1,30 @@
 import { useQuery } from '@tanstack/react-query';
-import { useContext } from 'react';
 import OfferCard from './OfferCard';
 import { getOffers } from '@/interactions/offers';
-import { OfferContext } from '@/context/OfferContext';
+import { useMemo } from 'react';
 
 export default function OfferCards() {
-  const { data: offers, isPending: isOffersPending } = useQuery({
+  const { data, isPending: isOffersPending } = useQuery({
     queryKey: ['profile-offers'],
     queryFn: getOffers,
   });
+  const offers = useMemo(() => data?.data, [data]);
 
-  const selectedOffer = useContext(OfferContext);
 
   if (isOffersPending) {
     return <p>Loading...</p>;
   }
-  return offers?.data.map((e) => (
-    <OfferCard offer={e} selected={e.id == selectedOffer?.id} key={e.id} />
+
+
+  if(!offers) {
+    return <div className='w-full h-full flex flex-col gap-12 items-center align-middle justify-center col-span-full'>
+      <img src="/decide.svg" height={400} width={400}/>
+      <h1 className='text-4xl'>No offer so far !</h1>
+      <h2>Use the button on the left panel to add a new one.</h2>
+    </div>
+  }
+
+  return offers?.map((e) => (
+    <OfferCard offer={e} key={e.id} />
   ));
 }
