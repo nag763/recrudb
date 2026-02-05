@@ -9,6 +9,7 @@ import (
 	"google.golang.org/adk/agent"
 	"google.golang.org/adk/agent/llmagent"
 	"google.golang.org/adk/agent/workflowagents/sequentialagent"
+	"google.golang.org/adk/session"
 	"google.golang.org/adk/tool"
 	"google.golang.org/adk/tool/geminitool"
 	"google.golang.org/genai"
@@ -123,7 +124,8 @@ func NewJobOfferAgent(agentConfig *AgentConfig, secretService secret.SecretServi
 	}
 
 	return &injection.HttpAgent{
-		Path:  "/jobOffer",
-		Agent: jobOfferMatcher,
+		Path:    "/jobOffer",
+		Agent:   jobOfferMatcher,
+		Session: session.InMemoryService(),
 	}, nil
 }

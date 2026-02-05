@@ -3,6 +3,7 @@ package agent
 import (
 	"context"
 	"log"
+	"nag763/recrudb/api/internal/injection"
 	"strings"
 
 	"google.golang.org/adk/agent"
@@ -18,13 +19,13 @@ type Runner struct {
 	sessionService session.Service
 }
 
-func NewAgentRunner(sessionService session.Service, agent agent.Agent) (*Runner, error) {
+func NewAgentRunner(agent *injection.HttpAgent) (*Runner, error) {
 	ctx := context.Background()
 
 	runner, err := runner.New(runner.Config{
-		Agent:          agent,
-		SessionService: sessionService,
-		AppName:        agent.Name(),
+		Agent:          agent.Agent,
+		SessionService: agent.Session,
+		AppName:        agent.Agent.Name(),
 	})
 	if err != nil {
 		return nil, err
@@ -33,30 +34,49 @@ func NewAgentRunner(sessionService session.Service, agent agent.Agent) (*Runner,
 	return &Runner{
 		ctx:            ctx,
 		runner:         *runner,
-		appName:        agent.Name(),
-		sessionService: sessionService,
+		appName:        agent.Agent.Name(),
+		sessionService: agent.Session,
 	}, nil
 }
 
 type RunParams struct {
 	Input        *genai.Content
 	UserId       string
+	SessionId    string
 	ClearSession bool
 }
 
-func (r Runner) Run(params RunParams) (string, error) {
+type RunResponse struct {
+	Content   string `json:"content"`
+	SessionId string `json:"sessionId"`
+}
+
+func (r Runner) Run(params RunParams) (*RunResponse, error) {
 	var sb strings.Builder
 
-	request, err := r.sessionService.Create(r.ctx, &session.CreateRequest{
-		AppName: r.appName,
-		UserID:  params.UserId,
-	})
-	if err != nil {
-		log.Printf("error creating session %v", err)
-		return "", err
+	var sessionId string
+	if params.SessionId == "" {
+		request, err := r.sessionService.Create(r.ctx, &session.CreateRequest{
+			AppName: r.appName,
+			UserID:  params.UserId,
+		})
+		if err != nil {
+			log.Printf("error creating session %v", err)
+			return nil, err
+		}
+		sessionId = request.Session.ID()
+	} else {
+		req, err := r.sessionService.Get(r.ctx, &session.GetRequest{
+			AppName:   r.appName,
+			UserID:    params.UserId,
+			SessionID: params.SessionId,
+		})
+		if err != nil {
+			return nil, err
+		}
+		sessionId = req.Session.ID()
 	}
 
-	sessionId := request.Session.ID()
 	if params.ClearSession {
 		defer func() {
 			if err := r.sessionService.Delete(r.ctx, &session.DeleteRequest{
@@ -73,12 +93,15 @@ func (r Runner) Run(params RunParams) (string, error) {
 		StreamingMode: agent.StreamingModeSSE,
 	}) {
 		if err != nil {
-			return "", err
+			return nil, err
 		} else if event.Partial {
 			for _, p := range event.LLMResponse.Content.Parts {
 				sb.WriteString(p.Text)
 			}
 		}
 	}
-	return sb.String(), nil
+	return &RunResponse{
+		Content:   sb.String(),
+		SessionId: sessionId,
+	}, nil
 }

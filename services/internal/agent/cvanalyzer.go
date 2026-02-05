@@ -6,6 +6,7 @@ import (
 	"nag763/recrudb/api/internal/secret"
 
 	"google.golang.org/adk/agent/llmagent"
+	"google.golang.org/adk/session"
 	"google.golang.org/adk/tool"
 	"google.golang.org/genai"
 )
@@ -39,7 +40,8 @@ func NewCvAnalyzer(agentConfig *AgentConfig, secretService secret.SecretService)
 	}
 
 	return &injection.HttpAgent{
-		Path:  "/cvAnalyzer",
-		Agent: agent,
+		Path:    "/cvAnalyzer",
+		Agent:   agent,
+		Session: session.InMemoryService(),
 	}, nil
 }

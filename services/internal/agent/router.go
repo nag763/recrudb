@@ -5,7 +5,6 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"go.uber.org/fx"
-	"google.golang.org/adk/session"
 )
 
 type AgentRouterParams struct {
@@ -16,10 +15,9 @@ type AgentRouterParams struct {
 
 func NewAgentRouter(agentConfig *AgentConfig, agentRouterParams AgentRouterParams) (injection.SubRouter, error) {
 	r := chi.NewMux()
-	sessionService := session.InMemoryService()
 
 	for _, ha := range agentRouterParams.HttpAgents {
-		runner, err := NewAgentRunner(sessionService, ha.Agent)
+		runner, err := NewAgentRunner(ha)
 		if err != nil {
 			return injection.SubRouter{}, err
 		}
