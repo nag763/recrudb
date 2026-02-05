@@ -1,6 +1,7 @@
 package agent
 
 import (
+	"errors"
 	"fmt"
 	"nag763/recrudb/api/internal/agent/firestore"
 	"nag763/recrudb/api/internal/pkg/identity"
@@ -65,5 +66,32 @@ func sessionListHttpHandler(runner *Runner, sessionService *firestore.FirestoreS
 			render.Render(w, r, response.InternalResponse(err))
 		}
 		render.Render(w, r, response.Success(sessions))
+	}
+}
+
+func sessionGetHttpHandler(runner *Runner, sessionService *firestore.FirestoreSessionService) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		sub, err := identity.GetSubFromRequest(r.Context(), r.Header)
+		if err != nil {
+			render.Render(w, r, response.Unauthorized(fmt.Errorf("no sub found : %w", err)))
+			return
+		}
+
+		sessionId := r.PathValue("sessionId")
+		if sessionId == "" {
+			render.Render(w, r, response.InvalidRequest(errors.New("session id can't be empty")))
+			return
+		}
+
+		session, err := sessionService.Get(r.Context(), &session.GetRequest{
+			AppName:   runner.appName,
+			UserID:    sub,
+			SessionID: sessionId,
+		})
+		if err != nil {
+			render.Render(w, r, response.InternalResponse(err))
+		}
+
+		render.Render(w, r, response.Success(session))
 	}
 }
