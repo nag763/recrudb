@@ -8,3 +8,5 @@ export const analyzeCv = (file: File) => {
 
 export const postOffer = (offerText: string) =>
   apiClient.post('/agents/jobOffer', { data: offerText });
+
+export const getCoordinatorSessions = () => apiClient.get('/agents/coordinator/sessions')

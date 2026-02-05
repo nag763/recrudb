@@ -2,6 +2,7 @@ import {
   BriefcaseBusiness,
   CircleUserRound,
   LogOutIcon,
+  PlusCircle,
   Settings2Icon,
 } from 'lucide-react';
 import { Link } from '@tanstack/react-router';
@@ -18,13 +19,19 @@ import {
 } from './ui/tooltip';
 import {
   Sidebar,
+  SidebarContent,
+  SidebarFooter,
   SidebarHeader,
   SidebarRail,
   useSidebar,
 } from '@/components/ui/sidebar';
 import OfferSidebar from './offer/OfferSidebar';
+import { Dialog, DialogTrigger } from './ui/dialog';
+import { Button } from './ui/button';
+import SubmitOfferDialog from './offer/SubmitOfferDialog';
+import ChatSidebar from './chats/ChatSidebar';
 
-export function ChatSidebar() {
+export function AppSidebar() {
   const { open, setOpen } = useSidebar();
 
   return (
@@ -39,7 +46,7 @@ export function ChatSidebar() {
               Menu
             </TooltipContent>
           </Tooltip>{' '}
-          <span hidden={!open}> Offers</span>
+          <span hidden={!open}>recrudb</span>
         </div>
         <DropdownMenu >
           <DropdownMenuTrigger hidden={!open} asChild>
@@ -62,7 +69,28 @@ export function ChatSidebar() {
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarHeader>
-      <OfferSidebar />
+      <SidebarContent className='gap-0'>
+        <ChatSidebar/>
+        <OfferSidebar />
+      </SidebarContent>
+      <SidebarFooter>
+        <Dialog>
+          <Tooltip>
+            <TooltipTrigger asChild className="flex gap-2 items-center">
+              <DialogTrigger asChild>
+                <Button>
+                  <PlusCircle />
+                  <span hidden={!open}>Add a new offer</span>
+                </Button>
+              </DialogTrigger>
+            </TooltipTrigger>
+            <TooltipContent hidden={open} side="right">
+              Add a new offer
+            </TooltipContent>
+          </Tooltip>
+          <SubmitOfferDialog />
+        </Dialog>
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );

@@ -2,6 +2,7 @@ package agent
 
 import (
 	"fmt"
+	"nag763/recrudb/api/internal/agent/firestore"
 	"nag763/recrudb/api/internal/pkg/identity"
 	"nag763/recrudb/api/internal/request"
 	"nag763/recrudb/api/internal/response"
@@ -48,7 +49,7 @@ func interactionHttpHandler(runner *Runner) func(w http.ResponseWriter, r *http.
 	}
 }
 
-func sessionListHttpHandler(runner *Runner) func(w http.ResponseWriter, r *http.Request) {
+func sessionListHttpHandler(runner *Runner, sessionService *firestore.FirestoreSessionService) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		sub, err := identity.GetSubFromRequest(r.Context(), r.Header)
 		if err != nil {
@@ -56,7 +57,7 @@ func sessionListHttpHandler(runner *Runner) func(w http.ResponseWriter, r *http.
 			return
 		}
 
-		sessions, err := runner.sessionService.List(r.Context(), &session.ListRequest{
+		sessions, err := sessionService.ListSessionShort(r.Context(), &session.ListRequest{
 			AppName: runner.appName,
 			UserID:  sub,
 		})

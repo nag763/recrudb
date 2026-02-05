@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useReducer } from 'react';
 import { useProfile } from '@/hooks/useProfile';
 import { SidebarProvider } from '@/components/ui/sidebar';
-import { ChatSidebar } from '@/components/ChatsSidebar';
+import { AppSidebar } from '@/components/AppSidebar';
 import {
   OfferContext,
   OfferContextDispatcher,
@@ -33,7 +33,7 @@ function App() {
     <OfferContext value={offer}>
       <OfferContextDispatcher value={dispatch}>
         <SidebarProvider>
-          <ChatSidebar />
+          <AppSidebar />
 
           <OfferViewer />
         </SidebarProvider>

@@ -3,6 +3,7 @@ package firestore
 import (
 	"context"
 	"errors"
+	"strings"
 
 	"cloud.google.com/go/firestore"
 	"github.com/google/uuid"
@@ -122,6 +123,35 @@ func (f *fss) List(ctx context.Context, r *session.ListRequest) (*session.ListRe
 	}, nil
 }
 
+func (f *fss) ListSessionShort(ctx context.Context, r *session.ListRequest) ([]FirestoreSessionShort, error) {
+	docs, err := f.getProfileSessions(r.UserID, r.AppName)
+	if err != nil {
+		return nil, err
+	}
+	iter := docs.OrderBy("lastUpdateTime", firestore.Desc).Documents(ctx)
+	defer iter.Stop()
+	sessions := []FirestoreSessionShort{}
+
+	for {
+		doc, err := iter.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+
+		var s FirestoreSessionShort
+		if err := doc.DataTo(&s); err != nil {
+			return nil, err
+		}
+
+		sessions = append(sessions, s)
+	}
+
+	return sessions, nil
+}
+
 func (f *fss) Delete(ctx context.Context, r *session.DeleteRequest) error {
 	doc, err := f.getSession(r.UserID, r.AppName, r.SessionID)
 	if err != nil {
@@ -136,16 +166,45 @@ func (f *fss) Delete(ctx context.Context, r *session.DeleteRequest) error {
 }
 
 func (f *fss) AppendEvent(ctx context.Context, s session.Session, e *session.Event) error {
+
+	updates := []firestore.Update{
+		{
+			Path:  "eventWrapper.events",
+			Value: firestore.ArrayUnion(e),
+		},
+		{
+			Path:  "lastUpdate",
+			Value: firestore.ServerTimestamp,
+		},
+	}
+
 	doc, err := f.getSession(s.UserID(), s.AppName(), s.ID())
 	if err != nil {
 		return err
 	}
 
-	_, err = doc.Update(ctx, []firestore.Update{
-		{
-			Path:  "eventWrapper.events",
-			Value: firestore.ArrayUnion(e),
-		},
-	})
+	docRef, err := doc.Get(ctx)
+	if err != nil {
+		return err
+	}
+
+	var fs FirestoreSessionShort
+	if err := docRef.DataTo(&fs); err != nil {
+		return err
+	}
+	if fs.Name == "" && e.Content.Role == "user" {
+		var sb strings.Builder
+		for _, part := range e.Content.Parts {
+			if part.Text != "" {
+				sb.WriteString(part.Text)
+			}
+		}
+		updates = append(updates, firestore.Update{
+			Path:  "name",
+			Value: sb.String(),
+		})
+	}
+
+	_, err = doc.Update(ctx, updates)
 	return err
 }

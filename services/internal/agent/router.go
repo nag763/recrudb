@@ -1,6 +1,7 @@
 package agent
 
 import (
+	"nag763/recrudb/api/internal/agent/firestore"
 	"nag763/recrudb/api/internal/injection"
 
 	"github.com/go-chi/chi/v5"
@@ -13,7 +14,7 @@ type AgentRouterParams struct {
 	HttpAgents []*injection.HttpAgent `group:"http_agent"`
 }
 
-func NewAgentRouter(agentConfig *AgentConfig, agentRouterParams AgentRouterParams) (injection.SubRouter, error) {
+func NewAgentRouter(agentConfig *AgentConfig, firestoreSessionService *firestore.FirestoreSessionService, agentRouterParams AgentRouterParams) (injection.SubRouter, error) {
 	r := chi.NewMux()
 
 	for _, ha := range agentRouterParams.HttpAgents {
@@ -22,7 +23,7 @@ func NewAgentRouter(agentConfig *AgentConfig, agentRouterParams AgentRouterParam
 			return injection.SubRouter{}, err
 		}
 		r.Post(ha.Path, interactionHttpHandler(runner))
-		r.Get(ha.Path+"/sessions", sessionListHttpHandler(runner))
+		r.Get(ha.Path+"/sessions", sessionListHttpHandler(runner, firestoreSessionService))
 	}
 
 	return injection.SubRouter{

@@ -5,7 +5,7 @@ import apiClient from '@/lib/client';
 import { OfferSchema, OfferShortSchema } from '@/types/offer';
 
 export const getOffers = (): ApiResponse<Array<OfferShort>> =>
-  apiClient.get('/profile/me/offers', { schema: z.array(OfferShortSchema).optional() });
+  apiClient.get(`/profile/me/offers`, { schema: z.array(OfferShortSchema).optional() });
 export const getOffer = (offerId?: string): ApiResponse<Offer> =>
   apiClient.get(`/profile/me/offers/${offerId}`, { schema: OfferSchema });
 export const deleteOffer = (offerId: string) =>
