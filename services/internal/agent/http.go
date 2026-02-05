@@ -9,9 +9,10 @@ import (
 	"strings"
 
 	"github.com/go-chi/render"
+	"google.golang.org/adk/session"
 )
 
-func httpHandler(runner *Runner) func(w http.ResponseWriter, r *http.Request) {
+func interactionHttpHandler(runner *Runner) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		sub, err := identity.GetSubFromRequest(r.Context(), r.Header)
 		if err != nil {
@@ -44,5 +45,24 @@ func httpHandler(runner *Runner) func(w http.ResponseWriter, r *http.Request) {
 		}
 
 		render.Render(w, r, response.Success(resp))
+	}
+}
+
+func sessionListHttpHandler(runner *Runner) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		sub, err := identity.GetSubFromRequest(r.Context(), r.Header)
+		if err != nil {
+			render.Render(w, r, response.Unauthorized(fmt.Errorf("no sub found : %w", err)))
+			return
+		}
+
+		sessions, err := runner.sessionService.List(r.Context(), &session.ListRequest{
+			AppName: runner.appName,
+			UserID:  sub,
+		})
+		if err != nil {
+			render.Render(w, r, response.InternalResponse(err))
+		}
+		render.Render(w, r, response.Success(sessions))
 	}
 }

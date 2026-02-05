@@ -21,7 +21,8 @@ func NewAgentRouter(agentConfig *AgentConfig, agentRouterParams AgentRouterParam
 		if err != nil {
 			return injection.SubRouter{}, err
 		}
-		r.Post(ha.Path, httpHandler(runner))
+		r.Post(ha.Path, interactionHttpHandler(runner))
+		r.Get(ha.Path+"/sessions", sessionListHttpHandler(runner))
 	}
 
 	return injection.SubRouter{
