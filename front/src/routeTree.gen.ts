@@ -11,7 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProfileIndexRouteImport } from './routes/profile/index'
+import { Route as OfferIndexRouteImport } from './routes/offer/index'
 import { Route as LogoutIndexRouteImport } from './routes/logout/index'
+import { Route as ChatIndexRouteImport } from './routes/chat/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -23,39 +25,57 @@ const ProfileIndexRoute = ProfileIndexRouteImport.update({
   path: '/profile/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OfferIndexRoute = OfferIndexRouteImport.update({
+  id: '/offer/',
+  path: '/offer/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LogoutIndexRoute = LogoutIndexRouteImport.update({
   id: '/logout/',
   path: '/logout/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ChatIndexRoute = ChatIndexRouteImport.update({
+  id: '/chat/',
+  path: '/chat/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/chat/': typeof ChatIndexRoute
   '/logout/': typeof LogoutIndexRoute
+  '/offer/': typeof OfferIndexRoute
   '/profile/': typeof ProfileIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/chat': typeof ChatIndexRoute
   '/logout': typeof LogoutIndexRoute
+  '/offer': typeof OfferIndexRoute
   '/profile': typeof ProfileIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/chat/': typeof ChatIndexRoute
   '/logout/': typeof LogoutIndexRoute
+  '/offer/': typeof OfferIndexRoute
   '/profile/': typeof ProfileIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/logout/' | '/profile/'
+  fullPaths: '/' | '/chat/' | '/logout/' | '/offer/' | '/profile/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/logout' | '/profile'
-  id: '__root__' | '/' | '/logout/' | '/profile/'
+  to: '/' | '/chat' | '/logout' | '/offer' | '/profile'
+  id: '__root__' | '/' | '/chat/' | '/logout/' | '/offer/' | '/profile/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ChatIndexRoute: typeof ChatIndexRoute
   LogoutIndexRoute: typeof LogoutIndexRoute
+  OfferIndexRoute: typeof OfferIndexRoute
   ProfileIndexRoute: typeof ProfileIndexRoute
 }
 
@@ -75,6 +95,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfileIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/offer/': {
+      id: '/offer/'
+      path: '/offer'
+      fullPath: '/offer/'
+      preLoaderRoute: typeof OfferIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/logout/': {
       id: '/logout/'
       path: '/logout'
@@ -82,12 +109,21 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LogoutIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/chat/': {
+      id: '/chat/'
+      path: '/chat'
+      fullPath: '/chat/'
+      preLoaderRoute: typeof ChatIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ChatIndexRoute: ChatIndexRoute,
   LogoutIndexRoute: LogoutIndexRoute,
+  OfferIndexRoute: OfferIndexRoute,
   ProfileIndexRoute: ProfileIndexRoute,
 }
 export const routeTree = rootRouteImport

@@ -32,11 +32,8 @@ function App() {
   return (
     <OfferContext value={offer}>
       <OfferContextDispatcher value={dispatch}>
-        <SidebarProvider>
-          <AppSidebar />
 
-          <OfferViewer />
-        </SidebarProvider>
+        <OfferViewer />
       </OfferContextDispatcher>
     </OfferContext>
   );

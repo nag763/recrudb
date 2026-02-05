@@ -13,7 +13,6 @@ export default function AppSidebarGroup({ groupLabel, GroupIcon, children }) {
 
             </SidebarGroupLabel>
             <SidebarGroupAction>
-                <PlusIcon></PlusIcon>
                 <CollapsibleTrigger asChild>
                     <ChevronDown className="cursor-pointer transition-transform -rotate-90 group-data-[state=open]/collapsible:rotate-0" />
                 </CollapsibleTrigger>

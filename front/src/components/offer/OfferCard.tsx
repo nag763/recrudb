@@ -2,20 +2,23 @@ import { MapPin, TrendingUp } from 'lucide-react';
 import { Badge } from '../ui/badge';
 import type { OfferShort } from '@/types/offer';
 import { cn } from '@/lib/utils';
-import useSelectOffer from '@/hooks/useSelectOffer';
 import { useMemo } from 'react';
 import { TooltipContent, Tooltip, TooltipTrigger } from '../ui/tooltip';
+import { Link, useSearch } from '@tanstack/react-router';
 
 interface OfferCardProps {
   offer: OfferShort;
 }
 
 export default function OfferCard({ offer }: OfferCardProps) {
-  const { selectedOffer, onOfferSelected: onClick } = useSelectOffer();
-  const selected = useMemo(() => selectedOffer?.id == offer.id, [selectedOffer]);
+
+  const { id } = useSearch({ from: "/offer/" })
+
+  const selected = useMemo(() => id == offer.id, [id]);
   return (
-    <div
-      onClick={() => onClick(offer.id)}
+    <Link
+      to={"/offer"}
+      search={{id: selected ? undefined: offer.id}}
       key={offer.id}
       className={cn("bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md cursor-pointer",
         "transition-shadow duration-200 flex flex-col justify-between",
@@ -34,7 +37,7 @@ export default function OfferCard({ offer }: OfferCardProps) {
               variant="outline"
               className="bg-green-100 text-green-800 border-green-200 text-xs"
             >
-              {selectedOffer?.id ?
+              {id ?
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <TrendingUp />
@@ -57,6 +60,6 @@ export default function OfferCard({ offer }: OfferCardProps) {
         </div>
         <p>{offer.createdAt.toLocaleDateString()}</p>
       </div>
-    </div>
+    </Link>
   );
 }

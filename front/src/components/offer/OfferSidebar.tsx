@@ -3,12 +3,15 @@ import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } 
 import { SidebarMenuItem } from "../ui/sidebar";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { deleteOffer, getOffers } from "@/interactions/offers";
-import useSelectOffer from "@/hooks/useSelectOffer";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import AppSidebarGroup from "../AppSidebarGroup";
+import { Link, useSearch } from "@tanstack/react-router";
 
 export default function OfferSidebar() {
+
+
+  const { id: selectedId } = useSearch({ from: "/offer/" });
 
     const { data: offers, isPending } = useQuery({
         queryKey: ['profile-offers'],
@@ -30,8 +33,6 @@ export default function OfferSidebar() {
         },
     });
 
-    const { selectedOffer, onOfferSelected: itemClicked } = useSelectOffer();
-
     return <AppSidebarGroup groupLabel={"Offers"} GroupIcon={Briefcase}>
         {isPending && <p>Loading ...</p>}
         {!isPending &&
@@ -39,22 +40,23 @@ export default function OfferSidebar() {
                 <SidebarMenuItem
                     className={cn(
                         ' p-0.5',
-                        selectedOffer?.id == e.id && 'font-bold',
+                        selectedId == e.id && 'font-bold',
                     )}>
                     <ContextMenu>
-                        <ContextMenuTrigger
-                            onClick={() => itemClicked(e.id)}
-                            asChild
-                        >
-                            <div className="flex flex-col gap-0.5 cursor-pointer">
-                                <p>{e.name}</p>
-                                <small
-                                    className="flex w-full justify-end"
-                                >
-                                    {e.createdAt.toDateString()}
-                                </small>
-                            </div>
-                        </ContextMenuTrigger>
+                        <Link to="/offer" search={{ id: e.id }}>
+                            <ContextMenuTrigger
+                                asChild
+                            >
+                                <div className="flex flex-col gap-0.5 cursor-pointer">
+                                    <p>{e.name}</p>
+                                    <small
+                                        className="flex w-full justify-end"
+                                    >
+                                        {e.createdAt.toDateString()}
+                                    </small>
+                                </div>
+                            </ContextMenuTrigger>
+                        </Link>
                         <ContextMenuContent>
                             <ContextMenuItem onClick={() => mutate(e.id)}>
                                 <Trash2 />
@@ -64,8 +66,9 @@ export default function OfferSidebar() {
                     </ContextMenu>
                 </SidebarMenuItem>
             ))}
-            <SidebarMenuItem className="font-semibold">
-                See all
-            </SidebarMenuItem>
+        <Link to="/offer" search={{id: undefined}}><SidebarMenuItem className="font-semibold cursor-pointer">
+            See all
+        </SidebarMenuItem>
+        </Link>
     </AppSidebarGroup>
 }

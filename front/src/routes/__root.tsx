@@ -12,6 +12,8 @@ import type { QueryClient } from '@tanstack/react-query';
 import AuthProvider from '@/components/AuthProvider';
 import AuthGuard from '@/components/AuthGuard';
 import { Toaster } from '@/components/ui/sonner';
+import { SidebarProvider } from '@/components/ui/sidebar';
+import { AppSidebar } from '@/components/AppSidebar';
 
 interface MyRouterContext {
   queryClient: QueryClient;
@@ -21,21 +23,25 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
   component: () => (
     <AuthProvider>
       <AuthGuard>
-        {/* <Header /> */}
-        <Outlet />
-        <TanStackDevtools
-          config={{
-            position: 'bottom-right',
-          }}
-          plugins={[
-            {
-              name: 'Tanstack Router',
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-            TanStackQueryDevtools,
-          ]}
-        />
-        <Toaster />
+        <SidebarProvider>
+          <AppSidebar />
+          {/* <Header /> */}
+          <Outlet />
+          <TanStackDevtools
+            config={{
+              position: 'bottom-right',
+            }}
+            plugins={[
+              {
+                name: 'Tanstack Router',
+                render: <TanStackRouterDevtoolsPanel />,
+              },
+              TanStackQueryDevtools,
+            ]}
+          />
+          <Toaster />
+
+        </SidebarProvider>
       </AuthGuard>
     </AuthProvider>
   ),
