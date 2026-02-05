@@ -33,14 +33,14 @@ func (ew *EventWrapper) At(i int) *session.Event {
 }
 
 type FirestoreSession struct {
-	Id              string        `firestore:"sessionId"`
-	Name            string        `firestore:"name"`
-	IAppName        string        `firestore:"appName"`
-	IUserId         string        `firestore:"userId"`
-	IState          session.State `firestore:"-"`
-	IEvent          EventWrapper  `firestore:"eventWrapper"`
-	ILastUpdateTime time.Time     `firestore:"lastUpdateTime,serverTimestamp"`
-	CreateTime      time.Time     `firestore:"createTime,serverTimestamp"`
+	Id              string        `json:"id" firestore:"sessionId"`
+	Name            string        `json:"name" firestore:"name"`
+	IAppName        string        `json:"appName" firestore:"appName"`
+	IUserId         string        `json:"userId" firestore:"userId"`
+	IState          session.State `json:"-" firestore:"-"`
+	IEvent          EventWrapper  `json:"eventWrapper" firestore:"eventWrapper"`
+	ILastUpdateTime time.Time     `json:"lastUpdateTime" firestore:"lastUpdateTime,serverTimestamp"`
+	CreateTime      time.Time     `json:"createTime" firestore:"createTime,serverTimestamp"`
 }
 
 type FirestoreSessionShort struct {

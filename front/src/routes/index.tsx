@@ -1,14 +1,5 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { useReducer } from 'react';
 import { useProfile } from '@/hooks/useProfile';
-import { SidebarProvider } from '@/components/ui/sidebar';
-import { AppSidebar } from '@/components/AppSidebar';
-import {
-  OfferContext,
-  OfferContextDispatcher,
-  offerReducer,
-} from '@/context/OfferContext';
-import OfferViewer from '@/components/offer/OfferViewer';
 
 export const Route = createFileRoute('/')({
   component: App,
@@ -19,7 +10,6 @@ function App() {
 
   const navigate = useNavigate();
 
-  const [offer, dispatch] = useReducer(offerReducer, null);
 
   if (isLoading) {
     return <p>Loading...</p>;
@@ -30,11 +20,10 @@ function App() {
   }
 
   return (
-    <OfferContext value={offer}>
-      <OfferContextDispatcher value={dispatch}>
-
-        <OfferViewer />
-      </OfferContextDispatcher>
-    </OfferContext>
+    <div className='w-full h-full   min-h-screen  flex flex-col gap-12 items-center align-middle justify-center col-span-full'>
+      <img src="/daydream.svg" height={400} width={400} />
+      <h1 className='text-4xl'>I will be waiting....</h1>
+      <h2>Use the panel on the left to start using the app.</h2>
+    </div>
   );
 }

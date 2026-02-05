@@ -4,31 +4,33 @@ import { useQuery } from "@tanstack/react-query";
 import { getCoordinatorSessions } from "@/interactions/agents";
 import { SidebarMenuItem } from "../ui/sidebar";
 import { cn } from "@/lib/utils";
-import { useCallback, useMemo } from "react";
-import { useNavigate } from "@tanstack/react-router";
+import { useMemo } from "react";
+import { Link } from "@tanstack/react-router";
 
 export default function ChatSidebar() {
-
-    const navigate = useNavigate();
 
     const { data, isPending } = useQuery({
         queryKey: ['profile-sessions'],
         queryFn: async () => getCoordinatorSessions(),
     });
 
-    const createNewChatCallback = useCallback(() => {
-        navigate({to: "/chat"})
-    }, [navigate])
 
     const sessions = useMemo(() => data?.data, [data]);
     return <AppSidebarGroup groupLabel={"Chats"} GroupIcon={Bot}>
-        <SidebarMenuItem className="font-semibold" onClick={createNewChatCallback}>Create new</SidebarMenuItem>
+
+        <Link to="/chat" search={{ id: undefined }}>
+            <SidebarMenuItem className="font-semibold">Create new</SidebarMenuItem>
+        </Link>
+
         {isPending && <p>Loading ...</p>}
-        {!isPending && sessions.map((e) => <SidebarMenuItem
-            className={cn(
-                ' p-0.5 text-truncate',
-            )}>
-            {e.name}
-        </SidebarMenuItem>)}
+        {!isPending && sessions.map((e) => <Link to="/chat" search={{ id: e.id }}>
+            <SidebarMenuItem
+                className={cn(
+                    ' p-0.5 text-truncate',
+                )}>
+                {e.name}
+            </SidebarMenuItem>
+        </Link>
+        )}
     </AppSidebarGroup>
 }

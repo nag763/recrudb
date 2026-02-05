@@ -11,7 +11,6 @@ import { Link, useSearch } from "@tanstack/react-router";
 export default function OfferSidebar() {
 
 
-  const { id: selectedId } = useSearch({ from: "/offer/" });
 
     const { data: offers, isPending } = useQuery({
         queryKey: ['profile-offers'],
@@ -38,10 +37,7 @@ export default function OfferSidebar() {
         {!isPending &&
             offers?.data?.slice(0, 5).map((e) => (
                 <SidebarMenuItem
-                    className={cn(
-                        ' p-0.5',
-                        selectedId == e.id && 'font-bold',
-                    )}>
+                    className={"p-0.5"}>
                     <ContextMenu>
                         <Link to="/offer" search={{ id: e.id }}>
                             <ContextMenuTrigger
@@ -66,7 +62,7 @@ export default function OfferSidebar() {
                     </ContextMenu>
                 </SidebarMenuItem>
             ))}
-        <Link to="/offer" search={{id: undefined}}><SidebarMenuItem className="font-semibold cursor-pointer">
+        <Link to="/offer" search={{ id: undefined }}><SidebarMenuItem className="font-semibold cursor-pointer">
             See all
         </SidebarMenuItem>
         </Link>

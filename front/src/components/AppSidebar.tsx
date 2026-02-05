@@ -1,5 +1,4 @@
 import {
-  BriefcaseBusiness,
   CircleUserRound,
   LogOutIcon,
   PlusCircle,

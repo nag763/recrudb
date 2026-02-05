@@ -1,4 +1,4 @@
-import { ChevronDown, PlusIcon } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { SidebarGroup, SidebarGroupAction, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, useSidebar } from "./ui/sidebar";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible";
 

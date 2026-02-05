@@ -10,3 +10,4 @@ export const postOffer = (offerText: string) =>
   apiClient.post('/agents/jobOffer', { data: offerText });
 
 export const getCoordinatorSessions = () => apiClient.get('/agents/coordinator/sessions')
+export const getCoordinatorSession = (id: string) => apiClient.get(`/agents/coordinator/sessions/${id}`)
