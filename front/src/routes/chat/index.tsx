@@ -1,6 +1,5 @@
 import Chatbar from '@/components/chats/Chatbar'
 import ChatInterface from '@/components/chats/ChatInterface'
-import { cn } from '@/lib/utils'
 import { createFileRoute, useSearch } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/chat/')({
@@ -14,11 +13,11 @@ export const Route = createFileRoute('/chat/')({
 
 function RouteComponent() {
   const { id } = useSearch({from: "/chat/"})
-  return <div className='w-full flex-col'>
+  return <div className='w-full h-[100dvh] flex flex-col overflow-hidden'>
     {id && 
       <ChatInterface sessionId={id}/>
     }
-    <Chatbar messagesShown={!!id} className={cn("h-0 flex flex-row")}></Chatbar>
+    <Chatbar messagesShown={!!id} />
     
   </div>
 }

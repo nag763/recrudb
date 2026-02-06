@@ -18,7 +18,7 @@ const LanguageSchema = z.object({
 
 const SocialSchema = z.object({
   name: z.string().optional(),
-  link: z.url().optional(),
+  link: z.string().optional(),
 });
 
 export const ProfileSchema = z.object({

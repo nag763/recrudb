@@ -2,8 +2,9 @@ import { getCoordinatorSession } from "@/interactions/agents";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import ChatEvent from "./ChatEvent";
+import { cn } from "@/lib/utils";
 
-export default function ChatInterface({sessionId, className} : Readonly<{sessionId: string}>) {
+export default function ChatInterface({sessionId, className} : Readonly<{sessionId: string, className?: string}>) {
 
     const { data, isPending } = useQuery({
         queryKey: [`profile-session-${sessionId}`],
@@ -16,7 +17,7 @@ export default function ChatInterface({sessionId, className} : Readonly<{session
         return <p>Waiting ...</p>
     }
 
-    return <div className="h-screen flex-1 min-h-0 overflow-auto flex flex-col-reverse">
-        {session && session.eventWrapper.Events.map((e) => <ChatEvent key={e.ID} event={e}/>)}
+    return <div className={cn("flex-1 min-h-0 overflow-auto flex flex-col-reverse", className)}>
+        {session && session.eventWrapper.Events.map((e) => <ChatEvent key={e.ID} event={e}/>).reverse()}
     </div>
 }
