@@ -1,8 +1,10 @@
-import { Link, createFileRoute } from '@tanstack/react-router';
+import {  createFileRoute } from '@tanstack/react-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { deleteProfile, getProfile } from '@/interactions/profile';
-import UploadCv from '@/components/UploadCv';
+import UploadCv from '@/components/profile/UploadCv';
 import { Button } from '@/components/ui/button';
+import { Trash2Icon } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 export const Route = createFileRoute('/profile/')({
   component: RouteComponent,
@@ -24,7 +26,7 @@ function RouteComponent() {
   });
 
   if (profileIsPending) {
-    return <p>Loading...</p>;
+    return <p>Loading ...</p>;
   }
 
   return (
@@ -33,24 +35,38 @@ function RouteComponent() {
 
       {data?.status == 200 && (
         <div className="space-y-8">
-          <div>
-            <Button onClick={deleteProfileMutate}>Delete</Button>
-            <Link to="/">Go home</Link>
-            <h1 className="text-3xl font-bold">
-              {data.data.firstName} {data.data.lastName}
-            </h1>
-            <div className="text-gray-600 mt-2 flex gap-3 text-sm">
-              {data.data.contact?.email && (
-                <span>{data.data.contact.email}</span>
-              )}
-              {data.data.contact?.number && (
-                <span>{data.data.contact.number}</span>
-              )}
-              {data.data.location?.city && (
-                <span>{data.data.location?.city}</span>
-              )}
+          <div className='w-full flex justify-between'>
+            <div>
+              <h1 className="text-3xl font-bold">
+                {data.data.firstName} {data.data.lastName}
+              </h1>
+              <div className="text-gray-600 mt-2 flex gap-3 text-sm">
+                {data.data.contact?.email && (
+                  <span>{data.data.contact.email}</span>
+                )}
+                {data.data.contact?.number && (
+                  <span>{data.data.contact.number}</span>
+                )}
+                {data.data.location?.city && (
+                  <span>{data.data.location?.city}</span>
+                )}
+              </div>
             </div>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" onClick={deleteProfileMutate}>
+                  <Trash2Icon className='text-red-500' />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                Delete profile
+              </TooltipContent>
+            </Tooltip>
           </div>
+
+          {data.data.lookingFor && 
+            <p className='bg-gray-100 p-4 italic rounded-3xl'>{data.data.lookingFor}</p>
+          }
 
           {data.data.skills?.length > 0 && (
             <div>

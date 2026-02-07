@@ -58,10 +58,10 @@ export default function SubmitOfferDialog(): React.ReactNode {
         </div>
         <DialogFooter className="mt-2">
           <DialogClose className="flex w-full justify-end space-x-2">
-            <Button variant={'default'} type="button">
+            <Button variant={'secondary'} type="button">
               Close
             </Button>
-            <Button variant={'secondary'}>Submit</Button>
+            <Button>Submit</Button>
           </DialogClose>
         </DialogFooter>
       </form>

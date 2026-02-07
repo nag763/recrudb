@@ -3,10 +3,9 @@ import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } 
 import { SidebarMenuItem } from "../ui/sidebar";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { deleteOffer, getOffers } from "@/interactions/offers";
-import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import AppSidebarGroup from "../AppSidebarGroup";
-import { Link, useSearch } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 
 export default function OfferSidebar() {
 
@@ -24,7 +23,7 @@ export default function OfferSidebar() {
         onSuccess: () => {
             queryClient
                 .invalidateQueries({ queryKey: ['profile-offers'] })
-                .then(() => toast.success("Your offer is now available!"));
+                .then(() => toast.success("The offer has been deleted with success"));
         },
         onError: (error) => {
             console.error('Delete failed', error);
