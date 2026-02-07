@@ -88,7 +88,7 @@ func (f *fss) Get(ctx context.Context, r *session.GetRequest) (*session.GetRespo
 	}
 
 	return &session.GetResponse{
-		Session: fs,
+		Session: &fs,
 	}, nil
 }
 
@@ -206,5 +206,10 @@ func (f *fss) AppendEvent(ctx context.Context, s session.Session, e *session.Eve
 	}
 
 	_, err = doc.Update(ctx, updates)
-	return err
+	fsMapped, ok := s.(*FirestoreSession)
+	if !ok {
+		return errors.New("session type not supported")
+	}
+	fsMapped.IEvent.Events = append(fsMapped.IEvent.Events, *e)
+	return nil
 }
