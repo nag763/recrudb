@@ -1,46 +1,20 @@
 package firestore
 
 import (
-	"iter"
 	"time"
 
 	"google.golang.org/adk/session"
 )
 
-type EventWrapper struct {
-	Events []session.Event `firestore:"events"`
-}
-
-func (ew EventWrapper) All() iter.Seq[*session.Event] {
-	return func(yield func(*session.Event) bool) {
-		for i := range ew.Events {
-			if !yield(&(ew.Events[i])) {
-				return
-			}
-		}
-	}
-}
-
-func (ew EventWrapper) Len() int {
-	return len(ew.Events)
-}
-
-func (ew *EventWrapper) At(i int) *session.Event {
-	if i < 0 || i >= ew.Len() {
-		return nil
-	}
-	return &ew.Events[i]
-}
-
 type FirestoreSession struct {
-	Id              string        `json:"id" firestore:"sessionId"`
-	Name            string        `json:"name" firestore:"name"`
-	IAppName        string        `json:"appName" firestore:"appName"`
-	IUserId         string        `json:"userId" firestore:"userId"`
-	IState          session.State `json:"-" firestore:"-"`
-	IEvent          EventWrapper  `json:"eventWrapper" firestore:"eventWrapper"`
-	ILastUpdateTime time.Time     `json:"lastUpdateTime" firestore:"lastUpdateTime,serverTimestamp"`
-	CreateTime      time.Time     `json:"createTime" firestore:"createTime,serverTimestamp"`
+	Id              string       `json:"id" firestore:"sessionId"`
+	Name            string       `json:"name" firestore:"name"`
+	IAppName        string       `json:"appName" firestore:"appName"`
+	IUserId         string       `json:"userId" firestore:"userId"`
+	IState          StateWrapper `json:"state" firestore:"state"`
+	IEvent          EventWrapper `json:"eventWrapper" firestore:"eventWrapper"`
+	ILastUpdateTime time.Time    `json:"lastUpdateTime" firestore:"lastUpdateTime,serverTimestamp"`
+	CreateTime      time.Time    `json:"createTime" firestore:"createTime,serverTimestamp"`
 }
 
 type FirestoreSessionShort struct {
@@ -69,7 +43,7 @@ func (fs FirestoreSession) UserID() string {
 }
 
 func (fs FirestoreSession) State() session.State {
-	return fs.IState
+	return &fs.IState
 }
 
 func (fs FirestoreSession) Events() session.Events {
