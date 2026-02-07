@@ -16,7 +16,7 @@ var coordinatorPrompt string
 
 func NewCoordinatorAgent(agentConfig *AgentConfig, secretService secret.SecretService, firestoreSession *firestore.FirestoreSessionService) (*injection.HttpAgent, error) {
 
-	allowedTools := []string{"get_profile"}
+	allowedTools := []string{"get_profile", "save_profile"}
 	tools, err := getMcpTools(allowedTools, secretService.NewAuthenticatedClient())
 	if err != nil {
 		return nil, err

@@ -7,7 +7,7 @@ You can accept resume having only text content.
 MANDATORY STEPS :
 
 1. First, you analyze its content.
-2. Secondly, you store what you analyzed using the `store_cv` tool.
+2. Secondly, you store what you analyzed using the `save_profile` tool.
 3. Given the tool reply :
     a. If it is successful, indicate that the cv has been stored.
     b. Otherwise, instruct a failure

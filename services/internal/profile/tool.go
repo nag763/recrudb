@@ -32,7 +32,7 @@ func NewGetProfileTool(profileRepository Repository) injection.Tool {
 
 func NewStoreProfileTool(profileRepository Repository) injection.Tool {
 	return injection.Tool{
-		Tool: mcp.NewTool("store_cv",
+		Tool: mcp.NewTool("save_profile",
 			mcp.WithDescription("Stores a CV analyzed details"),
 			mcp.WithInputSchema[ProfileMcp](),
 		),

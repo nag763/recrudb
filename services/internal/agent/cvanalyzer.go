@@ -16,7 +16,7 @@ var cvAnalyzer string
 
 func NewCvAnalyzer(agentConfig *AgentConfig, secretService secret.SecretService) (*injection.HttpAgent, error) {
 
-	allowedTools := []string{"store_cv"}
+	allowedTools := []string{"save_profile"}
 	tools, err := getMcpTools(allowedTools, secretService.NewAuthenticatedClient())
 	if err != nil {
 		return nil, err

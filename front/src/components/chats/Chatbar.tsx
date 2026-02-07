@@ -44,14 +44,18 @@ export default function Chatbar({ messagesShown, className }) {
 
     const handleSubmit = useCallback((e) => {
         e.preventDefault();
-        mutate(input);
-        setInput("")
-    }, [input, setInput, mutate]);
+        if (!submitIsPending) {
+            mutate(input);
+            setInput("")
+        }
+    }, [input, setInput, mutate, submitIsPending]);
+
+    const placeholder = useMemo(() => submitIsPending ? "Your request is being processed ... ": "Start typing here...", [submitIsPending])
 
 
     return <form onSubmit={handleSubmit}><div className={cn("w-full h-full flex flex-col items-center justify-center border-t-2 p-4", messagesShown && 'flex flex-row h-auto', className)}>
         {!messagesShown && <Label className="text-2xl">Start typing below</Label>}
-        <Textarea minLength={1} value={input} onChange={updateInput} className={cn("shadow-2xl resize-none ", !messagesShown && "h-80")} placeholder="Start typing here ..." />
+        <Textarea minLength={1} value={input} onChange={updateInput} className={cn("shadow-2xl resize-none ", !messagesShown && "h-80")} placeholder={placeholder}/>
         <Button disabled={inputEmpty || submitIsPending}>Send<SendIcon /></Button>
     </div></form>
 }
