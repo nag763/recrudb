@@ -28,7 +28,7 @@ export default function ChatSidebar() {
                 className={cn(
                     ' p-0.5 text-truncate',
                 )}>
-                {e.name}
+                {60 < e.name.length ? `${e.name.slice(0, 60)}...` : e.name}
             </SidebarMenuItem>
         </Link>
         )}

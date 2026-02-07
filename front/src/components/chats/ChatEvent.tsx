@@ -10,7 +10,10 @@ export default function ChatEvent({ event }) {
 
     const isUser = event.Author === "user"
     const text = useMemo(() => event.Content.parts.reduce((acc, val) => acc.concat(val.text), ""), [event])
-
+    console.log(text)
+    if(text == "" || text == undefined) {
+        return <p>No text</p>
+    }
     return (
         <div className={cn(
             "flex w-full gap-4 p-6 transition-colors",
