@@ -23,7 +23,7 @@ export default function ChatSidebar() {
         </Link>
 
         {isPending && <p>Loading ...</p>}
-        {!isPending && sessions.map((e) => <Link to="/chat" search={{ id: e.id }}>
+        {!isPending && sessions?.map((e) => <Link to="/chat" search={{ id: e.id }}>
             <SidebarMenuItem
                 className={cn(
                     ' p-0.5 text-truncate',
