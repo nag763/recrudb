@@ -6,6 +6,7 @@ import { SidebarMenuItem } from "../ui/sidebar";
 import { cn } from "@/lib/utils";
 import { useMemo } from "react";
 import { Link } from "@tanstack/react-router";
+import ChatContextMenu from "./ChatContextMenu";
 
 export default function ChatSidebar() {
 
@@ -23,14 +24,17 @@ export default function ChatSidebar() {
         </Link>
 
         {isPending && <p>Loading ...</p>}
-        {!isPending && sessions?.map((e) => <Link to="/chat" search={{ id: e.id }}>
-            <SidebarMenuItem
-                className={cn(
-                    ' p-0.5 text-truncate',
-                )}>
-                {60 < e.name.length ? `${e.name.slice(0, 60)}...` : e.name}
-            </SidebarMenuItem>
-        </Link>
-        )}
-    </AppSidebarGroup>
+        {!isPending && sessions?.map((e) =>
+            <ChatContextMenu sessionId={e.id}>
+                <Link to="/chat" search={{ id: e.id }}>
+                    <SidebarMenuItem
+                        className={cn(
+                            ' p-0.5 text-truncate',
+                        )}>
+                        {60 < e.name.length ? `${e.name.slice(0, 60)}...` : e.name}
+                    </SidebarMenuItem>
+                </Link>
+            </ChatContextMenu>)
+        }
+    </AppSidebarGroup >
 }

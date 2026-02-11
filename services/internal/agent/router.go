@@ -25,6 +25,7 @@ func NewAgentRouter(agentConfig *AgentConfig, firestoreSessionService *firestore
 		r.Post(ha.Path, interactionHttpHandler(runner))
 		r.Get(ha.Path+"/sessions", sessionListHttpHandler(runner, firestoreSessionService))
 		r.Get(ha.Path+"/sessions/{sessionId}", sessionGetHttpHandler(runner, firestoreSessionService))
+		r.Delete(ha.Path+"/sessions/{sessionId}", sessionDeleteHttpHandler(runner, firestoreSessionService))
 	}
 
 	return injection.SubRouter{

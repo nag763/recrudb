@@ -95,3 +95,30 @@ func sessionGetHttpHandler(runner *Runner, sessionService *firestore.FirestoreSe
 		render.Render(w, r, response.Success(session))
 	}
 }
+
+func sessionDeleteHttpHandler(runner *Runner, sessionService *firestore.FirestoreSessionService) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		sub, err := identity.GetSubFromRequest(r.Context(), r.Header)
+		if err != nil {
+			render.Render(w, r, response.Unauthorized(fmt.Errorf("no sub found : %w", err)))
+			return
+		}
+
+		sessionId := r.PathValue("sessionId")
+		if sessionId == "" {
+			render.Render(w, r, response.InvalidRequest(errors.New("session id can't be empty")))
+			return
+		}
+
+		err = sessionService.Delete(r.Context(), &session.DeleteRequest{
+			AppName:   runner.appName,
+			UserID:    sub,
+			SessionID: sessionId,
+		})
+		if err != nil {
+			render.Render(w, r, response.InternalResponse(err))
+		}
+
+		render.Render(w, r, response.Success("DELETED"))
+	}
+}
