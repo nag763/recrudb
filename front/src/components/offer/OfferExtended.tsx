@@ -1,10 +1,11 @@
 import type { Offer } from "@/types/offer";
 import ReactMarkdown from "react-markdown";
+import { Badge } from "../ui/badge";
 
-export default function OfferExtended({ offer }: Readonly<{offer: Offer}>) {
-    return <div className="max-h-screen w-full p-10 overflow-auto max-w-4xl mx-auto bg-white shadow-lg rounded-xl border border-gray-100">
+export default function OfferExtended({ offer }: Readonly<{ offer: Offer }>) {
+    return <div className="max-h-screen w-full p-10 overflow-auto max-w-4xl mx-auto bg-white shadow-lg rounded-xl border border-gray-100 flex flex-col gap-8">
         {/* Header */}
-        <div className="flex justify-between items-start border-b pb-4 mb-6">
+        <div className="flex justify-between items-start border-b pb-6">
             <div>
                 <h1 className="text-2xl font-bold text-gray-800">{offer.name}</h1>
                 <p className="text-gray-500">
@@ -17,16 +18,22 @@ export default function OfferExtended({ offer }: Readonly<{offer: Offer}>) {
         </div>
 
         <div className="bg-indigo-50 p-4 rounded-lg">
-            <h3 className="font-bold mb-2 text-indigo-900">Agent Recap</h3>
-            <div className="text-indigo-800 text-sm whitespace-pre-line">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-indigo-400 mb-2">Agent Recap</h3>
+            <div className="prose prose-indigo prose-sm max-w-none text-indigo-900">
                 <ReactMarkdown>{offer.agentRecap}</ReactMarkdown>{' '}
                 {/* Shortened for clean UI */}
             </div>
         </div>
 
+        <div className="bg-teal-50 border border-teal-100 p-4 rounded-lg">
+            <h3 className="text-teal-800 font-bold mb-1">How to apply?</h3>
+            <p className="text-teal-700 text-sm mb-3">{offer.howToApply}</p>
+        </div>
+
+
         {/* Tech Stack Tags */}
-        <div className="mb-8">
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-400 mb-3">
+        <div>
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">
                 Tech Requirements
             </h3>
             <div className="flex flex-wrap gap-2">
@@ -42,19 +49,15 @@ export default function OfferExtended({ offer }: Readonly<{offer: Offer}>) {
         </div>
 
         {/* Recap Section */}
-        <div className="gap-8 mb-8">
-            <div className="bg-gray-50 p-4 rounded-lg">
-                <h3 className="font-bold mb-2 text-gray-700">Role Description</h3>
-                <p className="text-gray-600 text-sm leading-relaxed">
-                    {offer.description}
+        <div>
+            <div className="bg-gray-50/50 p-6 rounded-lg border border-gray-100">
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-4">Role Description</h3>
+                <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-line">
+                    {offer.description || "No description provided."}
                 </p>
             </div>
         </div>
 
-        {/* Footer / Apply */}
-        <div className="bg-teal-50 border border-teal-100 p-4 rounded-lg">
-            <h3 className="text-teal-800 font-bold mb-1">How to apply?</h3>
-            <p className="text-teal-700 text-sm mb-3">{offer.howToApply}</p>
-        </div>
+
     </div>
 }

@@ -84,7 +84,7 @@ Examples :
 
 The purpose of this tool is to update an existing profile with the correction asked.
 
-Use this tool ONLY AND ONLY AFTER calling `get_profile`
+Use this tool ONLY AND ONLY AFTER calling `get_profile`.
 
 The process is the following :
 
@@ -92,7 +92,9 @@ The process is the following :
 2. Update the existing document with requested modifications.
 3. Stores them using `save_profile`
 
-It should never be used directly, and it should never infer directly data from it. If the agent is in doubt, it should always ask the user for clarification.
+It should never be used directly, and it should never infer directly data from it. 
+
+If the agent is in doubt, it should always ask the user for clarification, but ONLY AND ONLY after having check the user profile and realized that it couldn't complete a process without further information.
 
 Examples :
 

@@ -50,8 +50,9 @@ type Offer struct {
 	Description           string    `json:"description"`
 	AgentRecap            string    `json:"agentRecap"`
 	Name                  string    `json:"name"`
+	WorkLocation          string    `json:"workLocation,omitempty" firestore:"workLocation"`
+	LatestNews            []string  `json:"latestNews,omitempty" firestore:"latestNews"`
 	CreatedAt             time.Time `json:"-" firestore:"CreatedAt,serverTimestamp"`
-	CompanyLogo           string    `json:"companyLogo,omitempty"`
 }
 
 type Address struct {

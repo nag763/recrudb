@@ -23,6 +23,8 @@ export const OfferSchema = z.object({
   description: z.string().optional(),
   agentRecap: z.string().optional(),
   name: z.string().optional(),
+  workLocation: z.string().optional(),
+  latestNews: z.array(z.string()).optional(),
 });
 
 export type Offer = z.infer<typeof OfferSchema>;
