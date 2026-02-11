@@ -7,6 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, useSearch } from '@tanstack/react-router'
 import { useMemo } from 'react';
 
+
 export const Route = createFileRoute('/offer/')({
   component: RouteComponent,
   validateSearch: (search: Record<string, unknown>) => {

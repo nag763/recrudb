@@ -16,7 +16,7 @@ export default function ChatInterface({sessionId} : Readonly<{sessionId: string}
         return <div className="h-full text-sm">Waiting ...</div>
     }
 
-    return <div className="flex-1 min-h-0 overflow-auto flex flex-col-reverse">
+    return <div className="flex-1 min-h-0 overflow-auto flex flex-col-reverse px-[15%] py-12 gap-4">
         {session && session.eventWrapper.Events.filter((e) => e.Content.parts.every((p) => p.text != null)).map((e) => <ChatEvent key={e.ID} event={e}/>).reverse()}
     </div>
 }

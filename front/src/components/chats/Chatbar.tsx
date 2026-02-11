@@ -1,8 +1,8 @@
-import { SendIcon } from "lucide-react";
+import { Loader2, SendIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { Textarea } from "../ui/textarea";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { sendToCoordinator } from "@/interactions/agents";
@@ -18,6 +18,7 @@ export default function Chatbar({ messagesShown, className }) {
     const { id: sessionId } = useSearch({ from: "/chat/" })
 
     const [input, setInput] = useState("");
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
 
     const updateInput = useCallback((e) => {
         setInput(e.target.value);
@@ -32,6 +33,7 @@ export default function Chatbar({ messagesShown, className }) {
             }
             setInput("");
             queryClient.invalidateQueries({ queryKey: [`profile-session-${sessionId}`] });
+            textareaRef.current?.focus();
         },
         onError: (error) => {
             console.error(error);
@@ -50,12 +52,32 @@ export default function Chatbar({ messagesShown, className }) {
         }
     }, [input, setInput, mutate, submitIsPending]);
 
-    const placeholder = useMemo(() => submitIsPending ? "Your request is being processed ... ": "Start typing here...", [submitIsPending])
+    const placeholder = useMemo(() => submitIsPending ? "Your request is being processed ... " : "Start typing here...", [submitIsPending])
 
+    const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handleSubmit(e);
+        }
+    }, [handleSubmit]);
 
-    return <form onSubmit={handleSubmit}><div className={cn("w-full h-full flex flex-col items-center justify-center border-t-2 p-4", messagesShown && 'flex flex-row h-auto', className)}>
-        {!messagesShown && <Label className="text-2xl">Start typing below</Label>}
-        <Textarea minLength={1} value={input} onChange={updateInput} className={cn("shadow-2xl resize-none ", !messagesShown && "h-80")} placeholder={placeholder}/>
-        <Button disabled={inputEmpty || submitIsPending}>Send<SendIcon /></Button>
-    </div></form>
+    return <form onSubmit={handleSubmit} className={cn(!messagesShown && "flex-1 flex flex-col justify-center")}>
+        <div className={cn("w-full flex flex-col items-start justify-center border-t-2 p-4 max-h-full", messagesShown && 'flex flex-row items-center px-20 gap-4', !messagesShown && "max-w-3xl mx-auto border-t-0", className)}>
+            {!messagesShown && (
+                <div className="text-left mb-8 space-y-2">
+                    <Label className="text-4xl font-bold">How can I help you?</Label>
+                    <p className="text-muted-foreground">Ask me anything about your job offers, requirements, or application status.</p>
+                </div>
+            )}
+            <div className="relative w-full">
+                <Textarea ref={textareaRef} disabled={submitIsPending} minLength={1} value={input} onChange={updateInput} onKeyDown={handleKeyDown} className={cn("shadow-2xl resize-none max-h-30", !messagesShown && "h-40")} placeholder={placeholder} />
+                {submitIsPending && (
+                    <div className="absolute right-4 bottom-4 animate-spin text-indigo-600">
+                        <Loader2 size={20} />
+                    </div>
+                )}
+            </div>
+            <Button hidden={true} disabled={inputEmpty || submitIsPending}>Send<SendIcon /></Button>
+        </div>
+    </form>
 }
