@@ -16,15 +16,15 @@ export default function OfferCards() {
   }
 
 
-  if(!offers) {
+  if (!offers) {
     return <div className='w-full h-full flex flex-col gap-12 items-center align-middle justify-center col-span-full'>
-      <img src="/decide.svg" height={400} width={400}/>
+      <img src="/decide.svg" height={400} width={400} />
       <h1 className='text-4xl'>No offer so far !</h1>
       <h2>Use the button on the left panel to add a new one.</h2>
     </div>
   }
 
   return offers?.map((e) => (
-    <OfferCard offer={e} key={e.id} />
+      <OfferCard offer={e} key={e.id} />
   ));
 }

@@ -1,11 +1,10 @@
-import { Briefcase, Trash2 } from "lucide-react";
-import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "../ui/context-menu";
+import { Briefcase } from "lucide-react";
 import { SidebarMenuItem } from "../ui/sidebar";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { deleteOffer, getOffers } from "@/interactions/offers";
-import { toast } from "sonner";
+import { useQuery } from "@tanstack/react-query";
+import { getOffers } from "@/interactions/offers";
 import AppSidebarGroup from "../AppSidebarGroup";
 import { Link } from "@tanstack/react-router";
+import OfferContextMenu from "./OfferContextMenu";
 
 export default function OfferSidebar() {
 
@@ -16,20 +15,6 @@ export default function OfferSidebar() {
         queryFn: async () => getOffers(),
     });
 
-    const queryClient = useQueryClient();
-
-    const { mutate } = useMutation({
-        mutationFn: deleteOffer,
-        onSuccess: () => {
-            queryClient
-                .invalidateQueries({ queryKey: ['profile-offers'] })
-                .then(() => toast.success("The offer has been deleted with success"));
-        },
-        onError: (error) => {
-            console.error('Delete failed', error);
-            toast.error("An errror happened while processing your offer. Try again!")
-        },
-    });
 
     return <AppSidebarGroup groupLabel={"Offers"} GroupIcon={Briefcase}>
         {isPending && <p>Loading ...</p>}
@@ -37,28 +22,19 @@ export default function OfferSidebar() {
             offers?.data?.slice(0, 5).map((e) => (
                 <SidebarMenuItem
                     className={"p-0.5"}>
-                    <ContextMenu>
+                    <OfferContextMenu offerId={e.id}>
                         <Link to="/offer" search={{ id: e.id }}>
-                            <ContextMenuTrigger
-                                asChild
-                            >
-                                <div className="flex flex-col gap-0.5 cursor-pointer">
-                                    <p>{e.name}</p>
-                                    <small
-                                        className="flex w-full justify-end"
-                                    >
-                                        {e.createdAt.toDateString()}
-                                    </small>
-                                </div>
-                            </ContextMenuTrigger>
+
+                            <div className="flex flex-col gap-0.5 cursor-pointer">
+                                <p>{e.name}</p>
+                                <small
+                                    className="flex w-full justify-end"
+                                >
+                                    {e.createdAt.toDateString()}
+                                </small>
+                            </div>
                         </Link>
-                        <ContextMenuContent>
-                            <ContextMenuItem onClick={() => mutate(e.id)}>
-                                <Trash2 />
-                                Delete
-                            </ContextMenuItem>
-                        </ContextMenuContent>
-                    </ContextMenu>
+                    </OfferContextMenu>
                 </SidebarMenuItem>
             ))}
         <Link to="/offer" search={{ id: undefined }}><SidebarMenuItem className="font-semibold cursor-pointer">

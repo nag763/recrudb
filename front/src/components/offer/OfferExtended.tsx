@@ -1,6 +1,5 @@
 import type { Offer } from "@/types/offer";
 import ReactMarkdown from "react-markdown";
-import { Badge } from "../ui/badge";
 
 export default function OfferExtended({ offer }: Readonly<{ offer: Offer }>) {
     return <div className="max-h-screen w-full p-10 overflow-auto max-w-4xl mx-auto bg-white shadow-lg rounded-xl border border-gray-100 flex flex-col gap-8">
