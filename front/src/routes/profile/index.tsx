@@ -30,7 +30,7 @@ function RouteComponent() {
   }
 
   return (
-    <div className="px-80 py-12">
+    <div className="px-80 py-12 w-full">
       {data?.status == 204 && <UploadCv />}
 
       {data?.status == 200 && (
