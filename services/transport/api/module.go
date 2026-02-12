@@ -26,6 +26,7 @@ var Module = fx.Module("api",
 	injection.AsApiMiddlewareProvider(middleware.ThrottleBacklog(10, 50, time.Second*10)),
 	injection.AsApiMiddlewareProvider(middleware.Timeout(time.Second*75)),
 	injection.AsApiMiddlewareProvider(httprate.LimitByRealIP(100, 1*time.Minute)),
+	injection.AsApiMiddlewareProvider(middleware.Compress(5, "application/json")),
 
 	fx.Provide(NewHttpServer),
 )
