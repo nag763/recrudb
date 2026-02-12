@@ -60,7 +60,7 @@ func (f *fss) Create(ctx context.Context, r *session.CreateRequest) (*session.Cr
 		return nil, err
 	}
 
-	fs := NewFirestoreSession(sessionId, r.AppName, r.UserID)
+	fs := NewFirestoreSession(sessionId, r.AppName, r.UserID, r.State)
 
 	if _, err = doc.Set(ctx, fs); err != nil {
 		return nil, err

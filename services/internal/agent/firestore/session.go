@@ -23,11 +23,14 @@ type FirestoreSessionShort struct {
 	ILastUpdateTime time.Time `json:"lastUpdateTime" firestore:"lastUpdateTime,serverTimestamp"`
 }
 
-func NewFirestoreSession(id, appName, userId string) FirestoreSession {
+func NewFirestoreSession(id, appName, userId string, state map[string]any) FirestoreSession {
 	return FirestoreSession{
 		Id:       id,
 		IAppName: appName,
 		IUserId:  userId,
+		IState: StateWrapper{
+			State: state,
+		},
 	}
 }
 

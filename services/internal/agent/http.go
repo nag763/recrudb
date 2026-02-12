@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"nag763/recrudb/api/internal/agent/firestore"
+	"nag763/recrudb/api/internal/profile"
 	"nag763/recrudb/api/internal/request"
 	"nag763/recrudb/api/internal/response"
 	"net/http"
@@ -13,7 +14,7 @@ import (
 	"google.golang.org/adk/session"
 )
 
-func interactionHttpHandler(runner *Runner) func(w http.ResponseWriter, r *http.Request) {
+func interactionHttpHandler(runner *Runner, profileRepository *profile.FirestoreProfileRepository) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
 		ctx := r.Context()
@@ -31,11 +32,30 @@ func interactionHttpHandler(runner *Runner) func(w http.ResponseWriter, r *http.
 			return
 		}
 
+		state := make(map[string]any)
+		if offerId := httpRequest.Context.OfferId; offerId != "" {
+			offer, err := profileRepository.GetOffer(ctx, sub, offerId)
+			if err != nil {
+				render.Render(w, r, response.InvalidRequest(err))
+				return
+			}
+			state["offer"] = offer
+		}
+		if user := httpRequest.Context.User; user {
+			user, err := profileRepository.GetProfile(ctx, sub)
+			if err != nil {
+				render.Render(w, r, response.InvalidRequest(err))
+				return
+			}
+			state["user"] = user
+		}
+
 		resp, err := runner.Run(RunParams{
 			Input:        httpRequest.ToGenAiContent(),
 			UserId:       sub,
 			ClearSession: httpRequest.ClearSession,
 			SessionId:    httpRequest.SessionId,
+			State:        state,
 		})
 
 		if err != nil {

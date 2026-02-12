@@ -3,6 +3,7 @@ package agent
 import (
 	"nag763/recrudb/api/internal/agent/firestore"
 	"nag763/recrudb/api/internal/injection"
+	"nag763/recrudb/api/internal/profile"
 
 	"github.com/go-chi/chi/v5"
 	"go.uber.org/fx"
@@ -15,7 +16,7 @@ type AgentRouterParams struct {
 	HttpAgents []*injection.HttpAgent `group:"http_agent"`
 }
 
-func NewAgentRouter(agentConfig *AgentConfig, firestoreSessionService *firestore.FirestoreSessionService, agentRouterParams AgentRouterParams, logger *zap.SugaredLogger) (injection.SubRouter, error) {
+func NewAgentRouter(agentConfig *AgentConfig, firestoreSessionService *firestore.FirestoreSessionService, agentRouterParams AgentRouterParams, logger *zap.SugaredLogger, profileRepository *profile.FirestoreProfileRepository) (injection.SubRouter, error) {
 	r := chi.NewMux()
 
 	for _, ha := range agentRouterParams.HttpAgents {
@@ -23,7 +24,7 @@ func NewAgentRouter(agentConfig *AgentConfig, firestoreSessionService *firestore
 		if err != nil {
 			return injection.SubRouter{}, err
 		}
-		r.Post(ha.Path, interactionHttpHandler(runner))
+		r.Post(ha.Path, interactionHttpHandler(runner, profileRepository))
 		r.Get(ha.Path+"/sessions", sessionListHttpHandler(runner, firestoreSessionService))
 		r.Get(ha.Path+"/sessions/{sessionId}", sessionGetHttpHandler(runner, firestoreSessionService))
 		r.Delete(ha.Path+"/sessions/{sessionId}", sessionDeleteHttpHandler(runner, firestoreSessionService))

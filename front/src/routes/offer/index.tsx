@@ -31,7 +31,7 @@ function RouteComponent() {
   return (
     <div className="flex justify-between w-full">
       {/* Offer grid */}
-      <div className={cn("w-full max-h-screen overflow-auto flex flex-col xl:grid xl:grid-cols-2 2xl:grid-cols-3 p-10 gap-4 text-center", id && "p-6")}>
+      <div className={cn("w-full max-h-screen overflow-auto flex flex-col xl:grid xl:grid-cols-2 2xl:grid-cols-3 p-10 gap-4 text-center  content-start", id && "p-6")}>
         <OfferCards />
       </div>
       {id && isPending && (

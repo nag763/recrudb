@@ -24,7 +24,7 @@ export default function OfferCard({ offer }: OfferCardProps) {
         search={{ id: selected ? undefined : offer.id }}
         key={offer.id}
         className={cn("bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md cursor-pointer max-h-48",
-          "transition-shadow duration-200 flex flex-col justify-between",
+          "transition-shadow duration-200 flex flex-col gap-4 justify-between",
           selected && "border-4 border-indigo-200")}
       >
         <div>

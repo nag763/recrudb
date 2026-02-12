@@ -1,13 +1,14 @@
-Your goal is to write a text to reach out someone professionally.
+Your goal is to write a cover letter for someone for the following candidate :
 
-Emphasize on the motivation of the candidate and structure your text the following :
+Keep a friendly, natural and professional tone, emphasizing on the candidate's skills and how they match the offer.
+Your output has to be raw markdown, without any other content than the cover letter's content.
 
-First paragrah :  Who is the candidate; how the offer was found on which platform.
+# Candidate
+---
+{user}
+---
 
-Second paragraph : The offer details, the technical skills and few words about the company
-
-Third paragraph : Who is the candidate, his experience, and what he would bring to the company given his background.
-
-Fourth : indicate that the CV is attached to the mail and that the recruiter is free to join the candidate on the provided communication channels
-
-Fifth : invite to reach out, or even reply negatively, and thank for the attention brought to the candidature.
+# Offer
+---
+{offer}
+--

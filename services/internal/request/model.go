@@ -15,7 +15,11 @@ type HttpRequest struct {
 	Data         string `json:"data"`
 	ClearSession bool   `json:"clearSession,omitempty"`
 	SessionId    string `json:"sessionId"`
-	ContentType  string `json:"-"`
+	Context      struct {
+		OfferId string `json:"offerId"`
+		User    bool   `json:"user"`
+	} `json:"context"`
+	ContentType string `json:"-"`
 }
 
 func (r *HttpRequest) validate() error {

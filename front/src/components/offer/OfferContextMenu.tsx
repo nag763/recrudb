@@ -1,16 +1,15 @@
-import { Trash2 } from "lucide-react";
+import { LetterText, Trash2 } from "lucide-react";
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "../ui/context-menu";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteOffer } from "@/interactions/offers";
 import { toast } from "sonner";
-import type { ReactNode } from "react";
+import { coverLetter } from "@/interactions/agents";
 
 export default function OfferContextMenu({ children, offerId }: Readonly<{ children: ReactNode, offerId: string }>) {
 
-
     const queryClient = useQueryClient();
 
-    const { mutate } = useMutation({
+    const { mutate: remove } = useMutation({
         mutationFn: deleteOffer,
         onSuccess: () => {
             queryClient
@@ -22,6 +21,28 @@ export default function OfferContextMenu({ children, offerId }: Readonly<{ child
             toast.error("An errror happened while processing your offer. Try again!")
         },
     });
+
+
+
+    const { mutateAsync: writeCover } = useMutation({
+        mutationFn: coverLetter,
+    });
+
+    const writeCoverToast = () => {
+        toast.promise(writeCover(offerId), {
+            loading: "Preparing the letter...",
+            success: (data) => {
+                if(data?.data?.content) {
+                    navigator.clipboard.writeText(data.data.content);
+                    return "Cover letter copied to clipboard!";
+                } 
+                return "Please try again ..."
+            },
+            error: "An error happened :("
+        })
+    }
+
+
     return <ContextMenu>
         <ContextMenuTrigger
             asChild
@@ -29,10 +50,16 @@ export default function OfferContextMenu({ children, offerId }: Readonly<{ child
             {children}
         </ContextMenuTrigger>
         <ContextMenuContent>
-            <ContextMenuItem onClick={() => mutate(offerId)}>
+            <ContextMenuItem onClick={() => remove(offerId)}>
                 <Trash2 />
                 Delete
             </ContextMenuItem>
+
+            <ContextMenuItem onClick={writeCoverToast}>
+                <LetterText />
+                Write a cover
+            </ContextMenuItem>
+
         </ContextMenuContent>
-    </ContextMenu>
+    </ContextMenu >
 }

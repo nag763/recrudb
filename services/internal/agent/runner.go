@@ -48,6 +48,7 @@ type RunParams struct {
 	UserId       string
 	SessionId    string
 	ClearSession bool
+	State        map[string]any
 }
 
 type RunResponse struct {
@@ -64,6 +65,7 @@ func (r Runner) Run(params RunParams) (*RunResponse, error) {
 		request, err := r.sessionService.Create(r.ctx, &session.CreateRequest{
 			AppName: r.appName,
 			UserID:  params.UserId,
+			State:   params.State,
 		})
 		if err != nil {
 			r.logger.Errorf("error creating session %v", err)
