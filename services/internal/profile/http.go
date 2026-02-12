@@ -2,7 +2,6 @@ package profile
 
 import (
 	"fmt"
-	"nag763/recrudb/api/internal/pkg/identity"
 	"nag763/recrudb/api/internal/response"
 	"net/http"
 
@@ -24,11 +23,7 @@ func NewProfileHandler(profileRepository Repository) *ProfileHandler {
 
 func (h *ProfileHandler) HandleGetProfile(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	sub, err := identity.GetSubFromRequest(ctx, r.Header)
-	if err != nil {
-		render.Render(w, r, response.Unauthorized(err))
-		return
-	}
+	sub := ctx.Value("sub").(string)
 
 	doc, err := h.profileRepository.GetProfile(ctx, sub)
 	if err != nil {
@@ -45,11 +40,7 @@ func (h *ProfileHandler) HandleGetProfile(w http.ResponseWriter, r *http.Request
 
 func (h *ProfileHandler) HandleGetProfileOffers(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	sub, err := identity.GetSubFromRequest(ctx, r.Header)
-	if err != nil {
-		render.Render(w, r, response.Unauthorized(err))
-		return
-	}
+	sub := ctx.Value("sub").(string)
 
 	doc, err := h.profileRepository.GetOffers(ctx, sub)
 	if err != nil {
@@ -66,11 +57,7 @@ func (h *ProfileHandler) HandleGetProfileOffers(w http.ResponseWriter, r *http.R
 
 func (h *ProfileHandler) HandleGetOffer(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	sub, err := identity.GetSubFromRequest(ctx, r.Header)
-	if err != nil {
-		render.Render(w, r, response.Unauthorized(err))
-		return
-	}
+	sub := ctx.Value("sub").(string)
 
 	offerId := chi.URLParam(r, "id")
 	if offerId == "" {
@@ -93,11 +80,7 @@ func (h *ProfileHandler) HandleGetOffer(w http.ResponseWriter, r *http.Request) 
 
 func (h *ProfileHandler) HandleDeleteOffer(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	sub, err := identity.GetSubFromRequest(ctx, r.Header)
-	if err != nil {
-		render.Render(w, r, response.Unauthorized(err))
-		return
-	}
+	sub := ctx.Value("sub").(string)
 
 	offerId := chi.URLParam(r, "id")
 	if offerId == "" {
@@ -114,11 +97,8 @@ func (h *ProfileHandler) HandleDeleteOffer(w http.ResponseWriter, r *http.Reques
 
 func (h *ProfileHandler) HandleDeleteProfile(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	sub, err := identity.GetSubFromRequest(ctx, r.Header)
-	if err != nil {
-		render.Render(w, r, response.Unauthorized(err))
-		return
-	}
+
+	sub := ctx.Value("sub").(string)
 
 	if err := h.profileRepository.DeleteProfile(ctx, sub); err != nil {
 		render.Render(w, r, response.InternalResponse(err))

@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"nag763/recrudb/api/internal/agent/firestore"
-	"nag763/recrudb/api/internal/pkg/identity"
 	"nag763/recrudb/api/internal/request"
 	"nag763/recrudb/api/internal/response"
 	"net/http"
@@ -16,11 +15,9 @@ import (
 
 func interactionHttpHandler(runner *Runner) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		sub, err := identity.GetSubFromRequest(r.Context(), r.Header)
-		if err != nil {
-			render.Render(w, r, response.Unauthorized(fmt.Errorf("no sub found : %w", err)))
-			return
-		}
+		var err error
+		ctx := r.Context()
+		sub := ctx.Value("sub").(string)
 
 		httpRequest := &request.HttpRequest{}
 		switch header := r.Header.Get("Content-Type"); {
@@ -52,11 +49,8 @@ func interactionHttpHandler(runner *Runner) func(w http.ResponseWriter, r *http.
 
 func sessionListHttpHandler(runner *Runner, sessionService *firestore.FirestoreSessionService) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		sub, err := identity.GetSubFromRequest(r.Context(), r.Header)
-		if err != nil {
-			render.Render(w, r, response.Unauthorized(fmt.Errorf("no sub found : %w", err)))
-			return
-		}
+		ctx := r.Context()
+		sub := ctx.Value("sub").(string)
 
 		sessions, err := sessionService.ListSessionShort(r.Context(), &session.ListRequest{
 			AppName: runner.appName,
@@ -71,11 +65,8 @@ func sessionListHttpHandler(runner *Runner, sessionService *firestore.FirestoreS
 
 func sessionGetHttpHandler(runner *Runner, sessionService *firestore.FirestoreSessionService) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		sub, err := identity.GetSubFromRequest(r.Context(), r.Header)
-		if err != nil {
-			render.Render(w, r, response.Unauthorized(fmt.Errorf("no sub found : %w", err)))
-			return
-		}
+		ctx := r.Context()
+		sub := ctx.Value("sub").(string)
 
 		sessionId := r.PathValue("sessionId")
 		if sessionId == "" {
@@ -98,11 +89,8 @@ func sessionGetHttpHandler(runner *Runner, sessionService *firestore.FirestoreSe
 
 func sessionDeleteHttpHandler(runner *Runner, sessionService *firestore.FirestoreSessionService) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		sub, err := identity.GetSubFromRequest(r.Context(), r.Header)
-		if err != nil {
-			render.Render(w, r, response.Unauthorized(fmt.Errorf("no sub found : %w", err)))
-			return
-		}
+		ctx := r.Context()
+		sub := ctx.Value("sub").(string)
 
 		sessionId := r.PathValue("sessionId")
 		if sessionId == "" {
@@ -110,12 +98,11 @@ func sessionDeleteHttpHandler(runner *Runner, sessionService *firestore.Firestor
 			return
 		}
 
-		err = sessionService.Delete(r.Context(), &session.DeleteRequest{
+		if err := sessionService.Delete(r.Context(), &session.DeleteRequest{
 			AppName:   runner.appName,
 			UserID:    sub,
 			SessionID: sessionId,
-		})
-		if err != nil {
+		}); err != nil {
 			render.Render(w, r, response.InternalResponse(err))
 		}
 

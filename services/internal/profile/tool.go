@@ -2,6 +2,7 @@ package profile
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"nag763/recrudb/api/internal/injection"
 	"nag763/recrudb/api/internal/metadata"
@@ -30,7 +31,7 @@ func NewGetProfileTool(profileRepository Repository) injection.Tool {
 	}
 }
 
-func NewStoreProfileTool(profileRepository Repository) injection.Tool {
+func NewStoreProfileTool(profileRepository Repository, logger *zap.SugaredLogger) injection.Tool {
 	return injection.Tool{
 		Tool: mcp.NewTool("save_profile",
 			mcp.WithDescription("Stores a CV analyzed details"),
@@ -39,9 +40,8 @@ func NewStoreProfileTool(profileRepository Repository) injection.Tool {
 		Handler: func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 			var doc ProfileMcpWithMeta
 			if err := request.BindArguments(&doc); err != nil {
-				return mcp.NewToolResultError("ERROR WHILE ACCESSING DOC ID"), nil
+				return mcp.NewToolResultError(fmt.Sprintf("ERROR WHILE ACCESSING DOC ID, %s", err)), nil
 			}
-
 			userId := doc.Metadata.UserId
 
 			if _, err := profileRepository.StoreProfile(ctx, userId, doc.Document); err != nil {
