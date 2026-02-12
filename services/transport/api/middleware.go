@@ -21,13 +21,14 @@ var corsMiddleware = cors.Handler(cors.Options{
 func authenticatedMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
-		sub, err := identity.GetSubFromRequest(ctx, r.Header)
-		if err != nil {
-			render.Render(w, r, response.Unauthorized(err))
-			return
+		if r.Method != "OPTIONS" {
+			sub, err := identity.GetSubFromRequest(ctx, r.Header)
+			if err != nil {
+				render.Render(w, r, response.Unauthorized(err))
+				return
+			}
+			ctx = context.WithValue(r.Context(), "sub", sub)
 		}
-
-		ctx = context.WithValue(r.Context(), "sub", sub)
 
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})

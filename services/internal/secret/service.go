@@ -2,6 +2,8 @@ package secret
 
 import (
 	"crypto/rand"
+	"crypto/sha256"
+	"fmt"
 	"net/http"
 )
 
@@ -18,7 +20,7 @@ type secretServiceInternal struct {
 
 func newSecretServiceInternal() *secretServiceInternal {
 	return &secretServiceInternal{
-		internalSecret: rand.Text(),
+		internalSecret: fmt.Sprintf("%x", sha256.Sum256([]byte(fmt.Sprint(rand.Text())))),
 	}
 }
 
