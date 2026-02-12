@@ -1,7 +1,9 @@
 import { cn } from "@/lib/utils"
-import { Bot, User } from "lucide-react"
+import { Bot } from "lucide-react"
 import { useMemo } from "react"
 import ReactMarkdown from "react-markdown"
+import Pre from "../Pre"
+
 
 export default function ChatEvent({ event }) {
     if (!event) {
@@ -10,7 +12,6 @@ export default function ChatEvent({ event }) {
 
     const isUser = event.Author === "user"
     const text = useMemo(() => event.Content.parts.reduce((acc, val) => acc.concat(val.text), ""), [event])
-    console.log(text)
     if (text == "" || text == undefined) {
         return <p>No text</p>
     }
@@ -28,9 +29,9 @@ export default function ChatEvent({ event }) {
                     {<Bot size={18} />}
                 </div>
                 }
-                <div className={cn("flex-1 space-y-2 overflow-hidden p-4 rounded-3xl rounded-tr-lg shadown-xl ", isUser && "bg-gray-50/50 flex-row-reverse  border")}>
-                    <div className="prose prose-slate max-w-none break-words dark:prose-invert">
-                        <ReactMarkdown>{text}</ReactMarkdown>
+                <div className={cn("flex-1 space-y-2 overflow-auto p-4 rounded-3xl rounded-tr-lg max-w-full ", isUser && "bg-gray-50/50 flex-row-reverse  border")}>
+                    <div className="prose prose-slate dark:prose-invert max-w-full overflow-auto">
+                        <ReactMarkdown components={{pre: Pre}} >{text}</ReactMarkdown>
                     </div>
                 </div>
             </div>

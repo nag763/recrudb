@@ -18,21 +18,26 @@ export default function SubmitOfferDialog(): React.ReactNode {
 
   const queryClient = useQueryClient();
 
-  const mutation = useMutation({
+  const {mutateAsync} = useMutation({
     mutationFn: postOffer,
-    onSuccess: () => {
-      setData('');
-      queryClient.invalidateQueries({ queryKey: ['profile-offers'] });
-      toast.success('Your offer has been registered');
-    },
+    retry: 2
   });
 
   const onFormSubmitCallback = useCallback(
     (e: FormEvent) => {
       e.preventDefault();
-      mutation.mutate(data);
+      toast.promise(mutateAsync(data), {
+        loading: "The offer is currently being processed....",
+        success: () => {
+          setData('');
+          queryClient.invalidateQueries({ queryKey: ['profile-offers'] });
+          toast.success('Your offer has been registered');
+          return "Your offer has been saved"
+        },
+        error: "An error happened while storing the offer"
+      })
     },
-    [mutation],
+    [mutateAsync, data],
   );
 
   return (

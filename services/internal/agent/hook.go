@@ -9,6 +9,7 @@ import (
 func injectMetadata(ctx tool.Context, tool tool.Tool, args map[string]any) (map[string]any, error) {
 	args["metadata"] = metadata.Metadata{
 		UserId: ctx.UserID(),
+		Agent:  ctx.AppName(),
 	}
 	return nil, nil
 }

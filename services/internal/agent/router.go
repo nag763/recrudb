@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"go.uber.org/fx"
+	"go.uber.org/zap"
 )
 
 type AgentRouterParams struct {
@@ -14,11 +15,11 @@ type AgentRouterParams struct {
 	HttpAgents []*injection.HttpAgent `group:"http_agent"`
 }
 
-func NewAgentRouter(agentConfig *AgentConfig, firestoreSessionService *firestore.FirestoreSessionService, agentRouterParams AgentRouterParams) (injection.SubRouter, error) {
+func NewAgentRouter(agentConfig *AgentConfig, firestoreSessionService *firestore.FirestoreSessionService, agentRouterParams AgentRouterParams, logger *zap.SugaredLogger) (injection.SubRouter, error) {
 	r := chi.NewMux()
 
 	for _, ha := range agentRouterParams.HttpAgents {
-		runner, err := NewAgentRunner(ha)
+		runner, err := NewAgentRunner(ha, logger)
 		if err != nil {
 			return injection.SubRouter{}, err
 		}

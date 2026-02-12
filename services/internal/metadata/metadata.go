@@ -2,6 +2,7 @@ package metadata
 
 type Metadata struct {
 	UserId string `json:"userId,omitempty"`
+	Agent  string `json:"agent,omitempty"`
 }
 
 type McpDocument[T any] struct {

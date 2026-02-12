@@ -17,4 +17,5 @@ var Module = fx.Module("profile",
 	injection.AsMcpToolProvider(NewGetProfileTool),
 	injection.AsMcpToolProvider(NewStoreProfileTool),
 	injection.AsMcpToolProvider(NewStoreOfferTool),
+	injection.AsMcpToolProvider(NewGetOfferTool),
 )

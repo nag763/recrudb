@@ -17,12 +17,6 @@ Start with the score result indicated below
 {job_offer_score}
 ---
 
-Find the company details here
-
----
-{company_lookup}
----
-
 And the summed up offer 
 
 ---

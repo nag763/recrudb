@@ -8,7 +8,7 @@ export default function OfferExtended({ offer }: Readonly<{ offer: Offer }>) {
             <div>
                 <h1 className="text-2xl font-bold text-gray-800">{offer.name}</h1>
                 <p className="text-gray-500">
-                    {offer?.address?.city}, {offer?.address?.country} • Hybrid
+                    {offer?.address?.city}, {offer?.address?.country} • {offer.workLocation}
                 </p>
             </div>
             <div className="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full font-bold">

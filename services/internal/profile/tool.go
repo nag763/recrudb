@@ -53,6 +53,32 @@ func NewStoreProfileTool(profileRepository Repository) injection.Tool {
 	}
 }
 
+func NewGetOfferTool(profileRepository Repository, logger *zap.SugaredLogger) injection.Tool {
+	return injection.Tool{
+		Tool: mcp.NewTool("get_offer",
+			mcp.WithDescription("Retrieves an offer details"),
+			mcp.WithString("offerId"),
+		),
+		Handler: func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+			var metadata metadata.MetadataOnly
+			if err := request.BindArguments(&metadata); err != nil {
+				return mcp.NewToolResultError("ERROR WHILE ACCESSING DOC ID"), nil
+			}
+
+			offerId := request.GetString("offerId", "")
+			if offerId == "" {
+				return mcp.NewToolResultError("offer id is nil"), nil
+			}
+
+			doc, err := profileRepository.GetOffer(ctx, metadata.Metadata.UserId, offerId)
+			if err != nil {
+				return mcp.NewToolResultError("couldn't access profile"), nil
+			}
+			return mcp.NewToolResultStructuredOnly(doc), nil
+		},
+	}
+}
+
 func NewStoreOfferTool(profileRepository Repository, logger *zap.SugaredLogger) injection.Tool {
 	return injection.Tool{
 		Tool: mcp.NewTool("stores_offer",
@@ -66,11 +92,12 @@ func NewStoreOfferTool(profileRepository Repository, logger *zap.SugaredLogger) 
 				return mcp.NewToolResultError("ERROR WHILE ACCESSING DOC ID"), nil
 			}
 
-			if _, err := profileRepository.StoreOffer(ctx, offer.Metadata.UserId, offer.Document); err != nil {
+			id, err := profileRepository.StoreOffer(ctx, offer.Metadata.UserId, offer.Document)
+			if err != nil {
 				logger.Errorf("err ? %v", err)
 				return mcp.NewToolResultError("ERROR WHILE STORING IN FIRESTORE"), nil
 			}
-			return mcp.NewToolResultText("OK"), nil
+			return mcp.NewToolResultText(id), nil
 		},
 	}
 }

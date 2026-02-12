@@ -1,5 +1,7 @@
 Your goal is to store the content of what is below using the `stores_offer` tool.
 
+It is MANDATORY to use the tool.
+
 Please keep in the mind the following when inserting the offer :
 
 1. `agentRecap` should be concise, explaining in two paragraphs formatted in Markdown: 
@@ -24,10 +26,4 @@ Consider by order of importance
 
 ---
 {job_offer_score}
----
-
-3. The company lookup (do not infer details from this that are unlikely to match the offer)
-
----
-{company_lookup}
 ---

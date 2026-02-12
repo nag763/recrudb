@@ -11,7 +11,6 @@ import (
 	"google.golang.org/adk/agent/workflowagents/sequentialagent"
 	"google.golang.org/adk/session"
 	"google.golang.org/adk/tool"
-	"google.golang.org/adk/tool/geminitool"
 	"google.golang.org/genai"
 )
 
@@ -20,9 +19,6 @@ var profileScorerPrompt string
 
 //go:embed prompts/offer_parser.txt
 var offerParserPrompt string
-
-//go:embed prompts/company_lookup.txt
-var companyLookupPrompt string
 
 //go:embed prompts/recap_agent.txt
 var recapAgentPrompt string
@@ -43,18 +39,6 @@ func NewJobOfferAgent(agentConfig *AgentConfig, secretService secret.SecretServi
 		Description: "Parse a job offer.",
 		Instruction: offerParserPrompt,
 		OutputKey:   "summed_up_offer",
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	lookupCompanyAgent, err := llmagent.New(llmagent.Config{
-		Name:        "lookup_company",
-		Model:       agentConfig.Model,
-		Description: "Look up on the company and provides a recap",
-		Instruction: companyLookupPrompt,
-		OutputKey:   "company_lookup",
-		Tools:       []tool.Tool{geminitool.GoogleSearch{}},
 	})
 	if err != nil {
 		return nil, err
@@ -112,7 +96,6 @@ func NewJobOfferAgent(agentConfig *AgentConfig, secretService secret.SecretServi
 			Description: "Analyzes a job offer, provide a score and details.",
 			SubAgents: []agent.Agent{
 				parseOfferAgent,
-				lookupCompanyAgent,
 				offerScorerAgent,
 				recapAgent,
 				storeOfferAgent,

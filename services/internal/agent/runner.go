@@ -2,10 +2,12 @@ package agent
 
 import (
 	"context"
+	"errors"
 	"log"
 	"nag763/recrudb/api/internal/injection"
 	"strings"
 
+	"go.uber.org/zap"
 	"google.golang.org/adk/agent"
 	"google.golang.org/adk/runner"
 	"google.golang.org/adk/session"
@@ -17,9 +19,10 @@ type Runner struct {
 	runner         runner.Runner
 	appName        string
 	sessionService session.Service
+	logger         *zap.SugaredLogger
 }
 
-func NewAgentRunner(agent *injection.HttpAgent) (*Runner, error) {
+func NewAgentRunner(agent *injection.HttpAgent, logger *zap.SugaredLogger) (*Runner, error) {
 	ctx := context.Background()
 
 	runner, err := runner.New(runner.Config{
@@ -36,6 +39,7 @@ func NewAgentRunner(agent *injection.HttpAgent) (*Runner, error) {
 		runner:         *runner,
 		appName:        agent.Agent.Name(),
 		sessionService: agent.Session,
+		logger:         logger,
 	}, nil
 }
 
@@ -52,6 +56,7 @@ type RunResponse struct {
 }
 
 func (r Runner) Run(params RunParams) (*RunResponse, error) {
+	r.logger.Debugf("runner %s received %+v", r.appName, params)
 	var sb strings.Builder
 
 	var sessionId string
@@ -61,8 +66,9 @@ func (r Runner) Run(params RunParams) (*RunResponse, error) {
 			UserID:  params.UserId,
 		})
 		if err != nil {
-			log.Printf("error creating session %v", err)
+			r.logger.Errorf("error creating session %v", err)
 			return nil, err
+
 		}
 		sessionId = request.Session.ID()
 	} else {
@@ -89,17 +95,29 @@ func (r Runner) Run(params RunParams) (*RunResponse, error) {
 		}()
 	}
 
+RunnerLoop:
 	for event, err := range r.runner.Run(r.ctx, params.UserId, sessionId, params.Input, agent.RunConfig{
 		StreamingMode: agent.StreamingModeSSE,
 	}) {
 		if err != nil {
-			return nil, err
+			var apiError genai.APIError
+			switch {
+			case err.Error() == "TODO: last event is not final":
+				r.logger.Warnf("runner %s: non-final event detected", r.appName)
+				break RunnerLoop
+			case errors.As(err, &apiError):
+				r.logger.Errorf("genai api error: %v", err)
+				return nil, err
+			default:
+				return nil, err
+			}
 		} else if event.Partial {
 			for _, p := range event.LLMResponse.Content.Parts {
 				sb.WriteString(p.Text)
 			}
 		}
 	}
+	r.logger.Infof("runner %s ran with success", r.appName)
 	return &RunResponse{
 		Content:   sb.String(),
 		SessionId: sessionId,

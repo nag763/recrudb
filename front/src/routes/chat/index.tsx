@@ -13,7 +13,7 @@ export const Route = createFileRoute('/chat/')({
 
 function RouteComponent() {
   const { id } = useSearch({from: "/chat/"})
-  return <div className='w-full h-[100dvh] flex flex-col overflow-hidden'>
+  return <div className='w-full h-dvh flex flex-col overflow-hidden'>
     {id && 
       <ChatInterface sessionId={id}/>
     }

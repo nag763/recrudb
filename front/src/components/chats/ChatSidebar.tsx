@@ -22,7 +22,7 @@ export default function ChatSidebar() {
         <Link to="/chat" search={{ id: undefined }}>
             <SidebarMenuItem className="font-semibold">Create new</SidebarMenuItem>
         </Link>
-
+        
         {isPending && <p>Loading ...</p>}
         {!isPending && sessions?.map((e) =>
             <ChatContextMenu sessionId={e.id}>

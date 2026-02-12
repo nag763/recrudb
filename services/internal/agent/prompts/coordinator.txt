@@ -64,7 +64,10 @@ Use it whenever a personalized response will be needed :
 
 # Job offer agent tool - `job_offer_agent`
 
-This tool will be used to store job offers, use this tool as soon as you receive something that looks like a job offer. The tool will care about the rest.
+This tool will be used to store job offers, use this tool as soon as you receive something that looks like a job offer. 
+The tool will care about the rest.
+It is mandatory to transfer all the request that look like offers to this tool.
+If it went through indicate that the offer has been stored without further commenting.
 
 Examples :
 
