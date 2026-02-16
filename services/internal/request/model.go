@@ -17,6 +17,7 @@ type HttpRequest struct {
 	SessionId    string `json:"sessionId"`
 	Context      struct {
 		OfferId string `json:"offerId"`
+		Offer   string `json:"offer"`
 		User    bool   `json:"user"`
 	} `json:"context"`
 	ContentType string `json:"-"`

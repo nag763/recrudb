@@ -5,60 +5,30 @@ import (
 	"nag763/recrudb/api/internal/injection"
 	"nag763/recrudb/api/internal/secret"
 
-	"google.golang.org/adk/agent"
 	"google.golang.org/adk/agent/llmagent"
-	"google.golang.org/adk/agent/workflowagents/sequentialagent"
 	"google.golang.org/adk/session"
 	"google.golang.org/adk/tool"
 	"google.golang.org/genai"
 )
 
-//go:embed prompts/recap_agent.txt
-var recapAgentPrompt string
-
-//go:embed prompts/store_offer.txt
-var storeOfferAgentPrompt string
+//go:embed prompts/joboffer_agent.txt
+var jobofferAgentPrompt string
 
 func NewJobOfferAgent(agentConfig *AgentConfig, secretService secret.SecretService) (*injection.HttpAgent, error) {
 	allowedTools := []string{"stores_offer"}
 
 	mcpTools, err := getMcpTools(allowedTools, secretService.NewAuthenticatedClient())
 
-	recapAgent, err := llmagent.New(llmagent.Config{
-		Name:        "recap_agent",
-		Description: "Recap informations of other agents into a few lines",
-		Model:       agentConfig.Model,
-		Instruction: recapAgentPrompt,
-		OutputKey:   "recap",
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	storeOfferAgent, err := llmagent.New(llmagent.Config{
-		Name:                "store_offer_agent",
-		Description:         "Stores the offer details",
+	jobOfferMatcher, err := llmagent.New(llmagent.Config{
+		Name:                "job_offer_agent",
+		Description:         "Analyzes a job offer, provide a score and details.",
 		Model:               agentConfig.Model,
-		Instruction:         storeOfferAgentPrompt,
+		Instruction:         jobofferAgentPrompt,
 		Toolsets:            []tool.Toolset{mcpTools},
 		BeforeToolCallbacks: []llmagent.BeforeToolCallback{injectMetadata},
 		GenerateContentConfig: &genai.GenerateContentConfig{
 			ToolConfig: &genai.ToolConfig{
 				FunctionCallingConfig: restrictConfigTo(allowedTools),
-			},
-		},
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	jobOfferMatcher, err := sequentialagent.New(sequentialagent.Config{
-		AgentConfig: agent.Config{
-			Name:        "job_offer_agent",
-			Description: "Analyzes a job offer, provide a score and details.",
-			SubAgents: []agent.Agent{
-				recapAgent,
-				storeOfferAgent,
 			},
 		},
 	})
