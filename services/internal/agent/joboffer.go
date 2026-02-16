@@ -4,7 +4,6 @@ import (
 	_ "embed"
 	"nag763/recrudb/api/internal/injection"
 	"nag763/recrudb/api/internal/secret"
-	"slices"
 
 	"google.golang.org/adk/agent"
 	"google.golang.org/adk/agent/llmagent"
@@ -27,9 +26,7 @@ var recapAgentPrompt string
 var storeOfferAgentPrompt string
 
 func NewJobOfferAgent(agentConfig *AgentConfig, secretService secret.SecretService) (*injection.HttpAgent, error) {
-	offerScorerAllowedTools := []string{"get_profile"}
-	offerStorerAllowedTools := []string{"stores_offer"}
-	allowedTools := slices.Concat(offerScorerAllowedTools, offerStorerAllowedTools)
+	allowedTools := []string{"stores_offer"}
 
 	mcpTools, err := getMcpTools(allowedTools, secretService.NewAuthenticatedClient())
 
@@ -45,18 +42,11 @@ func NewJobOfferAgent(agentConfig *AgentConfig, secretService secret.SecretServi
 	}
 
 	offerScorerAgent, err := llmagent.New(llmagent.Config{
-		Name:                "offer_scorer",
-		Model:               agentConfig.Model,
-		Description:         "Goal is to match my profile with the offer, on a score out of 100",
-		Instruction:         profileScorerPrompt,
-		OutputKey:           "job_offer_score",
-		Toolsets:            []tool.Toolset{mcpTools},
-		BeforeToolCallbacks: []llmagent.BeforeToolCallback{injectMetadata},
-		GenerateContentConfig: &genai.GenerateContentConfig{
-			ToolConfig: &genai.ToolConfig{
-				FunctionCallingConfig: restrictConfigTo(offerScorerAllowedTools),
-			},
-		},
+		Name:        "offer_scorer",
+		Model:       agentConfig.Model,
+		Description: "Goal is to match my profile with the offer, on a score out of 100",
+		Instruction: profileScorerPrompt,
+		OutputKey:   "job_offer_score",
 	})
 	if err != nil {
 		return nil, err
@@ -82,7 +72,7 @@ func NewJobOfferAgent(agentConfig *AgentConfig, secretService secret.SecretServi
 		BeforeToolCallbacks: []llmagent.BeforeToolCallback{injectMetadata},
 		GenerateContentConfig: &genai.GenerateContentConfig{
 			ToolConfig: &genai.ToolConfig{
-				FunctionCallingConfig: restrictConfigTo(offerStorerAllowedTools),
+				FunctionCallingConfig: restrictConfigTo(allowedTools),
 			},
 		},
 	})

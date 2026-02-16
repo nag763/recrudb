@@ -1,7 +1,5 @@
 You will be passed a job offer.
 
-First, find the candidate profile information using the `get_profile` tool, it is MANDATORY to use it, and you are allowed to use it.
-
 From this offer, your goal is to match my profile agains the offer on a score of 20. Take in consideration the followings :
     1. The skills : Does the candidate seems like a good fit for the offer.
     2. The company : Is the domain of the company possibly a good fit.
@@ -14,4 +12,10 @@ Here is the summed up offer.
 
 ---
 {summed_up_offer}
+---
+
+Here is the candidate profile 
+
+---
+{user}
 ---

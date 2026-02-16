@@ -31,7 +31,6 @@ export default function SubmitOfferDialog(): React.ReactNode {
         success: () => {
           setData('');
           queryClient.invalidateQueries({ queryKey: ['profile-offers'] });
-          toast.success('Your offer has been registered');
           return "Your offer has been saved"
         },
         error: "An error happened while storing the offer"
