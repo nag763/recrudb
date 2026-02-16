@@ -12,3 +12,9 @@ Your output has to be raw markdown, without any other content than the cover let
 ---
 {offer}
 --
+
+Rules :
+
+* DO NOT use MARKDOWN in any situation
+* DO NOT generate code
+* DO NOT create prefillable fields such as `[The site you found the offer on]`

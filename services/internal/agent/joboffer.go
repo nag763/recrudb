@@ -13,12 +13,6 @@ import (
 	"google.golang.org/genai"
 )
 
-//go:embed prompts/profile_scorer.txt
-var profileScorerPrompt string
-
-//go:embed prompts/offer_parser.txt
-var offerParserPrompt string
-
 //go:embed prompts/recap_agent.txt
 var recapAgentPrompt string
 
@@ -29,28 +23,6 @@ func NewJobOfferAgent(agentConfig *AgentConfig, secretService secret.SecretServi
 	allowedTools := []string{"stores_offer"}
 
 	mcpTools, err := getMcpTools(allowedTools, secretService.NewAuthenticatedClient())
-
-	parseOfferAgent, err := llmagent.New(llmagent.Config{
-		Name:        "parse_offer_agent",
-		Model:       agentConfig.Model,
-		Description: "Parse a job offer.",
-		Instruction: offerParserPrompt,
-		OutputKey:   "summed_up_offer",
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	offerScorerAgent, err := llmagent.New(llmagent.Config{
-		Name:        "offer_scorer",
-		Model:       agentConfig.Model,
-		Description: "Goal is to match my profile with the offer, on a score out of 100",
-		Instruction: profileScorerPrompt,
-		OutputKey:   "job_offer_score",
-	})
-	if err != nil {
-		return nil, err
-	}
 
 	recapAgent, err := llmagent.New(llmagent.Config{
 		Name:        "recap_agent",
@@ -85,8 +57,6 @@ func NewJobOfferAgent(agentConfig *AgentConfig, secretService secret.SecretServi
 			Name:        "job_offer_agent",
 			Description: "Analyzes a job offer, provide a score and details.",
 			SubAgents: []agent.Agent{
-				parseOfferAgent,
-				offerScorerAgent,
 				recapAgent,
 				storeOfferAgent,
 			},

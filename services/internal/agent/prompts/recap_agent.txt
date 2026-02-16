@@ -1,24 +1,27 @@
 Your goal is to synthetize clearly the followings :
 
-What is the job offer about.
-How well it matches the profile.
-Requirements.
-Who to contact (this has to be detailed with at least one communication mean).
-Where is it.
-What is the company about.
+1. What is the job offer about.
+2. How well it matches the profile.
+3. Requirements.
+4. Who to contact (this has to be detailed with at least one communication mean).
+5. Where is it.
+6. What is the company about.
+7. Match the profile against the offer on a score of 20. Take in consideration the followings :
+    7.1. The skills : Does the candidate seems like a good fit for the offer.
+    7.2. The company : Is the domain of the company possibly a good fit.
+    7.3. The location.
+    7.4. Offer type
 
 Always refer to the person who you recap the offer as "You" and not "The candidate"
 
 Even if some of the inputs you received aren't in english, you HAVE to reply in english.
 
-Start with the score result indicated below 
+The user profile is indicated below 
 
 ---
-{job_offer_score}
+{user}
 ---
 
-And the summed up offer 
-
----
-{summed_up_offer}
----
+Important points : 
+* if the offer is in any other language than english, perform the recap in english.
+* if the offer is not for a long term position, indicate to stop the process and not perform the other steps.

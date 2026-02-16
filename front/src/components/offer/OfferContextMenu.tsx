@@ -32,10 +32,10 @@ export default function OfferContextMenu({ children, offerId }: Readonly<{ child
         toast.promise(writeCover(offerId), {
             loading: "Preparing the letter...",
             success: (data) => {
-                if(data?.data?.content) {
+                if (data?.data?.content) {
                     navigator.clipboard.writeText(data.data.content);
                     return "Cover letter copied to clipboard!";
-                } 
+                }
                 return "Please try again ..."
             },
             error: "An error happened :("
@@ -50,16 +50,14 @@ export default function OfferContextMenu({ children, offerId }: Readonly<{ child
             {children}
         </ContextMenuTrigger>
         <ContextMenuContent>
-            <ContextMenuItem onClick={() => remove(offerId)}>
-                <Trash2 />
-                Delete
-            </ContextMenuItem>
-
             <ContextMenuItem onClick={writeCoverToast}>
                 <LetterText />
                 Write a cover
             </ContextMenuItem>
-
+            <ContextMenuItem onClick={() => remove(offerId)}>
+                <Trash2 />
+                Delete
+            </ContextMenuItem>
         </ContextMenuContent>
     </ContextMenu >
 }
