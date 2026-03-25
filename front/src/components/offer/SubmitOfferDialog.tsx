@@ -18,7 +18,7 @@ export default function SubmitOfferDialog(): React.ReactNode {
 
   const queryClient = useQueryClient();
 
-  const {mutateAsync} = useMutation({
+  const { mutateAsync } = useMutation({
     mutationFn: postOffer,
     retry: 2
   });
@@ -61,12 +61,12 @@ export default function SubmitOfferDialog(): React.ReactNode {
           </div>
         </div>
         <DialogFooter className="mt-2">
-          <DialogClose className="flex w-full justify-end space-x-2">
+          <DialogClose asChild>
             <Button variant={'secondary'} type="button">
               Close
             </Button>
-            <Button>Submit</Button>
           </DialogClose>
+          <Button>Submit</Button>
         </DialogFooter>
       </form>
     </DialogContent>
